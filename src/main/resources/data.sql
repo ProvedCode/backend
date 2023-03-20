@@ -1,5 +1,5 @@
-insert into talent (first_name, last_name, specialization, short_description, image)
-values ('Serhii', 'Soloviov', 'Java-Developer', 'Young java-developer from Ukraine', 'http://image');
+insert into talent (first_name, last_name, specialization, image)
+values ('Serhii', 'Soloviov', 'Java-Developer', 'http://image');
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Default bio', 'Default addition info');
 insert into talent_link (talent_id, link)
@@ -27,8 +27,8 @@ values ((select id from talent order by id desc limit 1), 'second_file');
 insert into talent_attached_file (talent_id, attached_file)
 values ((select id from talent order by id desc limit 1), 'third_file');
 
-insert into talent (first_name, last_name, specialization, short_description, image)
-values ('Mykhailo', 'Ordyntsev', 'Java-Developer', 'Mykhailo Ordyntsev short description', 'http://MykhailoOrdyntsevImage');
+insert into talent (first_name, last_name, specialization, image)
+values ('Mykhailo', 'Ordyntsev', 'Java-Developer', 'http://MykhailoOrdyntsevImage');
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Mykhailo Ordyntsev bio', 'Mykhailo Ordyntsev addition info');
 insert into talent_link (talent_id, link)
@@ -56,8 +56,8 @@ values ((select id from talent order by id desc limit 1), 'MykhailoOrdyntsev_sec
 insert into talent_attached_file (talent_id, attached_file)
 values ((select id from talent order by id desc limit 1), 'MykhailoOrdyntsev_third_file');
 
-insert into talent (first_name, last_name, specialization, short_description, image)
-values ('Denis', 'Boyko', 'Java-Developer', 'Denis Boyko short description', 'http://DenisBoykoImage');
+insert into talent (first_name, last_name, specialization, image)
+values ('Denis', 'Boyko', 'Java-Developer', 'http://DenisBoykoImage');
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Denis Boyko bio', 'Denis Boyko addition info');
 insert into talent_link (talent_id, link)
@@ -85,8 +85,8 @@ values ((select id from talent order by id desc limit 1), 'DenisBoyko_second_fil
 insert into talent_attached_file (talent_id, attached_file)
 values ((select id from talent order by id desc limit 1), 'DenisBoyko_third_file');
 
-insert into talent (first_name, last_name, specialization, short_description, image)
-values ('Ihor', 'Schurenko', 'Java-Developer', 'Ihor Shchurenko short description', 'http://IhorShchurenkoImage');
+insert into talent (first_name, last_name, specialization, image)
+values ('Ihor', 'Schurenko', 'Java-Developer', 'http://IhorShchurenkoImage');
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Ihor Shchurenko bio', 'Ihor Shchurenko addition info');
 insert into talent_link (talent_id, link)
