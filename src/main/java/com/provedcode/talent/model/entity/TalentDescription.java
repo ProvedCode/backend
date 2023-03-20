@@ -19,10 +19,8 @@ public class TalentDescription {
     @NotNull
     @Column(name = "talent_id", nullable = false)
     private Long talentId;
-    @NotNull
     @Column(name = "BIO")
     private String bio;
-    @NotNull
     @Column(name = "addition_info")
     private String additionalInfo;
     @NotNull

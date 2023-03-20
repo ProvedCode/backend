@@ -33,28 +33,17 @@ public class Talent {
     @NotNull
     @Column(name = "specialization", length = 30)
     private String specialization;
-    @NotEmpty
-    @NotNull
-    @Column(name = "short_description")
-    private String shortDescription;
     @URL
-    @NotEmpty
-    @NotNull
-        @Column(name = "image", length = 100)
+    @Column(name = "image", length = 100)
     private String image;
-    @NotNull
     @OneToOne(mappedBy = "talent", orphanRemoval = true)
     private TalentDescription talentDescription;
-    @NotNull
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", orphanRemoval = true)
     private List<TalentLink> talentLinks = new ArrayList<>();
-    @NotNull
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", orphanRemoval = true)
     private List<TalentSkill> talentSkills = new ArrayList<>();
-    @NotNull
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", orphanRemoval = true)
     private List<TalentContact> talentContacts = new ArrayList<>();
-    @NotNull
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", orphanRemoval = true)
     private List<TalentAttachedFile> talentAttachedFiles = new ArrayList<>();
 }

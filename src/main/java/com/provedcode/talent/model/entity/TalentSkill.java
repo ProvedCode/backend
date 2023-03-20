@@ -17,7 +17,6 @@ public class TalentSkill {
     @NotNull
     @Column(name = "talent_id", nullable = false)
     private Long talentId;
-    @NotNull
     @Column(name = "skill")
     private String skill;
     @NotNull

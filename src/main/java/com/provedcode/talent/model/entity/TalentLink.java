@@ -18,7 +18,6 @@ public class TalentLink {
     @NotNull
     @Column(name = "talent_id", nullable = false)
     private Long talentId;
-    @NotNull
     @URL
     @Column(name = "link")
     private String link;

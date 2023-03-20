@@ -18,7 +18,6 @@ public class TalentAttachedFile {
     @NotNull
     @Column(name = "talent_id", nullable = false)
     private Long talentId;
-    @NotNull
     @URL
     @Column(name = "attached_file", length = 100)
     private String attachedFile;
