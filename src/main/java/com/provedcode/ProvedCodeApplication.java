@@ -1,4 +1,4 @@
-package com.provedcode.demo;
+package com.provedcode;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
