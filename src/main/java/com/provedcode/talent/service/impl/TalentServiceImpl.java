@@ -1,7 +1,7 @@
-package com.provedcode.service.impl;
+package com.provedcode.talent.service.impl;
 
 import com.provedcode.config.PageConfig;
-import com.provedcode.service.TalentService;
+import com.provedcode.talent.service.TalentService;
 import com.provedcode.talent.mapper.TalentMapper;
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;

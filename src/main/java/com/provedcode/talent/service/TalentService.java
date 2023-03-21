@@ -1,4 +1,4 @@
-package com.provedcode.service;
+package com.provedcode.talent.service;
 
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
