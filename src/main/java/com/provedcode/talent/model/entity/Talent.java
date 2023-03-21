@@ -46,4 +46,5 @@ public class Talent {
     private List<TalentContact> talentContacts = new ArrayList<>();
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", orphanRemoval = true)
     private List<TalentAttachedFile> talentAttachedFiles = new ArrayList<>();
+
 }
