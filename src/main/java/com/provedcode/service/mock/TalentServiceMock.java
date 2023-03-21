@@ -3,6 +3,7 @@ package com.provedcode.service.mock;
 import com.provedcode.config.PageConfig;
 import com.provedcode.service.TalentService;
 import com.provedcode.talent.mapper.TalentMapper;
+import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
 import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.repo.TalentRepository;
@@ -40,11 +41,11 @@ public class TalentServiceMock implements TalentService {
     }
 
     @Override
-    public Talent getTalentById(long id) {
+    public FullTalentDTO getTalentById(long id) {
         Optional<Talent> talent = talentRepository.findById(id);
         if (talent.isEmpty()){
             throw new ResponseStatusException(NOT_FOUND, String.format("talent with id = %d not found", id));
         }
-        return null;
+        return talentMapper.talentToFullTalentDTO(talent.get());
     }
 }
