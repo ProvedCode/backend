@@ -1,9 +1,8 @@
 package com.provedcode.talent;
 
-import com.provedcode.service.TalentService;
+import com.provedcode.talent.service.TalentService;
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
-import com.provedcode.talent.model.entity.Talent;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
