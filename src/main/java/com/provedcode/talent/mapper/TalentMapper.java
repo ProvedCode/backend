@@ -15,4 +15,5 @@ public interface TalentMapper {
                 .skills(talent.getTalentSkills().stream().map(TalentSkill::getSkill).toList())
                 .build();
     }
+
 }

@@ -1,8 +1,7 @@
-package com.provedcode.service.impl;
+package com.provedcode.service.mock;
 
 import com.provedcode.config.PageConfig;
 import com.provedcode.service.TalentService;
-import com.provedcode.talent.TalentController;
 import com.provedcode.talent.mapper.TalentMapper;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
 import com.provedcode.talent.model.entity.Talent;
@@ -10,7 +9,6 @@ import com.provedcode.talent.repo.TalentRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -19,10 +17,10 @@ import java.util.Optional;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-@Service
+//@Service
 @Slf4j
 @AllArgsConstructor
-public class TalentServiceImpl implements TalentService {
+public class TalentServiceMock implements TalentService {
     TalentMapper talentMapper;
     TalentRepository talentRepository;
     PageConfig pageConfig;
@@ -36,7 +34,7 @@ public class TalentServiceImpl implements TalentService {
             throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
         }
         return talentRepository.getTalentsPage(
-                PageRequest.of(page.orElse(pageConfig.defaultPageNum()), size.orElse(pageConfig.defaultPageSize())))
+                        PageRequest.of(page.orElse(pageConfig.defaultPageNum()), size.orElse(pageConfig.defaultPageSize())))
                 .stream().map(i -> talentMapper.talentToShortTalentDTO(i))
                 .toList();
     }
