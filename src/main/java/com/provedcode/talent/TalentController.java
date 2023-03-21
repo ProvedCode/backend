@@ -1,6 +1,7 @@
 package com.provedcode.talent;
 
 import com.provedcode.service.TalentService;
+import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
 import com.provedcode.talent.model.entity.Talent;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ public class TalentController {
     TalentService talentService;
 
     @GetMapping("/api/talents/{id}")
-    Talent getTalent(@PathVariable("id") long id) {
+    FullTalentDTO getTalent(@PathVariable("id") long id) {
         return talentService.getTalentById(id);
     }
 
