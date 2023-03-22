@@ -7,7 +7,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.PropertySource;
 
 @EnableConfigurationProperties
-@PropertySource("pagination.properties")
 @ConfigurationProperties(prefix = "page-config")
 @Slf4j
 public record PageConfig(
