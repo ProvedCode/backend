@@ -1,6 +1,6 @@
 package com.provedcode.talent.service.impl;
 
-import com.provedcode.config.PageConfig;
+import com.provedcode.config.PageProperties;
 import com.provedcode.talent.service.TalentService;
 import com.provedcode.talent.mapper.TalentMapper;
 import com.provedcode.talent.model.dto.FullTalentDTO;
@@ -25,18 +25,18 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class TalentServiceImpl implements TalentService {
     TalentMapper talentMapper;
     TalentRepository talentRepository;
-    PageConfig pageConfig;
+    PageProperties pageProperties;
 
     @Override
     public List<ShortTalentDTO> getTalentsPage(Optional<Integer> page, Optional<Integer> size) {
-        if (page.orElse(pageConfig.defaultPageNum()) < 0) {
+        if (page.orElse(pageProperties.defaultPageNum()) < 0) {
             throw new ResponseStatusException(BAD_REQUEST, "'page' query parameter must be greater than or equal to 0");
         }
-        if (size.orElse(pageConfig.defaultPageSize()) <= 0) {
+        if (size.orElse(pageProperties.defaultPageSize()) <= 0) {
             throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
         }
-        return talentRepository.getTalentsPage(
-                PageRequest.of(page.orElse(pageConfig.defaultPageNum()), size.orElse(pageConfig.defaultPageSize())))
+        return talentRepository.findTalentsPage(
+                PageRequest.of(page.orElse(pageProperties.defaultPageNum()), size.orElse(pageProperties.defaultPageSize())))
                 .stream().map(i -> talentMapper.talentToShortTalentDTO(i))
                 .toList();
     }
