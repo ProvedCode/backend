@@ -20,7 +20,7 @@ public class SecurityConfig {
                 .requestMatchers("/actuator/health").permitAll() // for DevOps
                 .requestMatchers(antMatcher("/h2/**")).permitAll()
                 .requestMatchers(antMatcher("/api/**")).permitAll()
-                .anyRequest().permitAll()
+                .anyRequest().denyAll()
         );
         http.csrf().disable().headers().frameOptions().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
