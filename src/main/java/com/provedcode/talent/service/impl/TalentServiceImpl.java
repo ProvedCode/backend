@@ -35,10 +35,9 @@ public class TalentServiceImpl implements TalentService {
         if (size.orElse(pageProperties.defaultPageSize()) <= 0) {
             throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
         }
-        return talentRepository.findTalentsPage(
+        return talentRepository.findAll(
                 PageRequest.of(page.orElse(pageProperties.defaultPageNum()), size.orElse(pageProperties.defaultPageSize())))
-                .stream().map(i -> talentMapper.talentToShortTalentDTO(i))
-                .toList();
+                .stream().map(i -> talentMapper.talentToShortTalentDTO(i)).toList();
     }
 
     @Override
