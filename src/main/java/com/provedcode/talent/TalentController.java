@@ -4,10 +4,10 @@ import com.provedcode.talent.service.TalentService;
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -22,7 +22,7 @@ public class TalentController {
 
     @GetMapping("/api/talents")
     @ResponseStatus(HttpStatus.OK)
-    List<ShortTalentDTO> getTalents(@RequestParam(value = "page") Optional<Integer> page,
+    Page<ShortTalentDTO> getTalents(@RequestParam(value = "page") Optional<Integer> page,
                                     @RequestParam(value = "size") Optional<Integer> size) {
         return talentService.getTalentsPage(page, size);
     }

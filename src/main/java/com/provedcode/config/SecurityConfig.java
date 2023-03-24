@@ -17,6 +17,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(c -> c
+                .requestMatchers("/actuator/health").permitAll() // for DevOps
                 .requestMatchers(antMatcher("/h2/**")).permitAll()
                 .requestMatchers(antMatcher("/api/**")).permitAll()
                 .anyRequest().denyAll()
