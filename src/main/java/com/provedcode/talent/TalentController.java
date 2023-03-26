@@ -1,8 +1,8 @@
 package com.provedcode.talent;
 
-import com.provedcode.talent.service.TalentService;
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
+import com.provedcode.talent.service.TalentService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -12,6 +12,8 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
+                                                             RequestMethod.DELETE})
 public class TalentController {
     TalentService talentService;
 
