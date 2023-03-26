@@ -1,12 +1,12 @@
 package com.provedcode.talent.service.impl;
 
 import com.provedcode.config.PageProperties;
-import com.provedcode.talent.service.TalentService;
 import com.provedcode.talent.mapper.TalentMapper;
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
 import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.repo.TalentRepository;
+import com.provedcode.talent.service.TalentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,15 +35,16 @@ public class TalentServiceImpl implements TalentService {
         if (size.orElse(pageProperties.defaultPageSize()) <= 0) {
             throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
         }
-        return talentRepository.findAll(PageRequest.of(page.orElse(pageProperties.defaultPageNum()), size.orElse(pageProperties.defaultPageSize())))
-                .map(talentMapper::talentToShortTalentDTO);
+        return talentRepository.findAll(PageRequest.of(page.orElse(pageProperties.defaultPageNum()),
+                                                       size.orElse(pageProperties.defaultPageSize())))
+                               .map(talentMapper::talentToShortTalentDTO);
 
     }
 
     @Override
     public FullTalentDTO getTalentById(long id) {
         Optional<Talent> talent = talentRepository.findById(id);
-        if (talent.isEmpty()){
+        if (talent.isEmpty()) {
             throw new ResponseStatusException(NOT_FOUND, String.format("talent with id = %d not found", id));
         }
         return talentMapper.talentToFullTalentDTO(talent.get());
