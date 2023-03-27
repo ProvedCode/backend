@@ -36,6 +36,6 @@ public class UserInfo {
     @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private Talent talent;
-    @OneToMany(mappedBy = "userInfo", orphanRemoval = true)
+    @OneToMany(mappedBy = "userInfo", orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<UserAuthority> userAuthorities = new LinkedHashSet<>();
 }

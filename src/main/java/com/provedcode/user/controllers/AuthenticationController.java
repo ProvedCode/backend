@@ -28,11 +28,6 @@ public class AuthenticationController {
     UserInfoRepository repository;
     PasswordEncoder passwordEncoder;
 
-    @GetMapping("/test")
-    List<String> test() {
-        return repository.findAll().stream().map(i -> i.getPassword() + " : " + passwordEncoder.encode(i.getPassword())).toList();
-    }
-
     @PostMapping("/api/login")
     String login(Authentication authentication) {
         log.info("=== POST /login === auth.name = {}", authentication.getName());
