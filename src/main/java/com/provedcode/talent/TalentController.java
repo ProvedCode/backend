@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -20,6 +20,7 @@ import java.util.Optional;
 public class TalentController {
     TalentService talentService;
 
+    @PreAuthorize("hasRole('TALENT')")
     @GetMapping("/talents/{id}")
     FullTalentDTO getTalent(@PathVariable("id") long id) {
         return talentService.getTalentById(id);
