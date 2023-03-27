@@ -42,8 +42,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(c -> c
                 .requestMatchers("/actuator/health").permitAll() // for DevOps
-                .requestMatchers("/api/login").permitAll()
                 .requestMatchers(antMatcher("/h2/**")).permitAll()
+                .requestMatchers("/api/login").permitAll()
+                .requestMatchers(antMatcher("/api/register")).permitAll()
                 .requestMatchers(antMatcher("/api/talents")).permitAll()
                 .anyRequest().authenticated()
         );

@@ -17,13 +17,12 @@ public class InitConfig implements CommandLineRunner {
     UserInfoMapper userInfoMapper;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) throws Exception { // Method to change passwords for already created users from data.sql
         userInfoRepository.saveAll(
                 userInfoRepository.findAll().stream()
                         .map(i -> {
                             i.setPassword(passwordEncoder.encode(i.getPassword()));
                             return i;
                         }).toList());
-        log.info("userInfoRepository = {}", userInfoRepository.findAll().stream().map(userInfoMapper::toUserDetails).toList());
     }
 }
