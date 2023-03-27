@@ -26,10 +26,11 @@ import static java.time.temporal.ChronoUnit.MINUTES;
 public class AuthenticationController {
     JwtEncoder jwtEncoder;
     UserInfoRepository repository;
+    PasswordEncoder passwordEncoder;
 
     @GetMapping("/test")
     List<String> test() {
-        return repository.findAll().stream().map(i -> i.getPassword()).toList();
+        return repository.findAll().stream().map(i -> i.getPassword() + " : " + passwordEncoder.encode(i.getPassword())).toList();
     }
 
     @PostMapping("/api/login")
