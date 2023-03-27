@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -22,12 +23,14 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Service
 @Slf4j
 @AllArgsConstructor
+@Transactional
 public class TalentServiceImpl implements TalentService {
     TalentMapper talentMapper;
     TalentRepository talentRepository;
     PageProperties pageProperties;
 
     @Override
+    @Transactional(readOnly = true)
     public Page<ShortTalentDTO> getTalentsPage(Optional<Integer> page, Optional<Integer> size) {
         if (page.orElse(pageProperties.defaultPageNum()) < 0) {
             throw new ResponseStatusException(BAD_REQUEST, "'page' query parameter must be greater than or equal to 0");
@@ -42,6 +45,7 @@ public class TalentServiceImpl implements TalentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public FullTalentDTO getTalentById(long id) {
         Optional<Talent> talent = talentRepository.findById(id);
         if (talent.isEmpty()) {

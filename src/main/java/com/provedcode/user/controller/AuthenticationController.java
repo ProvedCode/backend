@@ -1,8 +1,9 @@
-package com.provedcode.user.controllers;
+package com.provedcode.user.controller;
 
 import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.repo.db.TalentEntityRepository;
 import com.provedcode.user.model.dto.RegistrationDTO;
+import com.provedcode.user.model.entity.UserAuthority;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.UserAuthorityRepository;
 import com.provedcode.user.repo.UserInfoRepository;
@@ -17,6 +18,7 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -44,31 +46,34 @@ public class AuthenticationController {
         log.info("=== POST /login === auth = {}", authentication);
         var now = Instant.now();
         var claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(5, MINUTES))
-                .subject(authentication.getName())
-                .claim("scope", createScope(authentication))
-                .build();
+                                 .issuer("self")
+                                 .issuedAt(now)
+                                 .expiresAt(now.plus(5, MINUTES))
+                                 .subject(authentication.getName())
+                                 .claim("scope", createScope(authentication))
+                                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
     @PostMapping("/register")
-    String register(@Valid RegistrationDTO user) {
+    String register(@RequestBody @Valid RegistrationDTO user) {
         if (userInfoRepository.existsByLogin(user.login())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("user with login = {%s} already exists", user.login()));
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                                              String.format("user with login = {%s} already exists", user.login()));
         }
         Talent talent = talentEntityRepository.save(Talent.builder()
-                .firstName(user.firstName())
-                .lastName(user.lastName())
-                .specialization(user.specialization())
-                .build());
+                                                          .firstName(user.firstName())
+                                                          .lastName(user.lastName())
+                                                          .specialization(user.specialization())
+                                                          .build());
         userInfoRepository.save(
                 UserInfo.builder()
-                        .talent(talent)
                         .userId(talent.getId())
-                        .userAuthorities(Set.of(userAuthorityRepository.findByAuthority_Authority("ROLE_USER")
-                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "user didn't created"))))
+//                        .userAuthorities(Set.of(userAuthorityRepository.findById(Integer.toUnsignedLong(1))
+//                                                                       .orElseThrow(() -> new ResponseStatusException(
+//                                                                               HttpStatus.BAD_REQUEST,
+//                                                                               "user didn't created"))))
+                        .userAuthorities(userAuthorityRepository.findByAuthority_Authority("ROLE_TALENT"))
                         .login(user.login())
                         .password(passwordEncoder.encode(user.password()))
                         .build()
@@ -76,10 +81,9 @@ public class AuthenticationController {
         return "YAY";
     }
 
-
     private String createScope(Authentication authentication) {
         return authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
+                             .map(GrantedAuthority::getAuthority)
+                             .collect(Collectors.joining(" "));
     }
 }
