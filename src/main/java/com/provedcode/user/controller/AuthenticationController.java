@@ -5,6 +5,7 @@ import com.provedcode.talent.repo.db.TalentEntityRepository;
 import com.provedcode.user.model.dto.RegistrationDTO;
 import com.provedcode.user.model.entity.UserAuthority;
 import com.provedcode.user.model.entity.UserInfo;
+import com.provedcode.user.repo.AuthorityRepository;
 import com.provedcode.user.repo.UserAuthorityRepository;
 import com.provedcode.user.repo.UserInfoRepository;
 import jakarta.validation.Valid;
@@ -38,6 +39,7 @@ public class AuthenticationController {
     UserInfoRepository userInfoRepository;
     TalentEntityRepository talentEntityRepository;
     UserAuthorityRepository userAuthorityRepository;
+    AuthorityRepository authorityRepository;
     PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
@@ -66,18 +68,32 @@ public class AuthenticationController {
                                                           .lastName(user.lastName())
                                                           .specialization(user.specialization())
                                                           .build());
-        userInfoRepository.save(
-                UserInfo.builder()
-                        .userId(talent.getId())
-//                        .userAuthorities(Set.of(userAuthorityRepository.findById(Integer.toUnsignedLong(1))
-//                                                                       .orElseThrow(() -> new ResponseStatusException(
-//                                                                               HttpStatus.BAD_REQUEST,
-//                                                                               "user didn't created"))))
-                        .userAuthorities(userAuthorityRepository.findByAuthority_Authority("ROLE_TALENT"))
-                        .login(user.login())
-                        .password(passwordEncoder.encode(user.password()))
-                        .build()
-        );
+
+        UserInfo userInfo = UserInfo.builder()
+                                    .userId(talent.getId())
+                                    .login(user.login())
+                                    .password(passwordEncoder.encode(user.password()))
+                                    .build();
+        UserAuthority userAuthority = UserAuthority.builder().userInfo(userInfo)
+                                                   .authority(authorityRepository.findById(1L).orElseThrow(
+                                                           () -> new ResponseStatusException(
+                                                                   HttpStatus.BAD_REQUEST,
+                                                                   "user didn't created"))).build();
+        userInfo.setUserAuthorities(Set.of(userAuthority));
+        userAuthority.setUserInfo(userInfoRepository.save(userInfo));
+        userAuthorityRepository.save(userAuthority);
+//        userInfoRepository.save(
+//                UserInfo.builder()
+//                        .userId(talent.getId())
+////                        .userAuthorities(Set.of(userAuthorityRepository.findById(Integer.toUnsignedLong(1))
+////                                                                       .orElseThrow(() -> new ResponseStatusException(
+////                                                                               HttpStatus.BAD_REQUEST,
+////                                                                               "user didn't created"))))
+//                        .userAuthorities(userAuthorityRepository.findByAuthority_Authority("ROLE_TALENT"))
+//                        .login(user.login())
+//                        .password(passwordEncoder.encode(user.password()))
+//                        .build()
+//        );
         return "YAY";
     }
 
