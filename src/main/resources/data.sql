@@ -39,7 +39,7 @@ insert into talent_attached_file (talent_id, attached_file)
 values ((select id from talent order by id desc limit 1), 'third_file');
 
 insert into user_info (user_id, login, password)
-values ((select id from talent order by id desc limit 1), 'SerhiiSoloviov', '$2a$10$1Np2nFzR58WBHCPEBB8vEuePZTtZFA53A4oHRADiviDVkTyt2Olau');
+values ((select id from talent order by id desc limit 1), 'SerhiiSoloviov', 'password');
 insert into user_authority (user_id, authority_id)
 values ((select id from user_info order by id desc limit 1),
         (select authority.id from authority where id = 1));
@@ -76,7 +76,7 @@ insert into talent_attached_file (talent_id, attached_file)
 values ((select id from talent order by id desc limit 1), 'MykhailoOrdyntsev_third_file');
 
 insert into user_info (user_id, login, password)
-values ((select id from talent order by id desc limit 1), 'MykhailoOrdyntsev', '$2a$10$Q/V.mYhHJA.955Lcnd1t1OoqSE6g0ZRi7xQsqnJEUbymIbpl0GvJi');
+values ((select id from talent order by id desc limit 1), 'MykhailoOrdyntsev', 'password');
 insert into user_authority (user_id, authority_id)
 values ((select id from user_info order by id desc limit 1),
         (select authority.id from authority where id = 1));
