@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/login").permitAll()
                 .requestMatchers(antMatcher("/h2/**")).permitAll()
                 .requestMatchers(antMatcher("/api/talents")).permitAll()
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
         );
 
         http.httpBasic(Customizer.withDefaults());
@@ -70,6 +70,11 @@ public class SecurityConfig {
         return login -> repository.findByLogin(login)
                 .map(mapper::toUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException(login + " not found"));
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
