@@ -1,10 +1,8 @@
 package com.provedcode.user.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Builder
 @AllArgsConstructor
@@ -18,9 +16,11 @@ public class UserAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserInfo userInfo;
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "authority_id")
     private Authority authority;

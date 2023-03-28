@@ -8,7 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 @ControllerAdvice
 public class TalentExceptionHandler {
     @ExceptionHandler(ResponseStatusException.class)
-    private ResponseEntity responseStatusExceptionHandler(ResponseStatusException exception) {
+    private ResponseEntity<?> responseStatusExceptionHandler(ResponseStatusException exception) {
         return ResponseEntity.status(exception.getStatusCode()).body(exception.getBody());
     }
 }

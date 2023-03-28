@@ -2,6 +2,7 @@ package com.provedcode.user.service.impl;
 
 import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.repo.db.TalentEntityRepository;
+import com.provedcode.user.model.Role;
 import com.provedcode.user.model.dto.RegistrationDTO;
 import com.provedcode.user.model.entity.UserAuthority;
 import com.provedcode.user.model.entity.UserInfo;
@@ -76,8 +77,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         UserAuthority userAuthority = UserAuthority.builder()
                 .userInfo(userInfo)
-                .authority(authorityRepository.findById(1L)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "user didn't created")))
+                .authority(authorityRepository.findByAuthority(Role.TALENT.toString())
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "this authority does`t exist")))
                 .build();
 
         userInfo.setUserAuthorities(Set.of(userAuthority));

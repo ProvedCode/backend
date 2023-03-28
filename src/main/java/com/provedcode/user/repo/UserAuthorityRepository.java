@@ -7,5 +7,4 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface UserAuthorityRepository extends JpaRepository<UserAuthority, Long> {
-    Set<UserAuthority> findByAuthority_Authority(String authority);
 }
