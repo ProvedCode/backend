@@ -4,6 +4,7 @@ import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.repo.db.TalentEntityRepository;
 import com.provedcode.user.model.Role;
 import com.provedcode.user.model.dto.RegistrationDTO;
+import com.provedcode.user.model.dto.SessionInfoDTO;
 import com.provedcode.user.model.entity.UserAuthority;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.AuthorityRepository;
@@ -42,22 +43,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     PasswordEncoder passwordEncoder;
 
     @Transactional
-    public String login(String name, Collection<? extends GrantedAuthority> authorities) {
-        log.info("=== POST /login === auth.name = {}", name);
-        log.info("=== POST /login === auth = {}", authorities);
-        var now = Instant.now();
-        var claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(5, MINUTES))
-                .subject(name)
-                .claim("scope", authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(" ")))
-                .build();
-        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    public SessionInfoDTO login(String name, Collection<? extends GrantedAuthority> authorities) {
+        return new SessionInfoDTO("User {%s} log-in".formatted(name), generateJWTToken(name, authorities));
     }
 
     @Transactional
-    public String register(RegistrationDTO user) {
+    public SessionInfoDTO register(RegistrationDTO user) {
         if (userInfoRepository.existsByLogin(user.login())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     String.format("user with login = {%s} already exists", user.login()));
@@ -88,7 +79,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("user with login {%s} was saved, his authorities: %s".formatted(userLogin, userAuthorities));
 
-        return login(userLogin, userAuthorities);
+        return new SessionInfoDTO("User: {%s} was registered".formatted(userLogin), generateJWTToken(userLogin, userAuthorities));
+    }
+
+    private String generateJWTToken(String name, Collection<? extends GrantedAuthority> authorities) {
+        log.info("=== POST /login === auth.name = {}", name);
+        log.info("=== POST /login === auth = {}", authorities);
+        var now = Instant.now();
+        var claims = JwtClaimsSet.builder()
+                .issuer("self")
+                .issuedAt(now)
+                .expiresAt(now.plus(5, MINUTES))
+                .subject(name)
+                .claim("scope", authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(" ")))
+                .build();
+        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
 }
