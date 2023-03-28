@@ -17,6 +17,6 @@ public class Authority {
     private Long id;
     @NotEmpty
     @NotNull
-    @Column(name = "authority", length = 50)
+    @Column(name = "authority", length = 20)
     private String authority;
 }
