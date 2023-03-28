@@ -13,8 +13,8 @@ public class TalentMapperImpl implements TalentMapper {
         return ShortTalentDTO.builder()
                 .id(talent.getId())
                 .image(talent.getImage())
-                .firstname(talent.getFirstName())
-                .lastname(talent.getLastName())
+                .firstName(talent.getFirstName())
+                .lastName(talent.getLastName())
                 .specialization(talent.getSpecialization())
                 .skills(talent.getTalentSkills().stream().map(TalentSkill::getSkill).toList())
                 .build();
@@ -23,8 +23,8 @@ public class TalentMapperImpl implements TalentMapper {
     public FullTalentDTO talentToFullTalentDTO(Talent talent) {
         return FullTalentDTO.builder()
                 .id(talent.getId())
-                .firstname(talent.getFirstName())
-                .lastname(talent.getLastName())
+                .firstName(talent.getFirstName())
+                .lastName(talent.getLastName())
                 .bio(talent.getTalentDescription() != null ? talent.getTalentDescription().getBio() : null)
                 .additionalInfo(talent.getTalentDescription() != null ? talent.getTalentDescription().getAdditionalInfo() : null)
                 .image(talent.getImage())
