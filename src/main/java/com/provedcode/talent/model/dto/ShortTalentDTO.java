@@ -8,8 +8,8 @@ import java.util.List;
 public record ShortTalentDTO(
         Long id,
         String image,
-        String firstname,
-        String lastname,
+        String firstName,
+        String lastName,
         String specialization,
         List<String> skills
 ) {

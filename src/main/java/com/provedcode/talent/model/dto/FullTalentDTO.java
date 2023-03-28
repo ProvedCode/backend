@@ -7,8 +7,8 @@ import java.util.List;
 @Builder
 public record FullTalentDTO (
     Long id,
-    String firstname,
-    String lastname,
+    String firstName,
+    String lastName,
     String image,
     String specialization,
     String additionalInfo,
