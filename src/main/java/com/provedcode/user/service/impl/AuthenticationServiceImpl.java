@@ -13,8 +13,8 @@ import com.provedcode.user.service.AuthenticationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,16 +42,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     PasswordEncoder passwordEncoder;
 
     @Transactional
-    public String login(Authentication authentication) {
-        log.info("=== POST /login === auth.name = {}", authentication.getName());
-        log.info("=== POST /login === auth = {}", authentication);
+    public String login(String name, Collection<? extends GrantedAuthority> authorities) {
+        log.info("=== POST /login === auth.name = {}", name);
+        log.info("=== POST /login === auth = {}", authorities);
         var now = Instant.now();
         var claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
                 .expiresAt(now.plus(5, MINUTES))
-                .subject(authentication.getName())
-                .claim("scope", createScope(authentication))
+                .subject(name)
+                .claim("scope", authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(" ")))
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
@@ -68,30 +69,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         .specialization(user.specialization())
                         .build()
         );
-
         UserInfo userInfo = UserInfo.builder()
                 .userId(talent.getId())
                 .login(user.login())
                 .password(passwordEncoder.encode(user.password()))
                 .build();
-
         UserAuthority userAuthority = UserAuthority.builder()
                 .userInfo(userInfo)
                 .authority(authorityRepository.findByAuthority(Role.TALENT.toString())
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "this authority does`t exist")))
                 .build();
-
         userInfo.setUserAuthorities(Set.of(userAuthority));
         userAuthority.setUserInfo(userInfoRepository.save(userInfo));
-
         userAuthorityRepository.save(userAuthority);
 
-        return "User was saved";
+        String userLogin = userInfo.getLogin();
+        Collection<? extends GrantedAuthority> userAuthorities = userInfo.getUserAuthorities().stream().map(i -> new SimpleGrantedAuthority(i.getAuthority().getAuthority())).toList();
+
+        log.info("user with login {%s} was saved, his authorities: %s".formatted(userLogin, userAuthorities));
+
+        return login(userLogin, userAuthorities);
     }
 
-    private String createScope(Authentication authentication) {
-        return authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
-    }
 }

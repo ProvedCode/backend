@@ -12,13 +12,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @Slf4j
-@RequestMapping("/api")
+@RequestMapping("/api/talents")
+@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/login")
     String login(Authentication authentication) {
-        return authenticationService.login(authentication);
+        return authenticationService.login(authentication.getName(), authentication.getAuthorities());
     }
 
     @PostMapping("/register")
