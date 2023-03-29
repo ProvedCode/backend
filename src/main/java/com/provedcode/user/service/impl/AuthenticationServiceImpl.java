@@ -53,13 +53,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     String.format("user with login = {%s} already exists", user.login()));
         }
-        Talent talent = talentEntityRepository.save(
-                Talent.builder()
-                        .firstName(user.firstName())
-                        .lastName(user.lastName())
-                        .specialization(user.specialization())
-                        .build()
-        );
+        Talent talent = Talent.builder()
+                .firstName(user.firstName())
+                .lastName(user.lastName())
+                .specialization(user.specialization())
+                .build();
+        talentEntityRepository.save(talent);
+
         UserInfo userInfo = UserInfo.builder()
                 .userId(talent.getId())
                 .login(user.login())
@@ -70,6 +70,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .authority(authorityRepository.findByAuthority(Role.TALENT.toString())
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "this authority does`t exist")))
                 .build();
+
         userInfo.setUserAuthorities(Set.of(userAuthority));
         userAuthority.setUserInfo(userInfoRepository.save(userInfo));
         userAuthorityRepository.save(userAuthority);
