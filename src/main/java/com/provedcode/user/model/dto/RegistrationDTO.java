@@ -1,12 +1,13 @@
 package com.provedcode.user.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 
 @Builder
 public record RegistrationDTO(
-        @NotEmpty String login,
+        @NotEmpty @Email String login,
         @NotEmpty String password,
         @JsonProperty("first_name")
         @NotEmpty

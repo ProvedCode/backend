@@ -1,7 +1,7 @@
 package com.provedcode.user.service.impl;
 
 import com.provedcode.talent.model.entity.Talent;
-import com.provedcode.talent.repo.db.TalentEntityRepository;
+import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.user.model.Role;
 import com.provedcode.user.model.dto.RegistrationDTO;
 import com.provedcode.user.model.dto.SessionInfoDTO;
@@ -37,7 +37,7 @@ import static java.time.temporal.ChronoUnit.MINUTES;
 public class AuthenticationServiceImpl implements AuthenticationService {
     JwtEncoder jwtEncoder;
     UserInfoRepository userInfoRepository;
-    TalentEntityRepository talentEntityRepository;
+    TalentRepository talentEntityRepository;
     UserAuthorityRepository userAuthorityRepository;
     AuthorityRepository authorityRepository;
     PasswordEncoder passwordEncoder;
@@ -53,13 +53,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     String.format("user with login = {%s} already exists", user.login()));
         }
-        Talent talent = talentEntityRepository.save(
-                Talent.builder()
-                        .firstName(user.firstName())
-                        .lastName(user.lastName())
-                        .specialization(user.specialization())
-                        .build()
-        );
+        Talent talent = Talent.builder()
+                .firstName(user.firstName())
+                .lastName(user.lastName())
+                .specialization(user.specialization())
+                .build();
+        talentEntityRepository.save(talent);
+
         UserInfo userInfo = UserInfo.builder()
                 .userId(talent.getId())
                 .login(user.login())
@@ -70,6 +70,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .authority(authorityRepository.findByAuthority(Role.TALENT.toString())
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "this authority does`t exist")))
                 .build();
+
         userInfo.setUserAuthorities(Set.of(userAuthority));
         userAuthority.setUserInfo(userInfoRepository.save(userInfo));
         userAuthorityRepository.save(userAuthority);

@@ -1,14 +1,16 @@
 package com.provedcode.talent.repo;
 
 import com.provedcode.talent.model.entity.Talent;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.provedcode.talent.model.entity.TalentSkill;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
-public interface TalentRepository {
-
-    Page<Talent> findAll(Pageable pageable);
-
-    Optional<Talent> findById(Long aLong);
+public interface TalentRepository extends
+                                  JpaRepository<Talent, Long> {
+    @Transactional
+    @Modifying
+    @Query("update Talent t set t.talentSkills = ?1")
+    int updateTalentSkillsBy(TalentSkill talentSkills);
 }

@@ -24,7 +24,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     SessionInfoDTO register(@RequestBody @Valid RegistrationDTO user) {
         return authenticationService.register(user);
     }
