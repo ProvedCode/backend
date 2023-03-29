@@ -90,7 +90,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
-                .expiresAt(now.plus(5, MINUTES))
+                .expiresAt(now.plus(60, MINUTES))
                 .subject(name)
                 .claim("scope", authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(" ")))
                 .build();

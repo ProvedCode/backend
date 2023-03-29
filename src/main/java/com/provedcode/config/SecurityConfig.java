@@ -43,7 +43,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(c -> c
                 .requestMatchers("/actuator/health").permitAll() // for DevOps
                 .requestMatchers(antMatcher("/h2/**")).permitAll()
-                .requestMatchers(antMatcher("/api/talents/*")).permitAll()
+                .requestMatchers(antMatcher("/api/talents/**")).permitAll()
                 .anyRequest().authenticated()
         );
 
