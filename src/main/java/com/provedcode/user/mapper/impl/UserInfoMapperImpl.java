@@ -13,11 +13,9 @@ public class UserInfoMapperImpl implements UserInfoMapper {
     public UserDetails toUserDetails(UserInfo user) {
         return User.withUsername(user.getLogin())
                    .password(user.getPassword())
-                   .authorities(user.getUserAuthorities()
+                   .authorities(user.getAuthorities()
                                     .stream()
-                                    .map(i -> new SimpleGrantedAuthority(
-                                            i.getAuthority()
-                                             .getAuthority()))
+                                    .map(i -> new SimpleGrantedAuthority(i.getAuthority()))
                                     .toList())
                    .build();
     }

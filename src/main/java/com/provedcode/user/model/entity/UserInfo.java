@@ -22,8 +22,8 @@ public class UserInfo {
     @Column(name = "id", nullable = false)
     private Long id;
     @NotNull
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "talent_id")
+    private Long talentId;
     @NotEmpty
     @NotNull
     @Column(name = "login", length = 100)
@@ -33,8 +33,11 @@ public class UserInfo {
     @Column(name = "password")
     private String password;
     @OneToOne(orphanRemoval = true)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "talent_id", insertable = false, updatable = false)
     private Talent talent;
-    @OneToMany(mappedBy = "userInfo", orphanRemoval = true, fetch = FetchType.EAGER)
-    private Set<UserAuthority> userAuthorities = new LinkedHashSet<>();
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "user_authorities",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "authority_id"))
+    private Set<Authority> authorities = new LinkedHashSet<>();
 }

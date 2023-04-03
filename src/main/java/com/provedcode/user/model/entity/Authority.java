@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
@@ -19,4 +22,6 @@ public class Authority {
     @NotNull
     @Column(name = "authority", length = 20)
     private String authority;
+    @ManyToMany(mappedBy = "authorities", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<UserInfo> userInfoes = new LinkedHashSet<>();
 }
