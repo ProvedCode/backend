@@ -16,7 +16,7 @@ public class TalentMapperImpl implements TalentMapper {
                              .firstName(talent.getFirstName())
                              .lastName(talent.getLastName())
                              .specialization(talent.getSpecialization())
-                             .skills(talent.getTalentSkills().stream().map(TalentSkill::getSkill).toList())
+                             .talents(talent.getTalentTalents().stream().map(TalentTalents::getTalentName).toList())
                              .build();
     }
 
@@ -33,7 +33,7 @@ public class TalentMapperImpl implements TalentMapper {
                             .specialization(talent.getSpecialization())
                             .links(talent.getTalentLinks().stream().map(TalentLink::getLink).toList())
                             .contacts(talent.getTalentContacts().stream().map(TalentContact::getContact).toList())
-                            .skills(talent.getTalentSkills().stream().map(TalentSkill::getSkill).toList())
+                            .talents(talent.getTalentTalents().stream().map(TalentTalents::getTalentName).toList())
                             .attachedFiles(
                                     talent.getTalentAttachedFiles().stream().map(TalentAttachedFile::getAttachedFile)
                                           .toList())

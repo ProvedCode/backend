@@ -2,7 +2,6 @@ package com.provedcode.talent.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.URL;
@@ -40,17 +39,17 @@ public class Talent {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TalentLink> talentLinks = new ArrayList<>();
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TalentSkill> talentSkills = new ArrayList<>();
+    private List<TalentTalents> talentTalents = new ArrayList<>();
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TalentContact> talentContacts = new ArrayList<>();
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TalentAttachedFile> talentAttachedFiles = new ArrayList<>();
 
-    public void addTalentSkill(TalentSkill talentSkill) {
-        talentSkills.add(talentSkill);
+    public void addTalentSkill(TalentTalents talentTalents) {
+        this.talentTalents.add(talentTalents);
     }
 
-    public void removeTalentSkill(TalentSkill talentSkill) {
-        talentSkills.remove(talentSkill);
+    public void removeTalentSkill(TalentTalents talentTalents) {
+        this.talentTalents.remove(talentTalents);
     }
 }

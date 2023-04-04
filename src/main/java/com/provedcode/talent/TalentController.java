@@ -26,7 +26,9 @@ public class TalentController {
 
     @PreAuthorize("hasRole('TALENT')")
     @GetMapping("/talents/{id}")
-    FullTalentDTO getTalent(@PathVariable("id") long id) {
+    FullTalentDTO getTalent(@PathVariable("id") long id, Authentication authentication) {
+        log.info("get-talent auth = {}", authentication);
+        log.info("get-talent auth.name = {}", authentication.getAuthorities());
         return talentService.getTalentById(id);
     }
 

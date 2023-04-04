@@ -10,8 +10,8 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "talent_skill")
-public class TalentSkill {
+@Table(name = "talent_talents")
+public class TalentTalents {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -19,8 +19,8 @@ public class TalentSkill {
     @NotNull
     @Column(name = "talent_id", nullable = false)
     private Long talentId;
-    @Column(name = "skill")
-    private String skill;
+    @Column(name = "talent_name")
+    private String talentName;
     @NotNull
     @ManyToOne
     @JoinColumn(name = "talent_id", insertable = false, updatable = false)

@@ -11,6 +11,6 @@ public record ShortTalentDTO(
         String firstName,
         String lastName,
         String specialization,
-        List<String> skills
+        List<String> talents
 ) {
 }

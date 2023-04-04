@@ -1,10 +1,10 @@
 package com.provedcode.talent.service;
 
-import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
 import com.provedcode.user.model.dto.SessionInfoDTO;
 import org.springframework.security.core.Authentication;
 import org.springframework.data.domain.Page;
+import com.provedcode.talent.model.dto.FullTalentDTO;
 
 import java.util.Optional;
 

@@ -1,7 +1,5 @@
 package com.provedcode.talent.model.response;
 
-import com.provedcode.talent.model.entity.TalentSkill;
-
 import java.util.List;
 
 public record ShortTalent(

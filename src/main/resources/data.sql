@@ -17,13 +17,13 @@ insert into talent_link (talent_id, link)
 values ((select id from talent order by id desc limit 1), 'http://second_link');
 insert into talent_link (talent_id, link)
 values ((select id from talent order by id desc limit 1), 'http://third_link');
-insert into talent_skill (talent_id, skill)
+insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'Java Core');
-insert into talent_skill (talent_id, skill)
+insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'Spring Core');
-insert into talent_skill (talent_id, skill)
+insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'Spring boot');
-insert into talent_skill (talent_id, skill)
+insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'H2 Database');
 insert into talent_contact (talent_id, contact)
 values ((select id from talent order by id desc limit 1), 'first_contact');
@@ -54,13 +54,13 @@ values ((select id from user_info order by id desc limit 1),
 -- values ((select id from talent order by id desc limit 1), 'http://MykhailoOrdyntsev_second_link');
 -- insert into talent_link (talent_id, link)
 -- values ((select id from talent order by id desc limit 1), 'http://MykhailoOrdyntsev_third_link');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Java Core');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Hibernate');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Spring Boot');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Git');
 -- insert into talent_contact (talent_id, contact)
 -- values ((select id from talent order by id desc limit 1), 'MykhailoOrdyntsev_first_contact');
@@ -91,11 +91,11 @@ values ((select id from user_info order by id desc limit 1),
 -- values ((select id from talent order by id desc limit 1), 'http://DenisBoyko_second_link');
 -- insert into talent_link (talent_id, link)
 -- values ((select id from talent order by id desc limit 1), 'http://DenisBoyko_third_link');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Java Core');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Spring Security');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Spring Core');
 -- insert into talent_contact (talent_id, contact)
 -- values ((select id from talent order by id desc limit 1), 'DenisBoyko_first_contact');
@@ -126,9 +126,9 @@ values ((select id from user_info order by id desc limit 1),
 -- values ((select id from talent order by id desc limit 1), 'http://IhorShchurenko_second_link');
 -- insert into talent_link (talent_id, link)
 -- values ((select id from talent order by id desc limit 1), 'http://IhorShchurenko_third_link');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Java Core');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'REST API');
 -- insert into talent_contact (talent_id, contact)
 -- values ((select id from talent order by id desc limit 1), 'IhorShchurenko_first_contact');
@@ -159,11 +159,11 @@ values ((select id from user_info order by id desc limit 1),
 -- values ((select id from talent order by id desc limit 1), 'http://DmytroUzun_second_link');
 -- insert into talent_link (talent_id, link)
 -- values ((select id from talent order by id desc limit 1), 'http://DmytroUzun_third_link');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Git');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Docker');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Mentor');
 -- insert into talent_contact (talent_id, contact)
 -- values ((select id from talent order by id desc limit 1), 'DmytroUzun_first_contact');
@@ -194,9 +194,9 @@ values ((select id from user_info order by id desc limit 1),
 -- values ((select id from talent order by id desc limit 1), 'http://ViktorVoloshko_second_link');
 -- insert into talent_link (talent_id, link)
 -- values ((select id from talent order by id desc limit 1), 'http://ViktorVoloshko_third_link');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Git');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Docker');
 -- insert into talent_contact (talent_id, contact)
 -- values ((select id from talent order by id desc limit 1), 'ViktorVoloshko_first_contact');
@@ -227,11 +227,11 @@ values ((select id from user_info order by id desc limit 1),
 -- values ((select id from talent order by id desc limit 1), 'http://OlhaMoiseienko_second_link');
 -- insert into talent_link (talent_id, link)
 -- values ((select id from talent order by id desc limit 1), 'http://OlhaMoiseienko_third_link');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Git');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Jira');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'QA');
 -- insert into talent_contact (talent_id, contact)
 -- values ((select id from talent order by id desc limit 1), 'OlhaMoiseienko_first_contact');
@@ -262,9 +262,9 @@ values ((select id from user_info order by id desc limit 1),
 -- values ((select id from talent order by id desc limit 1), 'http://MaximKiyashko_second_link');
 -- insert into talent_link (talent_id, link)
 -- values ((select id from talent order by id desc limit 1), 'http://MaximKiyashko_third_link');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Git');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'QA');
 -- insert into talent_contact (talent_id, contact)
 -- values ((select id from talent order by id desc limit 1), 'MaximKiyashko_first_contact');
@@ -295,12 +295,12 @@ values ((select id from user_info order by id desc limit 1),
 -- values ((select id from talent order by id desc limit 1), 'http://NikolaievOleksii_second_link');
 -- insert into talent_link (talent_id, link)
 -- values ((select id from talent order by id desc limit 1), 'http://NikolaievOleksii_third_link');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'QA');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Git');
--- insert into talent_skill (talent_id, skill)
--- values ((select id from talent order by id desc limit 1), 'NikolaievOleksii_third_skill');
+-- insert into talent_talents (talent_id, talents)
+-- values ((select id from talent order by id desc limit 1), 'NikolaievOleksii_third_talents');
 -- insert into talent_contact (talent_id, contact)
 -- values ((select id from talent order by id desc limit 1), 'NikolaievOleksii_first_contact');
 -- insert into talent_contact (talent_id, contact)
@@ -330,9 +330,9 @@ values ((select id from user_info order by id desc limit 1),
 -- values ((select id from talent order by id desc limit 1), 'http://ArtemLytvynenko_second_link');
 -- insert into talent_link (talent_id, link)
 -- values ((select id from talent order by id desc limit 1), 'http://ArtemLytvynenko_third_link');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'QA');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Git');
 -- insert into talent_contact (talent_id, contact)
 -- values ((select id from talent order by id desc limit 1), 'ArtemLytvynenko_first_contact');
@@ -363,9 +363,9 @@ values ((select id from user_info order by id desc limit 1),
 -- values ((select id from talent order by id desc limit 1), 'http://DaniilYevtukhov_second_link');
 -- insert into talent_link (talent_id, link)
 -- values ((select id from talent order by id desc limit 1), 'http://DaniilYevtukhov_third_link');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'JavaScript Core');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'React');
 -- insert into talent_contact (talent_id, contact)
 -- values ((select id from talent order by id desc limit 1), 'DaniilYevtukhov_first_contact');
@@ -396,11 +396,11 @@ values ((select id from user_info order by id desc limit 1),
 -- values ((select id from talent order by id desc limit 1), 'http://RuslanMorozov_second_link');
 -- insert into talent_link (talent_id, link)
 -- values ((select id from talent order by id desc limit 1), 'http://RuslanMorozov_third_link');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'JavaScript Core');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'React');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Node.js');
 -- insert into talent_contact (talent_id, contact)
 -- values ((select id from talent order by id desc limit 1), 'RuslanMorozov_first_contact');
@@ -431,11 +431,11 @@ values ((select id from user_info order by id desc limit 1),
 -- values ((select id from talent order by id desc limit 1), 'http://IhorKopieichykov_second_link');
 -- insert into talent_link (talent_id, link)
 -- values ((select id from talent order by id desc limit 1), 'http://IhorKopieichykov_third_link');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'JavaScript Core');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'React');
--- insert into talent_skill (talent_id, skill)
+-- insert into talent_talents (talent_id, talents)
 -- values ((select id from talent order by id desc limit 1), 'Angular');
 -- insert into talent_contact (talent_id, contact)
 -- values ((select id from talent order by id desc limit 1), 'IhorKopieichykov_first_contact');
