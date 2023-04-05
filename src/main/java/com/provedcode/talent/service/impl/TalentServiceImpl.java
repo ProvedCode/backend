@@ -6,7 +6,6 @@ import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
 import com.provedcode.talent.model.entity.*;
 import com.provedcode.talent.repo.TalentRepository;
-import com.provedcode.talent.repo.TalentSkillRepository;
 import com.provedcode.talent.service.TalentService;
 import com.provedcode.user.model.dto.SessionInfoDTO;
 import com.provedcode.user.model.entity.UserInfo;
@@ -32,10 +31,8 @@ import static org.springframework.http.HttpStatus.*;
 public class TalentServiceImpl implements TalentService {
     TalentMapper talentMapper;
     TalentRepository talentRepository;
-    TalentSkillRepository talentSkillRepository;
     UserInfoRepository userInfoRepository;
     PageProperties pageProperties;
-    TalentRepository talentEntityRepository;
 
 
     @Override
