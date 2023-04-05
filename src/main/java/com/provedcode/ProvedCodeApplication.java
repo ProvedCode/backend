@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
-public class ProvedCodeApplication {
+public class 	ProvedCodeApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProvedCodeApplication.class, args);
