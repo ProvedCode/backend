@@ -1,4 +1,4 @@
-package com.provedcode.talent;
+package com.provedcode.talent.controller;
 
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
@@ -18,8 +18,6 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
-                                                             RequestMethod.DELETE})
 @RequestMapping("/api")
 public class TalentController {
     TalentService talentService;
