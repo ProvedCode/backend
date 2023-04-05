@@ -28,6 +28,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -47,7 +49,6 @@ public class SecurityConfig {
         http.authorizeHttpRequests(c -> c
                 .requestMatchers("/actuator/health").permitAll() // for DevOps
                 .requestMatchers(antMatcher("/h2/**")).permitAll()
-                //.requestMatchers(antMatcher("/api/talents/login")).permitAll()
                 .requestMatchers(antMatcher("/api/talents/**")).permitAll()
                 .requestMatchers(antMatcher("/error")).permitAll()
                 .anyRequest().authenticated()
@@ -55,36 +56,51 @@ public class SecurityConfig {
 
         http.exceptionHandling(c -> c
                 .authenticationEntryPoint((request, response, authException) -> {
-                            log.info("Authentication failed {}, message:{}",
-                                    describe(request),
-                                    authException.getMessage());
-                            response.sendError(
-                                    HttpStatus.UNAUTHORIZED.value(),
-                                    authException.getMessage());
-                        }
+                                              log.info("Authentication failed {}, message:{}",
+                                                       describe(request),
+                                                       authException.getMessage());
+                                              response.sendError(
+                                                      HttpStatus.UNAUTHORIZED.value(),
+                                                      authException.getMessage());
+                                          }
                 )
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            log.info("Authorization failed {},message: {}",
-                                    describe(request),
-                                    accessDeniedException.getMessage());
-                            response.sendError(HttpStatus.FORBIDDEN.value(),
-                                    accessDeniedException.getMessage());
-                        }
+                                         log.info("Authorization failed {},message: {}",
+                                                  describe(request),
+                                                  accessDeniedException.getMessage());
+                                         response.sendError(HttpStatus.FORBIDDEN.value(),
+                                                            accessDeniedException.getMessage());
+                                     }
                 )
         );
 
         http.httpBasic(Customizer.withDefaults());
         http.csrf().disable().headers().disable();
+        http.cors();
+
 
         http.sessionManagement().sessionCreationPolicy(STATELESS);
 
         http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-                .exceptionHandling(c -> c
-                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-                );
+            .exceptionHandling(c -> c
+                    .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                    .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+            );
 
         return http.build();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("*")
+                        .allowedMethods("*")
+                        .allowedHeaders("*");
+            }
+        };
     }
 
     public String describe(HttpServletRequest request) {
@@ -119,8 +135,8 @@ public class SecurityConfig {
             UserInfoMapper mapper
     ) {
         return login -> repository.findByLogin(login)
-                .map(mapper::toUserDetails)
-                .orElseThrow(() -> new UsernameNotFoundException(login + " not found"));
+                                  .map(mapper::toUserDetails)
+                                  .orElseThrow(() -> new UsernameNotFoundException(login + " not found"));
     }
 
     @Bean
