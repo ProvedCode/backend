@@ -5,8 +5,11 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.provedcode.user.mapper.UserInfoMapper;
 import com.provedcode.user.repo.UserInfoRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,6 +37,7 @@ import java.security.interfaces.RSAPublicKey;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -43,9 +47,30 @@ public class SecurityConfig {
         http.authorizeHttpRequests(c -> c
                 .requestMatchers("/actuator/health").permitAll() // for DevOps
                 .requestMatchers(antMatcher("/h2/**")).permitAll()
-                .requestMatchers(antMatcher("/api/talents/login")).permitAll()
+                //.requestMatchers(antMatcher("/api/talents/login")).permitAll()
                 .requestMatchers(antMatcher("/api/talents/**")).permitAll()
+                .requestMatchers(antMatcher("/error")).permitAll()
                 .anyRequest().authenticated()
+        );
+
+        http.exceptionHandling(c -> c
+                .authenticationEntryPoint((request, response, authException) -> {
+                            log.info("Authentication failed {}, message:{}",
+                                    describe(request),
+                                    authException.getMessage());
+                            response.sendError(
+                                    HttpStatus.UNAUTHORIZED.value(),
+                                    authException.getMessage());
+                        }
+                )
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            log.info("Authorization failed {},message: {}",
+                                    describe(request),
+                                    accessDeniedException.getMessage());
+                            response.sendError(HttpStatus.FORBIDDEN.value(),
+                                    accessDeniedException.getMessage());
+                        }
+                )
         );
 
         http.httpBasic(Customizer.withDefaults());
@@ -54,12 +79,16 @@ public class SecurityConfig {
         http.sessionManagement().sessionCreationPolicy(STATELESS);
 
         http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-            .exceptionHandling(c -> c
-                    .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                    .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-            );
+                .exceptionHandling(c -> c
+                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+                );
 
         return http.build();
+    }
+
+    public String describe(HttpServletRequest request) {
+        return request.getRequestURI();
     }
 
     @Bean
@@ -90,8 +119,8 @@ public class SecurityConfig {
             UserInfoMapper mapper
     ) {
         return login -> repository.findByLogin(login)
-                                  .map(mapper::toUserDetails)
-                                  .orElseThrow(() -> new UsernameNotFoundException(login + " not found"));
+                .map(mapper::toUserDetails)
+                .orElseThrow(() -> new UsernameNotFoundException(login + " not found"));
     }
 
     @Bean

@@ -35,7 +35,7 @@ public class UserInfo {
     @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "talent_id", insertable = false, updatable = false)
     private Talent talent;
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_authorities",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
