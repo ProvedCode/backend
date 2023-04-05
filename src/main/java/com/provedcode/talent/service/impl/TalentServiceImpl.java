@@ -121,8 +121,7 @@ public class TalentServiceImpl implements TalentService {
         oldTalentAttachedFile.clear();
         if (fullTalent.attachedFiles() != null) {
             oldTalentAttachedFile.addAll(fullTalent.attachedFiles().stream().map(s -> TalentAttachedFile.builder()
-                    .talentId(
-                            oldTalentId)
+                    .talentId(oldTalentId)
                     .talent(oldTalent)
                     .attachedFile(s)
                     .build()).toList());
@@ -150,8 +149,8 @@ public class TalentServiceImpl implements TalentService {
 
         userVerification(talent, userInfo, id);
 
-        userInfoRepository.delete(userInfo.get());
-        talentRepository.deleteById(id);
+        userInfoRepository.delete(userInfo.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED)));
+        talentRepository.delete(talent.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED)));
         return new SessionInfoDTO("deleted", "null");
     }
 

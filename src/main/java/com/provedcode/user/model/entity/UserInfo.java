@@ -32,7 +32,7 @@ public class UserInfo {
     @NotNull
     @Column(name = "password")
     private String password;
-    @OneToOne(orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "talent_id", insertable = false, updatable = false)
     private Talent talent;
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})

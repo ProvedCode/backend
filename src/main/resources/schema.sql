@@ -89,7 +89,7 @@ CREATE TABLE user_authorities
     CONSTRAINT pk_user_authorities PRIMARY KEY (user_id, authority_id)
 );
 
-ALTER TABLE user_info ADD CONSTRAINT FK_USER_INFO_ON_USER_UUID FOREIGN KEY (talent_id) REFERENCES talent (id);
+ALTER TABLE user_info ADD CONSTRAINT FK_USER_INFO_ON_USER_ID FOREIGN KEY (talent_id) REFERENCES talent (id);
 
 ALTER TABLE user_authorities ADD CONSTRAINT fk_useaut_on_authority FOREIGN KEY (authority_id) REFERENCES authority (id);
 
