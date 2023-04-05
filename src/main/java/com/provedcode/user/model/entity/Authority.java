@@ -22,6 +22,6 @@ public class Authority {
     @NotNull
     @Column(name = "authority", length = 20)
     private String authority;
-    @ManyToMany(mappedBy = "authorities", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "authorities", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<UserInfo> userInfoes = new LinkedHashSet<>();
 }

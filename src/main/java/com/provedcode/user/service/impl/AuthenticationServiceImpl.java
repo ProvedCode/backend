@@ -4,7 +4,6 @@ import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.user.model.dto.RegistrationDTO;
 import com.provedcode.user.model.dto.SessionInfoDTO;
-import com.provedcode.user.model.entity.Authority;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.AuthorityRepository;
 import com.provedcode.user.repo.UserInfoRepository;
@@ -81,7 +80,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
-                .expiresAt(now.plus(5, MINUTES))
+                .expiresAt(now.plus(60, MINUTES))
                 .subject(name)
                 .claim("scope", authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(" ")))
                 .build();
