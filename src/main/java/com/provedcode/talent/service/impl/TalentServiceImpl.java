@@ -10,13 +10,11 @@ import com.provedcode.talent.repo.TalentSkillRepository;
 import com.provedcode.talent.service.TalentService;
 import com.provedcode.user.model.dto.SessionInfoDTO;
 import com.provedcode.user.model.entity.UserInfo;
-import com.provedcode.user.repo.AuthorityRepository;
 import com.provedcode.user.repo.UserInfoRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,8 +88,7 @@ public class TalentServiceImpl implements TalentService {
                     .talentId(oldTalentId)
                     .additionalInfo(fullTalent.additionalInfo())
                     .bio(fullTalent.bio())
-                    .talent(oldTalent)
-                    .build();
+                    .talent(oldTalent).build();
         }
 
         oldTalentTalents.clear();
@@ -123,8 +120,7 @@ public class TalentServiceImpl implements TalentService {
             oldTalentAttachedFile.addAll(fullTalent.attachedFiles().stream().map(s -> TalentAttachedFile.builder()
                     .talentId(oldTalentId)
                     .talent(oldTalent)
-                    .attachedFile(s)
-                    .build()).toList());
+                    .attachedFile(s).build()).toList());
         }
 
         oldTalent.setFirstName(fullTalent.firstName())
