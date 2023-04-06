@@ -1,5 +1,6 @@
 package com.provedcode.talent.model.entity;
 
+import com.provedcode.talent.model.ProofStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -28,7 +29,10 @@ public class TalentProof {
     @Column(name = "link", length = 100)
     private String link;
     private String text;
-    private String status;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private ProofStatus status;
     private LocalDateTime created;
     @NotNull
     @ManyToOne

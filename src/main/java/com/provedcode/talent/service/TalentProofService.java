@@ -1,6 +1,7 @@
 package com.provedcode.talent.service;
 
 import com.provedcode.config.PageProperties;
+import com.provedcode.talent.model.ProofStatus;
 import com.provedcode.talent.model.entity.TalentProof;
 import com.provedcode.talent.repo.TalentProofRepository;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,10 @@ public class TalentProofService {
         if (size.orElse(pageProperties.defaultPageSize()) <= 0) {
             throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
         }
-        return talentProofRepository.findAll(PageRequest.of(page.orElse(pageProperties.defaultPageNum()),
-                                                            size.orElse(pageProperties.defaultPageSize())));
+        return talentProofRepository.findByStatus(ProofStatus.PUBLISHED,
+                                                  PageRequest.of(page.orElse(
+                                                                         pageProperties.defaultPageNum()),
+                                                                 size.orElse(
+                                                                         pageProperties.defaultPageSize())));
     }
 }

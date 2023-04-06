@@ -71,7 +71,7 @@ CREATE TABLE talent_proofs (
    talent_id BIGINT NOT NULL,
    link VARCHAR(100),
    text VARCHAR(255),
-   status VARCHAR(255),
+   status VARCHAR(20),
    created TIMESTAMP,
    CONSTRAINT pk_talent_proofs PRIMARY KEY (id)
 );

@@ -1,9 +1,7 @@
 package com.provedcode.talent.service.impl;
 
 import com.provedcode.config.PageProperties;
-import com.provedcode.talent.mapper.TalentMapper;
 import com.provedcode.talent.model.dto.FullTalentDTO;
-import com.provedcode.talent.model.dto.ShortTalentDTO;
 import com.provedcode.talent.model.entity.*;
 import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.talent.service.TalentService;
@@ -135,9 +133,9 @@ public class TalentServiceImpl implements TalentService {
                  .setTalentContacts(oldTalentContacts)
                  .setTalentAttachedFiles(oldTalentAttachedFile);
 
-        talentRepository.save(oldTalent);
+        Talent newTalent = talentRepository.save(oldTalent);
 
-        return oldTalent;
+        return newTalent;
     }
 
     @Override

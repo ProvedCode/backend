@@ -36,6 +36,12 @@ insert into talent_attached_file (talent_id, attached_file)
 values ((select id from talent order by id desc limit 1), 'http://second_file');
 insert into talent_attached_file (talent_id, attached_file)
 values ((select id from talent order by id desc limit 1), 'http://third_file');
+insert into talent_proofs (talent_id, link, text, status, created)
+values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'PUBLISHED', '2023-06-04 16:00:19');
+insert into talent_proofs (talent_id, link, text, status, created)
+values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'DRAFT', '2023-06-04 16:00:19');
+insert into talent_proofs (talent_id, link, text, status, created)
+values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'DRAFT', '2023-06-04 16:00:19');
 
 insert into user_info (talent_id, login, password)
 values ((select id from talent order by id desc limit 1), 'SerhiiSoloviov', 'password');
@@ -73,6 +79,12 @@ insert into talent_attached_file (talent_id, attached_file)
 values ((select id from talent order by id desc limit 1), 'http://second_file');
 insert into talent_attached_file (talent_id, attached_file)
 values ((select id from talent order by id desc limit 1), 'http://third_file');
+insert into talent_proofs (talent_id, link, text, status, created)
+values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'DRAFT', '2023-06-04 16:00:19');
+insert into talent_proofs (talent_id, link, text, status, created)
+values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'DRAFT', '2023-06-04 16:00:19');
+insert into talent_proofs (talent_id, link, text, status, created)
+values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'DRAFT', '2023-06-04 16:00:19');
 
 insert into user_info (talent_id, login, password)
 values ((select id from talent order by id desc limit 1), 'MykhailoOrdyntsev', 'password');
@@ -108,6 +120,12 @@ insert into talent_attached_file (talent_id, attached_file)
 values ((select id from talent order by id desc limit 1), 'http://second_file');
 insert into talent_attached_file (talent_id, attached_file)
 values ((select id from talent order by id desc limit 1), 'http://third_file');
+insert into talent_proofs (talent_id, link, text, status, created)
+values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'DRAFT', '2023-06-04 16:00:19');
+insert into talent_proofs (talent_id, link, text, status, created)
+values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'DRAFT', '2023-06-04 16:00:19');
+insert into talent_proofs (talent_id, link, text, status, created)
+values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'DRAFT', '2023-06-04 16:00:19');
 
 insert into user_info (talent_id, login, password)
 values ((select id from talent order by id desc limit 1), 'DenisBoyko', 'password');
