@@ -29,7 +29,6 @@ import static org.springframework.http.HttpStatus.*;
 @AllArgsConstructor
 @Transactional
 public class TalentServiceImpl implements TalentService {
-    TalentMapper talentMapper;
     TalentRepository talentRepository;
     UserInfoRepository userInfoRepository;
     PageProperties pageProperties;
@@ -37,7 +36,7 @@ public class TalentServiceImpl implements TalentService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ShortTalentDTO> getTalentsPage(Optional<Integer> page, Optional<Integer> size) {
+    public Page<Talent> getTalentsPage(Optional<Integer> page, Optional<Integer> size) {
         if (page.orElse(pageProperties.defaultPageNum()) < 0) {
             throw new ResponseStatusException(BAD_REQUEST, "'page' query parameter must be greater than or equal to 0");
         }
@@ -45,23 +44,22 @@ public class TalentServiceImpl implements TalentService {
             throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
         }
         return talentRepository.findAll(PageRequest.of(page.orElse(pageProperties.defaultPageNum()),
-                                                       size.orElse(pageProperties.defaultPageSize())))
-                               .map(talentMapper::talentToShortTalentDTO);
+                                                       size.orElse(pageProperties.defaultPageSize())));
 
     }
 
     @Override
     @Transactional(readOnly = true)
-    public FullTalentDTO getTalentById(long id) {
+    public Talent getTalentById(long id) {
         Optional<Talent> talent = talentRepository.findById(id);
         if (talent.isEmpty()) {
             throw new ResponseStatusException(NOT_FOUND, String.format("talent with id = %d not found", id));
         }
-        return talentMapper.talentToFullTalentDTO(talent.get());
+        return talent.get();
     }
 
     @Override
-    public FullTalentDTO editTalent(long id, FullTalentDTO fullTalent, Authentication authentication) {
+    public Talent editTalent(long id, FullTalentDTO fullTalent, Authentication authentication) {
         Optional<Talent> talent = talentRepository.findById(id);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
 
@@ -82,42 +80,49 @@ public class TalentServiceImpl implements TalentService {
                     .setBio(fullTalent.bio());
         } else {
             oldTalentDescription = TalentDescription.builder()
-                    .talentId(oldTalentId)
-                    .additionalInfo(fullTalent.additionalInfo())
-                    .bio(fullTalent.bio())
-                    .talent(oldTalent).build();
+                                                    .talentId(oldTalentId)
+                                                    .additionalInfo(fullTalent.additionalInfo())
+                                                    .bio(fullTalent.bio())
+                                                    .talent(oldTalent)
+                                                    .build();
         }
 
         oldTalentTalents.clear();
         if (fullTalent.talents() != null) {
             oldTalentTalents.addAll(fullTalent.talents().stream().map(s -> TalentTalents.builder()
-                    .talentId(oldTalentId)
-                    .talent(oldTalent)
-                    .talentName(s).build()).toList());
+                                                                                        .talentId(oldTalentId)
+                                                                                        .talent(oldTalent)
+                                                                                        .talentName(s)
+                                                                                        .build()).toList());
         }
 
         oldTalentLinks.clear();
         if (fullTalent.links() != null) {
             oldTalentLinks.addAll(fullTalent.links().stream().map(l -> TalentLink.builder()
-                    .talentId(oldTalentId)
-                    .talent(oldTalent)
-                    .link(l).build()).toList());
+                                                                                 .talentId(oldTalentId)
+                                                                                 .talent(oldTalent)
+                                                                                 .link(l)
+                                                                                 .build()).toList());
         }
 
         oldTalentContacts.clear();
         if (fullTalent.contacts() != null) {
             oldTalentContacts.addAll(fullTalent.contacts().stream().map(s -> TalentContact.builder()
-                    .talentId(oldTalentId)
-                    .talent(oldTalent)
-                    .contact(s).build()).toList());
+                                                                                          .talentId(oldTalentId)
+                                                                                          .talent(oldTalent)
+                                                                                          .contact(s)
+                                                                                          .build()).toList());
         }
 
         oldTalentAttachedFile.clear();
         if (fullTalent.attachedFiles() != null) {
             oldTalentAttachedFile.addAll(fullTalent.attachedFiles().stream().map(s -> TalentAttachedFile.builder()
-                    .talentId(oldTalentId)
-                    .talent(oldTalent)
-                    .attachedFile(s).build()).toList());
+                                                                                                        .talentId(
+                                                                                                                oldTalentId)
+                                                                                                        .talent(oldTalent)
+                                                                                                        .attachedFile(s)
+                                                                                                        .build())
+                                                   .toList());
         }
 
         oldTalent.setFirstName(fullTalent.firstName())
@@ -132,7 +137,7 @@ public class TalentServiceImpl implements TalentService {
 
         talentRepository.save(oldTalent);
 
-        return talentMapper.talentToFullTalentDTO(oldTalent);
+        return oldTalent;
     }
 
     @Override
@@ -147,7 +152,7 @@ public class TalentServiceImpl implements TalentService {
         return new SessionInfoDTO("deleted", "null");
     }
 
-    public void userVerification(Optional<Talent> talent, Optional<UserInfo> userInfo, long id) {
+    private void userVerification(Optional<Talent> talent, Optional<UserInfo> userInfo, long id) {
         if (talent.isEmpty() || userInfo.isEmpty()) {
             throw new ResponseStatusException(NOT_FOUND, String.format("talent with id = %d not found", id));
         }

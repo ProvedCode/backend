@@ -1,5 +1,6 @@
 package com.provedcode.talent.controller;
 
+import com.provedcode.talent.mapper.TalentMapper;
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
 import com.provedcode.talent.service.TalentService;
@@ -21,20 +22,21 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class TalentController {
     TalentService talentService;
+    TalentMapper talentMapper;
 
     @PreAuthorize("hasRole('TALENT')")
     @GetMapping("/talents/{id}")
     FullTalentDTO getTalent(@PathVariable("id") long id, Authentication authentication) {
         log.info("get-talent auth = {}", authentication);
         log.info("get-talent auth.name = {}", authentication.getAuthorities());
-        return talentService.getTalentById(id);
+        return talentMapper.talentToFullTalentDTO(talentService.getTalentById(id));
     }
 
     @GetMapping("/talents")
     @ResponseStatus(HttpStatus.OK)
     Page<ShortTalentDTO> getTalents(@RequestParam(value = "page") Optional<Integer> page,
                                     @RequestParam(value = "size") Optional<Integer> size) {
-        return talentService.getTalentsPage(page, size);
+        return talentService.getTalentsPage(page, size).map(talentMapper::talentToShortTalentDTO);
     }
 
     @PreAuthorize("hasRole('TALENT')")
@@ -42,7 +44,7 @@ public class TalentController {
     FullTalentDTO editTalent(@PathVariable("talent-id") long id,
                              @RequestBody @Valid FullTalentDTO fullTalent,
                              Authentication authentication) {
-        return talentService.editTalent(id, fullTalent, authentication);
+        return talentMapper.talentToFullTalentDTO(talentService.editTalent(id, fullTalent, authentication));
     }
 
     @PreAuthorize("hasRole('TALENT')")
