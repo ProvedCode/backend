@@ -44,12 +44,4 @@ public class Talent {
     private List<TalentContact> talentContacts = new ArrayList<>();
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TalentAttachedFile> talentAttachedFiles = new ArrayList<>();
-
-    public void addTalentSkill(TalentTalents talentTalents) {
-        this.talentTalents.add(talentTalents);
-    }
-
-    public void removeTalentSkill(TalentTalents talentTalents) {
-        this.talentTalents.remove(talentTalents);
-    }
 }
