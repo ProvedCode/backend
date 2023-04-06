@@ -1,6 +1,8 @@
 package com.provedcode.user.model;
 
-public enum Role {
+import org.springframework.security.core.GrantedAuthority;
+
+public enum Role implements GrantedAuthority {
     TALENT("ROLE_TALENT");
     private final String userRole;
 
@@ -9,7 +11,7 @@ public enum Role {
     }
 
     @Override
-    public String toString() {
+    public String getAuthority() {
         return this.userRole;
     }
 }

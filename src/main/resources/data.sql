@@ -1,5 +1,5 @@
 insert into authority (id, authority)
-values (1, 'ROLE_TALENT');
+values (1, 'TALENT');
 -- -- FOR USER AUTHORITY
 -- -- SELECT USER_INFO.ID , LOGIN , PASSWORD, talent_id , AUTHORITY FROM
 -- --     USER_INFO

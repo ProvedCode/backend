@@ -1,10 +1,11 @@
 package com.provedcode.user.mapper;
 
+import com.provedcode.user.model.entity.Authority;
 import com.provedcode.user.model.entity.UserInfo;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,7 +16,7 @@ public interface UserInfoMapper {
                    .password(user.getPassword())
                    .authorities(user.getAuthorities()
                                     .stream()
-                                    .map(i -> new SimpleGrantedAuthority(i.getAuthority()))
+                                    .map(Authority::getAuthority)
                                     .toList())
                    .build();
     }
