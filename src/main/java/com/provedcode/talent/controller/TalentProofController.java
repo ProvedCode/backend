@@ -25,10 +25,12 @@ public class TalentProofController {
     }
 
     @GetMapping("/{talent-id}/proofs")
-    FullProofDTO getTalentInformationWithProofs(@PathVariable("talent-id") Long talentId,
+    FullProofDTO getTalentInformationWithProofs(Authentication authentication,
+                                                @PathVariable("talent-id") Long talentId,
                                                 @RequestParam(value = "page") Optional<Integer> page,
                                                 @RequestParam(value = "size") Optional<Integer> size,
-                                                Authentication authentication) {
-        return talentProofService.getTalentProofs(talentId, page, size, authentication);
+                                                @RequestParam(value = "direction") Optional<String> direction,
+                                                @RequestParam(value = "sort", defaultValue = "created") String... sort) {
+        return talentProofService.getTalentProofs(talentId, page, size, direction, authentication, sort);
     }
 }

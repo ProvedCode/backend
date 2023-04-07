@@ -14,13 +14,13 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
@@ -47,26 +47,37 @@ public class TalentProofService {
                                 pageProperties.defaultPageSize())));
     }
 
-    public FullProofDTO getTalentProofs(Long talentId, Optional<Integer> page, Optional<Integer> size, Authentication authentication) {
+    public FullProofDTO getTalentProofs(Long talentId, Optional<Integer> page, Optional<Integer> size,
+                                        Optional<String> direction, Authentication authentication, String... sortProperties) {
         Talent talent = talentRepository.findById(talentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Talent with id = %s not found".formatted(talentId)));
+        UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Talent with id = %s not found".formatted(talentId)));
+        Page<TalentProof> proofs = null;
+        PageRequest pageRequest = null;
+        String sortDirection = direction.orElseGet(Sort.DEFAULT_DIRECTION::name);
+
         if (page.orElse(pageProperties.defaultPageNum()) < 0) {
             throw new ResponseStatusException(BAD_REQUEST, "'page' query parameter must be greater than or equal to 0");
         }
         if (size.orElse(pageProperties.defaultPageSize()) <= 0) {
             throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
         }
-        UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Talent with id = %s not found".formatted(talentId)));
-        Page<TalentProof> proofs = null;
+        if (!sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) && !sortDirection.equalsIgnoreCase(Sort.Direction.DESC.name())) {
+            throw new ResponseStatusException(BAD_REQUEST, "'direction' query param must be equals ASC or DESC");
+        }
 
-        log.info("auth = {}", authentication);
-        if (userInfo.getTalent().getId() != talentId) {
-            proofs = talentProofRepository.findByTalentIdAndStatus(talentId, ProofStatus.PUBLISHED,
-                    PageRequest.of(page.orElse(pageProperties.defaultPageNum()), size.orElse(pageProperties.defaultPageSize())));
+        pageRequest = PageRequest.of(
+                page.orElse(pageProperties.defaultPageNum()),
+                size.orElse(pageProperties.defaultPageSize()),
+                Sort.Direction.valueOf(sortDirection),
+                sortProperties
+        );
+
+        if (!userInfo.getLogin().equals(authentication.getName())) {
+            proofs = talentProofRepository.findByTalentIdAndStatus(talentId, ProofStatus.PUBLISHED, pageRequest);
         } else {
-            proofs = talentProofRepository.findByTalentId(talentId,
-                    PageRequest.of(page.orElse(pageProperties.defaultPageNum()), size.orElse(pageProperties.defaultPageSize())));
+            proofs = talentProofRepository.findByTalentId(talentId, pageRequest);
         }
 
         return FullProofDTO.builder()
