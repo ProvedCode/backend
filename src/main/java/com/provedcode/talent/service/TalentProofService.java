@@ -8,6 +8,8 @@ import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.model.entity.TalentProof;
 import com.provedcode.talent.repo.TalentProofRepository;
 import com.provedcode.talent.repo.TalentRepository;
+import com.provedcode.user.model.entity.UserInfo;
+import com.provedcode.user.repo.UserInfoRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
@@ -27,6 +30,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 public class TalentProofService {
     TalentProofRepository talentProofRepository;
     TalentRepository talentRepository;
+    UserInfoRepository userInfoRepository;
     PageProperties pageProperties;
 
     public Page<TalentProof> getAllProofsPage(Optional<Integer> page, Optional<Integer> size) {
@@ -52,12 +56,18 @@ public class TalentProofService {
         if (size.orElse(pageProperties.defaultPageSize()) <= 0) {
             throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
         }
+        UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Talent with id = %s not found".formatted(talentId)));
         Page<TalentProof> proofs = null;
+
         log.info("auth = {}", authentication);
-
-
-                proofs = talentProofRepository.findByTalentId(talentId,
-                PageRequest.of(page.orElse(pageProperties.defaultPageNum()), size.orElse(pageProperties.defaultPageSize())));
+        if (userInfo.getTalent().getId() != talentId) {
+            proofs = talentProofRepository.findByTalentIdAndStatus(talentId, ProofStatus.PUBLISHED,
+                    PageRequest.of(page.orElse(pageProperties.defaultPageNum()), size.orElse(pageProperties.defaultPageSize())));
+        } else {
+            proofs = talentProofRepository.findByTalentId(talentId,
+                    PageRequest.of(page.orElse(pageProperties.defaultPageNum()), size.orElse(pageProperties.defaultPageSize())));
+        }
 
         return FullProofDTO.builder()
                 .id(talent.getId())
