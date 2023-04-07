@@ -21,7 +21,8 @@ public class TalentProofController {
 
     @GetMapping("/proofs")
     Page<ProofDTO> getAllProofs(@RequestParam(value = "page") Optional<Integer> page,
-                                @RequestParam(value = "size") Optional<Integer> size) {
-        return talentProofService.getAllProofsPage(page, size).map(talentProofMapper::toProofDTO);
+                                @RequestParam(value = "size") Optional<Integer> size,
+                                @RequestParam(value = "sortDir") Optional<String> sortDir) {
+        return talentProofService.getAllProofsPage(page, size, sortDir).map(talentProofMapper::toProofDTO);
     }
 }
