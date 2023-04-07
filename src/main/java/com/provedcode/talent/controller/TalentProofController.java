@@ -1,11 +1,13 @@
 package com.provedcode.talent.controller;
 
 import com.provedcode.talent.mapper.TalentProofMapper;
+import com.provedcode.talent.model.dto.AddProofDTO;
 import com.provedcode.talent.model.dto.ProofDTO;
 import com.provedcode.talent.service.TalentProofService;
 import com.provedcode.user.model.dto.SessionInfoDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -32,5 +34,14 @@ public class TalentProofController {
                                @PathVariable(value = "proof-id") long proof_id,
                                Authentication authentication) {
         return talentProofService.deleteProofById(talent_id, proof_id, authentication);
+    }
+
+    @PreAuthorize("hasRole('TALENT')")
+    @PostMapping("/{talent-id}/proofs")
+    ResponseEntity<?> addProof(@PathVariable(value = "talent-id") long talentId,
+                               @RequestBody AddProofDTO addProofDTO,
+                               Authentication authentication) {
+
+        return talentProofService.addProof(addProofDTO, talentId, authentication);
     }
 }

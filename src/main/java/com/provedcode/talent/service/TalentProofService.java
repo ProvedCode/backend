@@ -2,6 +2,7 @@ package com.provedcode.talent.service;
 
 import com.provedcode.config.PageProperties;
 import com.provedcode.talent.model.ProofStatus;
+import com.provedcode.talent.model.dto.AddProofDTO;
 import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.model.entity.TalentProof;
 import com.provedcode.talent.repo.TalentProofRepository;
@@ -13,11 +14,15 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
@@ -84,6 +89,42 @@ public class TalentProofService {
         }
         if (talentProof.get().getTalentId() != talentId) {
             throw new ResponseStatusException(FORBIDDEN, "you can`t delete/update another proof");
+        }
+    }
+
+    public ResponseEntity<?> addProof(AddProofDTO addProofDTO, long talentId, Authentication authentication) {
+
+        Optional<Talent> talent = talentRepository.findById(talentId);
+        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
+
+        userVerification(talent, userInfo, talentId);
+
+        TalentProof talentProof = TalentProof.builder()
+                .talent(talent.get())
+                .talentId(talentId)
+                .link(addProofDTO.link())
+                .text(addProofDTO.text())
+                .status(ProofStatus.DRAFT)
+                .created(LocalDateTime.now())
+                .build();
+
+        talentProofRepository.save(talentProof);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(talentProof.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
+    }
+
+    private void userVerification(Optional<Talent> talent, Optional<UserInfo> userInfo, long id) {
+        if (talent.isEmpty() || userInfo.isEmpty()) {
+            throw new ResponseStatusException(NOT_FOUND, String.format("talent with id = %d not found", id));
+        }
+        if (userInfo.get().getTalent().getId() != id) {
+            throw new ResponseStatusException(FORBIDDEN, "you can`t add proof another user");
         }
     }
 }
