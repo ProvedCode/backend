@@ -8,6 +8,7 @@ import com.provedcode.talent.service.TalentService;
 import com.provedcode.user.model.dto.SessionInfoDTO;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.UserInfoRepository;
+import com.provedcode.utill.ValidateTalentForCompliance;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ public class TalentServiceImpl implements TalentService {
     TalentRepository talentRepository;
     UserInfoRepository userInfoRepository;
     PageProperties pageProperties;
+    ValidateTalentForCompliance validateTalentForCompliance;
 
 
     @Override
@@ -42,7 +44,7 @@ public class TalentServiceImpl implements TalentService {
             throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
         }
         return talentRepository.findAll(PageRequest.of(page.orElse(pageProperties.defaultPageNum()),
-                                                       size.orElse(pageProperties.defaultPageSize())));
+                size.orElse(pageProperties.defaultPageSize())));
 
     }
 
@@ -61,7 +63,7 @@ public class TalentServiceImpl implements TalentService {
         Optional<Talent> talent = talentRepository.findById(id);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
 
-        userVerification(talent, userInfo, id);
+        validateTalentForCompliance.userVerification(talent, userInfo, id);
 
         Talent oldTalent = talent.get();
         long oldTalentId = oldTalent.getId();
@@ -78,60 +80,60 @@ public class TalentServiceImpl implements TalentService {
                     .setBio(fullTalent.bio());
         } else {
             oldTalentDescription = TalentDescription.builder()
-                                                    .talentId(oldTalentId)
-                                                    .additionalInfo(fullTalent.additionalInfo())
-                                                    .bio(fullTalent.bio())
-                                                    .talent(oldTalent)
-                                                    .build();
+                    .talentId(oldTalentId)
+                    .additionalInfo(fullTalent.additionalInfo())
+                    .bio(fullTalent.bio())
+                    .talent(oldTalent)
+                    .build();
         }
 
         oldTalentTalents.clear();
         if (fullTalent.talents() != null) {
             oldTalentTalents.addAll(fullTalent.talents().stream().map(s -> TalentTalents.builder()
-                                                                                        .talentId(oldTalentId)
-                                                                                        .talent(oldTalent)
-                                                                                        .talentName(s)
-                                                                                        .build()).toList());
+                    .talentId(oldTalentId)
+                    .talent(oldTalent)
+                    .talentName(s)
+                    .build()).toList());
         }
 
         oldTalentLinks.clear();
         if (fullTalent.links() != null) {
             oldTalentLinks.addAll(fullTalent.links().stream().map(l -> TalentLink.builder()
-                                                                                 .talentId(oldTalentId)
-                                                                                 .talent(oldTalent)
-                                                                                 .link(l)
-                                                                                 .build()).toList());
+                    .talentId(oldTalentId)
+                    .talent(oldTalent)
+                    .link(l)
+                    .build()).toList());
         }
 
         oldTalentContacts.clear();
         if (fullTalent.contacts() != null) {
             oldTalentContacts.addAll(fullTalent.contacts().stream().map(s -> TalentContact.builder()
-                                                                                          .talentId(oldTalentId)
-                                                                                          .talent(oldTalent)
-                                                                                          .contact(s)
-                                                                                          .build()).toList());
+                    .talentId(oldTalentId)
+                    .talent(oldTalent)
+                    .contact(s)
+                    .build()).toList());
         }
 
         oldTalentAttachedFile.clear();
         if (fullTalent.attachedFiles() != null) {
             oldTalentAttachedFile.addAll(fullTalent.attachedFiles().stream().map(s -> TalentAttachedFile.builder()
-                                                                                                        .talentId(
-                                                                                                                oldTalentId)
-                                                                                                        .talent(oldTalent)
-                                                                                                        .attachedFile(s)
-                                                                                                        .build())
-                                                   .toList());
+                            .talentId(
+                                    oldTalentId)
+                            .talent(oldTalent)
+                            .attachedFile(s)
+                            .build())
+                    .toList());
         }
 
         oldTalent.setFirstName(fullTalent.firstName())
-                 .setLastName(fullTalent.lastName())
-                 .setSpecialization(fullTalent.specialization())
-                 .setImage(fullTalent.image())
-                 .setTalentDescription(oldTalentDescription)
-                 .setTalentTalents(oldTalentTalents)
-                 .setTalentLinks(oldTalentLinks)
-                 .setTalentContacts(oldTalentContacts)
-                 .setTalentAttachedFiles(oldTalentAttachedFile);
+                .setLastName(fullTalent.lastName())
+                .setSpecialization(fullTalent.specialization())
+                .setImage(fullTalent.image())
+                .setTalentDescription(oldTalentDescription)
+                .setTalentTalents(oldTalentTalents)
+                .setTalentLinks(oldTalentLinks)
+                .setTalentContacts(oldTalentContacts)
+                .setTalentAttachedFiles(oldTalentAttachedFile);
 
         Talent newTalent = talentRepository.save(oldTalent);
 
@@ -143,19 +145,10 @@ public class TalentServiceImpl implements TalentService {
         Optional<Talent> talent = talentRepository.findById(id);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
 
-        userVerification(talent, userInfo, id);
+        validateTalentForCompliance.userVerification(talent, userInfo, id);
 
         userInfoRepository.delete(userInfo.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED)));
         talentRepository.delete(talent.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED)));
         return new SessionInfoDTO("deleted", "null");
-    }
-
-    private void userVerification(Optional<Talent> talent, Optional<UserInfo> userInfo, long id) {
-        if (talent.isEmpty() || userInfo.isEmpty()) {
-            throw new ResponseStatusException(NOT_FOUND, String.format("talent with id = %d not found", id));
-        }
-        if (userInfo.get().getTalent().getId() != id) {
-            throw new ResponseStatusException(FORBIDDEN, "you can`t delete/update another user");
-        }
     }
 }

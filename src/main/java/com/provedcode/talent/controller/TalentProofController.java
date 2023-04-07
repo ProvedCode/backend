@@ -41,7 +41,6 @@ public class TalentProofController {
     ResponseEntity<?> addProof(@PathVariable(value = "talent-id") long talentId,
                                @RequestBody AddProofDTO addProofDTO,
                                Authentication authentication) {
-
         return talentProofService.addProof(addProofDTO, talentId, authentication);
     }
 }

@@ -10,6 +10,7 @@ import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.user.model.dto.SessionInfoDTO;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.UserInfoRepository;
+import com.provedcode.utill.ValidateTalentForCompliance;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +35,7 @@ public class TalentProofService {
     TalentRepository talentRepository;
     UserInfoRepository userInfoRepository;
     PageProperties pageProperties;
+    ValidateTalentForCompliance validateTalentForCompliance;
 
     public Page<TalentProof> getAllProofsPage(Optional<Integer> page, Optional<Integer> size,
                                               Optional<String> sortDir) {
@@ -70,26 +72,9 @@ public class TalentProofService {
         Optional<Talent> talent = talentRepository.findById(talentId);
         Optional<TalentProof> talentProof = talentProofRepository.findById(proofId);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
-        userVerification(talent, talentProof, userInfo, talentId, proofId);
+        validateTalentForCompliance.userVerification(talent, talentProof, userInfo, talentId, proofId);
         talentProofRepository.delete(talentProof.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED)));
         return new SessionInfoDTO("deleted", "null");
-    }
-
-    private void userVerification(Optional<Talent> talent,
-                                  Optional<TalentProof> talentProof,
-                                  Optional<UserInfo> userInfo, long talentId, long proofId) {
-        if (talent.isEmpty() && userInfo.isEmpty()) {
-            throw new ResponseStatusException(NOT_FOUND, String.format("talent with id = %d not found", talentId));
-        }
-        if (userInfo.get().getTalent().getId() != talentId) {
-            throw new ResponseStatusException(FORBIDDEN, "you can`t delete/update another user");
-        }
-        if (talentProof.isEmpty()) {
-            throw new ResponseStatusException(NOT_FOUND, String.format("proof with id = %d not found", proofId));
-        }
-        if (talentProof.get().getTalentId() != talentId) {
-            throw new ResponseStatusException(FORBIDDEN, "you can`t delete/update another proof");
-        }
     }
 
     public ResponseEntity<?> addProof(AddProofDTO addProofDTO, long talentId, Authentication authentication) {
@@ -97,7 +82,7 @@ public class TalentProofService {
         Optional<Talent> talent = talentRepository.findById(talentId);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
 
-        userVerification(talent, userInfo, talentId);
+        validateTalentForCompliance.userVerification(talent, userInfo, talentId);
 
         TalentProof talentProof = TalentProof.builder()
                 .talent(talent.get())
@@ -117,14 +102,5 @@ public class TalentProofService {
                 .toUri();
 
         return ResponseEntity.created(location).build();
-    }
-
-    private void userVerification(Optional<Talent> talent, Optional<UserInfo> userInfo, long id) {
-        if (talent.isEmpty() || userInfo.isEmpty()) {
-            throw new ResponseStatusException(NOT_FOUND, String.format("talent with id = %d not found", id));
-        }
-        if (userInfo.get().getTalent().getId() != id) {
-            throw new ResponseStatusException(FORBIDDEN, "you can`t add proof another user");
-        }
     }
 }
