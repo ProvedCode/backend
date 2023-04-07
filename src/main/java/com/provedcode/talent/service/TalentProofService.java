@@ -2,23 +2,32 @@ package com.provedcode.talent.service;
 
 import com.provedcode.config.PageProperties;
 import com.provedcode.talent.model.ProofStatus;
+import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.model.entity.TalentProof;
 import com.provedcode.talent.repo.TalentProofRepository;
+import com.provedcode.talent.repo.TalentRepository;
+import com.provedcode.user.model.dto.SessionInfoDTO;
+import com.provedcode.user.model.entity.UserInfo;
+import com.provedcode.user.repo.UserInfoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.*;
 
 @Service
 @AllArgsConstructor
 public class TalentProofService {
     TalentProofRepository talentProofRepository;
+    TalentRepository talentRepository;
+    UserInfoRepository userInfoRepository;
     PageProperties pageProperties;
 
     public Page<TalentProof> getAllProofsPage(Optional<Integer> page, Optional<Integer> size,
@@ -48,5 +57,33 @@ public class TalentProofService {
                                 pageProperties.defaultPageNum()),
                         size.orElse(
                                 pageProperties.defaultPageSize())));
+    }
+
+    @Transactional
+    public SessionInfoDTO deleteProofById(long talentId, long proofId, Authentication authentication) {
+
+        Optional<Talent> talent = talentRepository.findById(talentId);
+        Optional<TalentProof> talentProof = talentProofRepository.findById(proofId);
+        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
+        userVerification(talent, talentProof, userInfo, talentId, proofId);
+        talentProofRepository.delete(talentProof.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED)));
+        return new SessionInfoDTO("deleted", "null");
+    }
+
+    private void userVerification(Optional<Talent> talent,
+                                  Optional<TalentProof> talentProof,
+                                  Optional<UserInfo> userInfo, long talentId, long proofId) {
+        if (talent.isEmpty() && userInfo.isEmpty()) {
+            throw new ResponseStatusException(NOT_FOUND, String.format("talent with id = %d not found", talentId));
+        }
+        if (userInfo.get().getTalent().getId() != talentId) {
+            throw new ResponseStatusException(FORBIDDEN, "you can`t delete/update another user");
+        }
+        if (talentProof.isEmpty()) {
+            throw new ResponseStatusException(NOT_FOUND, String.format("proof with id = %d not found", proofId));
+        }
+        if (talentProof.get().getTalentId() != talentId) {
+            throw new ResponseStatusException(FORBIDDEN, "you can`t delete/update another proof");
+        }
     }
 }
