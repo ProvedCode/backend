@@ -6,6 +6,7 @@ import com.provedcode.talent.model.dto.ProofDTO;
 import com.provedcode.talent.service.TalentProofService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ public class TalentProofController {
     }
 
     @GetMapping("/{talent-id}/proofs")
+    @PreAuthorize("hasRole('TALENT')")
     FullProofDTO getTalentInformationWithProofs(Authentication authentication,
                                                 @PathVariable("talent-id") Long talentId,
                                                 @RequestParam(value = "page") Optional<Integer> page,
