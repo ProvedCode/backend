@@ -6,6 +6,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface TalentProofRepository extends JpaRepository<TalentProof, Long> {
+    Page<TalentProof> findByTalentIdAndStatus(Long talentId, ProofStatus status, Pageable pageable);
+    Page<TalentProof> findByTalentId(Long talentId, Pageable pageable);
     Page<TalentProof> findByStatus(ProofStatus status, Pageable pageable);
 }
