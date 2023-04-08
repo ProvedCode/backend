@@ -133,9 +133,7 @@ public class TalentServiceImpl implements TalentService {
                  .setTalentContacts(oldTalentContacts)
                  .setTalentAttachedFiles(oldTalentAttachedFile);
 
-        Talent newTalent = talentRepository.save(oldTalent);
-
-        return newTalent;
+        return talentRepository.save(oldTalent);
     }
 
     @Override

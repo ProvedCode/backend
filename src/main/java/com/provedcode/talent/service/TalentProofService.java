@@ -18,21 +18,24 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.*;
 
 @Service
 @AllArgsConstructor
 @Slf4j
+@Transactional
 public class TalentProofService {
     TalentProofRepository talentProofRepository;
     TalentRepository talentRepository;
     UserInfoRepository userInfoRepository;
     PageProperties pageProperties;
 
+    @Transactional(readOnly = true)
     public Page<TalentProof> getAllProofsPage(Optional<Integer> page, Optional<Integer> size) {
         if (page.orElse(pageProperties.defaultPageNum()) < 0) {
             throw new ResponseStatusException(BAD_REQUEST, "'page' query parameter must be greater than or equal to 0");
@@ -41,18 +44,24 @@ public class TalentProofService {
             throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
         }
         return talentProofRepository.findByStatus(ProofStatus.PUBLISHED,
-                PageRequest.of(page.orElse(
-                                pageProperties.defaultPageNum()),
-                        size.orElse(
-                                pageProperties.defaultPageSize())));
+                                                  PageRequest.of(page.orElse(
+                                                                         pageProperties.defaultPageNum()),
+                                                                 size.orElse(
+                                                                         pageProperties.defaultPageSize())));
     }
 
+    @Transactional(readOnly = true)
     public FullProofDTO getTalentProofs(Long talentId, Optional<Integer> page, Optional<Integer> size,
-                                        Optional<String> direction, Authentication authentication, String... sortProperties) {
+                                        Optional<String> direction, Authentication authentication,
+                                        String... sortProperties) {
         Talent talent = talentRepository.findById(talentId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Talent with id = %s not found".formatted(talentId)));
+                                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                                                       "Talent with id = %s not found".formatted(
+                                                                                               talentId)));
         UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Talent with id = %s not found".formatted(talentId)));
+                                              .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                                                             "Talent with id = %s not found".formatted(
+                                                                                                     talentId)));
         Page<TalentProof> proofs;
         PageRequest pageRequest;
         String sortDirection = direction.orElseGet(Sort.DEFAULT_DIRECTION::name);
@@ -63,7 +72,8 @@ public class TalentProofService {
         if (size.orElse(pageProperties.defaultPageSize()) <= 0) {
             throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
         }
-        if (!sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) && !sortDirection.equalsIgnoreCase(Sort.Direction.DESC.name())) {
+        if (!sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) &&
+            !sortDirection.equalsIgnoreCase(Sort.Direction.DESC.name())) {
             throw new ResponseStatusException(BAD_REQUEST, "'direction' query param must be equals ASC or DESC");
         }
 
@@ -84,17 +94,46 @@ public class TalentProofService {
         }
 
         return FullProofDTO.builder()
-                .id(talent.getId())
-                .image(talent.getImage())
-                .firstName(talent.getFirstName())
-                .lastName(talent.getLastName())
-                .specialization(talent.getSpecialization())
-                .proofs(proofs.map(i -> ProofDTO.builder()
-                        .id(i.getId())
-                        .created(i.getCreated().toString())
-                        .link(i.getLink())
-                        .text(i.getText())
-                        .status(i.getStatus()).build()))
-                .build();
+                           .id(talent.getId())
+                           .image(talent.getImage())
+                           .firstName(talent.getFirstName())
+                           .lastName(talent.getLastName())
+                           .specialization(talent.getSpecialization())
+                           .proofs(proofs.map(i -> ProofDTO.builder()
+                                                           .id(i.getId())
+                                                           .created(i.getCreated().toString())
+                                                           .link(i.getLink())
+                                                           .text(i.getText())
+                                                           .status(i.getStatus()).build()))
+                           .build();
+    }
+
+    public TalentProof editTalentProof(long talentId, long id, ProofDTO proof, Authentication authentication) {
+        Optional<Talent> talent = talentRepository.findById(talentId);
+        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
+
+        userVerification(talent, userInfo, talentId);
+
+        TalentProof oldProof = talentProofRepository.findById(id)
+                                                    .orElseThrow(
+                                                            () -> new ResponseStatusException(NOT_FOUND, String.format(
+                                                                    "proof with id = %d not found", id)));
+
+        if (oldProof.getStatus() != ProofStatus.DRAFT)
+            throw new ResponseStatusException(FORBIDDEN, "you cannot edit proofs without DRAFT status");
+
+        oldProof.setLink(proof.link())
+                .setText(proof.text() != null ? proof.text() : oldProof.getText())
+                .setStatus(proof.status());
+        return talentProofRepository.save(oldProof);
+    }
+
+    private void userVerification(Optional<Talent> talent, Optional<UserInfo> userInfo, long id) {
+        if (talent.isEmpty() || userInfo.isEmpty()) {
+            throw new ResponseStatusException(NOT_FOUND, String.format("talent with id = %d not found", id));
+        }
+        if (userInfo.get().getTalent().getId() != id) {
+            throw new ResponseStatusException(FORBIDDEN, "you can't delete/update proofs of other talent");
+        }
     }
 }

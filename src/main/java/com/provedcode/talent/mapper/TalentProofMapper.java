@@ -9,11 +9,9 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface TalentProofMapper {
-    @Mapping(source = "talentId", target = "id")
     @Mapping(source = "created", target = "created", dateFormat = "dd-MM-yyyy HH:mm:ss")
     ProofDTO toProofDTO(TalentProof talentProof);
 
-    @Mapping(source = "id", target = "talentId")
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "created", target = "created", dateFormat = "dd-MM-yyyy HH:mm:ss")
     TalentProof toTalentProof(ProofDTO proofDTO);

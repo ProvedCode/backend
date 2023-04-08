@@ -52,5 +52,4 @@ public class TalentController {
     SessionInfoDTO deleteTalent(@PathVariable("id") long id, Authentication authentication) {
         return talentService.deleteTalentById(id, authentication);
     }
-
 }
