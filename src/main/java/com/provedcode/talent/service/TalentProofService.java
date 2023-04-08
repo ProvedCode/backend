@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
@@ -101,7 +102,8 @@ public class TalentProofService {
                            .specialization(talent.getSpecialization())
                            .proofs(proofs.map(i -> ProofDTO.builder()
                                                            .id(i.getId())
-                                                           .created(i.getCreated().toString())
+                                                           .created(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
+                                                                                     .format(i.getCreated()))
                                                            .link(i.getLink())
                                                            .text(i.getText())
                                                            .status(i.getStatus()).build()))
@@ -119,12 +121,24 @@ public class TalentProofService {
                                                             () -> new ResponseStatusException(NOT_FOUND, String.format(
                                                                     "proof with id = %d not found", id)));
 
-        if (oldProof.getStatus() != ProofStatus.DRAFT)
-            throw new ResponseStatusException(FORBIDDEN, "you cannot edit proofs without DRAFT status");
+        ProofStatus oldProofStatus = oldProof.getStatus();
 
-        oldProof.setLink(proof.link())
-                .setText(proof.text() != null ? proof.text() : oldProof.getText())
-                .setStatus(proof.status());
+        if (oldProofStatus != ProofStatus.DRAFT && proof.status() == ProofStatus.DRAFT)
+            throw new ResponseStatusException(FORBIDDEN, "you cannot change proofs status to DRAFT");
+        if (oldProofStatus == ProofStatus.DRAFT && proof.status() == ProofStatus.HIDDEN)
+            throw new ResponseStatusException(FORBIDDEN,
+                                              "you cannot change proofs status from DRAFT to HIDDEN, it should be PUBLISHED");
+
+        if (proof.link() == null && proof.text() == null) {
+            oldProof.setStatus(proof.status());
+        } else {
+            if (oldProofStatus != ProofStatus.DRAFT)
+                throw new ResponseStatusException(FORBIDDEN, "you cannot edit proofs without DRAFT status");
+
+            oldProof.setLink(proof.link())
+                    .setText(proof.text() != null ? proof.text() : oldProof.getText())
+                    .setStatus(proof.status());
+        }
         return talentProofRepository.save(oldProof);
     }
 

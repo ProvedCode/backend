@@ -9,7 +9,6 @@ import org.hibernate.validator.constraints.URL;
 public record ProofDTO(
         long id,
         @URL
-        @NotNull
         String link,
         String text,
         @NotNull
