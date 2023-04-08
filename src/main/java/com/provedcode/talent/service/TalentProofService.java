@@ -53,8 +53,8 @@ public class TalentProofService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Talent with id = %s not found".formatted(talentId)));
         UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Talent with id = %s not found".formatted(talentId)));
-        Page<TalentProof> proofs = null;
-        PageRequest pageRequest = null;
+        Page<TalentProof> proofs;
+        PageRequest pageRequest;
         String sortDirection = direction.orElseGet(Sort.DEFAULT_DIRECTION::name);
 
         if (page.orElse(pageProperties.defaultPageNum()) < 0) {
@@ -67,17 +67,20 @@ public class TalentProofService {
             throw new ResponseStatusException(BAD_REQUEST, "'direction' query param must be equals ASC or DESC");
         }
 
-        pageRequest = PageRequest.of(
-                page.orElse(pageProperties.defaultPageNum()),
-                size.orElse(pageProperties.defaultPageSize()),
-                Sort.Direction.valueOf(sortDirection),
-                sortProperties
-        );
-
-        if (!userInfo.getLogin().equals(authentication.getName())) {
-            proofs = talentProofRepository.findByTalentIdAndStatus(talentId, ProofStatus.PUBLISHED, pageRequest);
-        } else {
-            proofs = talentProofRepository.findByTalentId(talentId, pageRequest);
+        try {
+            pageRequest = PageRequest.of(
+                    page.orElse(pageProperties.defaultPageNum()),
+                    size.orElse(pageProperties.defaultPageSize()),
+                    Sort.Direction.valueOf(sortDirection),
+                    sortProperties
+            );
+            if (!userInfo.getLogin().equals(authentication.getName())) {
+                proofs = talentProofRepository.findByTalentIdAndStatus(talentId, ProofStatus.PUBLISHED, pageRequest);
+            } else {
+                proofs = talentProofRepository.findByTalentId(talentId, pageRequest);
+            }
+        } catch (RuntimeException exception) {
+            throw new ResponseStatusException(BAD_REQUEST, exception.getMessage());
         }
 
         return FullProofDTO.builder()
