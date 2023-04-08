@@ -26,7 +26,8 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
 
 @Service
 @AllArgsConstructor
@@ -38,7 +39,7 @@ public class TalentProofService {
     ValidateTalentForCompliance validateTalentForCompliance;
 
     public Page<TalentProof> getAllProofsPage(Optional<Integer> page, Optional<Integer> size,
-                                              Optional<String> sortDir) {
+                                              Optional<String> orderBy) {
         if (page.orElse(pageProperties.defaultPageNum()) < 0) {
             throw new ResponseStatusException(BAD_REQUEST, "'page' query parameter must be greater than or equal to 0");
         }
@@ -46,24 +47,27 @@ public class TalentProofService {
             throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
         }
 
-        if (sortDir.isPresent()) {
-            if (!sortDir.get().equalsIgnoreCase(Sort.Direction.ASC.name()) &&
-                    !sortDir.get().equalsIgnoreCase(Sort.Direction.DESC.name())) {
-                throw new ResponseStatusException(BAD_REQUEST, "'sortDir' query parameter must be ASC or DESC");
+        if (orderBy.isPresent()) {
+            if (!orderBy.get().equalsIgnoreCase(Sort.Direction.ASC.name()) &&
+                !orderBy.get().equalsIgnoreCase(Sort.Direction.DESC.name())) {
+                throw new ResponseStatusException(BAD_REQUEST, "'orderBy' query parameter must be ASC or DESC");
             }
-            Sort sort = sortDir.get().equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(pageProperties.defaultSortBy()).ascending()
-                    : Sort.by(pageProperties.defaultSortBy()).descending();
+            Sort sort =
+                    orderBy.get().equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(pageProperties.defaultSortBy())
+                                                                                    .ascending()
+                                                                              : Sort.by(pageProperties.defaultSortBy())
+                                                                                    .descending();
             return talentProofRepository.findByStatus(ProofStatus.PUBLISHED,
-                    PageRequest.of(page.orElse(
-                                    pageProperties.defaultPageNum()),
-                            size.orElse(
-                                    pageProperties.defaultPageSize()), sort));
+                                                      PageRequest.of(page.orElse(
+                                                                             pageProperties.defaultPageNum()),
+                                                                     size.orElse(
+                                                                             pageProperties.defaultPageSize()), sort));
         }
         return talentProofRepository.findByStatus(ProofStatus.PUBLISHED,
-                PageRequest.of(page.orElse(
-                                pageProperties.defaultPageNum()),
-                        size.orElse(
-                                pageProperties.defaultPageSize())));
+                                                  PageRequest.of(page.orElse(
+                                                                         pageProperties.defaultPageNum()),
+                                                                 size.orElse(
+                                                                         pageProperties.defaultPageSize())));
     }
 
     @Transactional
@@ -85,13 +89,13 @@ public class TalentProofService {
         validateTalentForCompliance.userVerification(talent, userInfo, talentId);
 
         TalentProof talentProof = TalentProof.builder()
-                .talent(talent.get())
-                .talentId(talentId)
-                .link(addProofDTO.link())
-                .text(addProofDTO.text())
-                .status(ProofStatus.DRAFT)
-                .created(LocalDateTime.now())
-                .build();
+                                             .talent(talent.get())
+                                             .talentId(talentId)
+                                             .link(addProofDTO.link())
+                                             .text(addProofDTO.text())
+                                             .status(ProofStatus.DRAFT)
+                                             .created(LocalDateTime.now())
+                                             .build();
 
         talentProofRepository.save(talentProof);
 

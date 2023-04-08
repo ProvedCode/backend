@@ -24,16 +24,16 @@ public class TalentProofController {
     @GetMapping("/proofs")
     Page<ProofDTO> getAllProofs(@RequestParam(value = "page") Optional<Integer> page,
                                 @RequestParam(value = "size") Optional<Integer> size,
-                                @RequestParam(value = "sortDir") Optional<String> sortDir) {
-        return talentProofService.getAllProofsPage(page, size, sortDir).map(talentProofMapper::toProofDTO);
+                                @RequestParam(value = "order-by") Optional<String> orderBy) {
+        return talentProofService.getAllProofsPage(page, size, orderBy).map(talentProofMapper::toProofDTO);
     }
 
     @PreAuthorize("hasRole('TALENT')")
     @DeleteMapping("/{talent-id}/proofs/{proof-id}")
-    SessionInfoDTO deleteProof(@PathVariable(value = "talent-id") long talent_id,
-                               @PathVariable(value = "proof-id") long proof_id,
+    SessionInfoDTO deleteProof(@PathVariable(value = "talent-id") long talentId,
+                               @PathVariable(value = "proof-id") long proofId,
                                Authentication authentication) {
-        return talentProofService.deleteProofById(talent_id, proof_id, authentication);
+        return talentProofService.deleteProofById(talentId, proofId, authentication);
     }
 
     @PreAuthorize("hasRole('TALENT')")
