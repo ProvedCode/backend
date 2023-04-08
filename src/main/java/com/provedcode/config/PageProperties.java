@@ -16,7 +16,8 @@ import org.springframework.validation.annotation.Validated;
 @Slf4j
 public record PageProperties(
         int defaultPageNum,
-        int defaultPageSize
+        int defaultPageSize,
+        String defaultSortBy
 ) {
     @PostConstruct
     void print() {

@@ -44,6 +44,7 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+    //http://localhost:8080/swagger-ui/index.html
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(c -> c
@@ -51,26 +52,29 @@ public class SecurityConfig {
                 .requestMatchers(antMatcher("/h2/**")).permitAll()
                 .requestMatchers(antMatcher("/api/talents/**")).permitAll()
                 .requestMatchers(antMatcher("/error")).permitAll()
+                .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll() // for openAPI
+                .requestMatchers(antMatcher("/swagger-ui/**")).permitAll() // for openAPI
+                .requestMatchers(antMatcher("/swagger-ui.html")).permitAll() // for openAPI
                 .anyRequest().authenticated()
         );
 
         http.exceptionHandling(c -> c
                 .authenticationEntryPoint((request, response, authException) -> {
-                                              log.info("Authentication failed {}, message:{}",
-                                                       describe(request),
-                                                       authException.getMessage());
-                                              response.sendError(
-                                                      HttpStatus.UNAUTHORIZED.value(),
-                                                      authException.getMessage());
-                                          }
+                            log.info("Authentication failed {}, message:{}",
+                                    describe(request),
+                                    authException.getMessage());
+                            response.sendError(
+                                    HttpStatus.UNAUTHORIZED.value(),
+                                    authException.getMessage());
+                        }
                 )
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                                         log.info("Authorization failed {},message: {}",
-                                                  describe(request),
-                                                  accessDeniedException.getMessage());
-                                         response.sendError(HttpStatus.FORBIDDEN.value(),
-                                                            accessDeniedException.getMessage());
-                                     }
+                            log.info("Authorization failed {},message: {}",
+                                    describe(request),
+                                    accessDeniedException.getMessage());
+                            response.sendError(HttpStatus.FORBIDDEN.value(),
+                                    accessDeniedException.getMessage());
+                        }
                 )
         );
 
@@ -82,10 +86,10 @@ public class SecurityConfig {
         http.sessionManagement().sessionCreationPolicy(STATELESS);
 
         http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-            .exceptionHandling(c -> c
-                    .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                    .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-            );
+                .exceptionHandling(c -> c
+                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+                );
 
         return http.build();
     }
@@ -135,8 +139,8 @@ public class SecurityConfig {
             UserInfoMapper mapper
     ) {
         return login -> repository.findByLogin(login)
-                                  .map(mapper::toUserDetails)
-                                  .orElseThrow(() -> new UsernameNotFoundException(login + " not found"));
+                .map(mapper::toUserDetails)
+                .orElseThrow(() -> new UsernameNotFoundException(login + " not found"));
     }
 
     @Bean
