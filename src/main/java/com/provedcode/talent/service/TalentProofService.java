@@ -71,7 +71,7 @@ public class TalentProofService {
             pageRequest = PageRequest.of(
                     page.orElse(pageProperties.defaultPageNum()),
                     size.orElse(pageProperties.defaultPageSize()),
-                    Sort.Direction.valueOf(sortDirection),
+                    Sort.Direction.valueOf(sortDirection.toUpperCase()),
                     sortProperties
             );
             if (!userInfo.getLogin().equals(authentication.getName())) {
