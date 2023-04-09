@@ -8,7 +8,7 @@ import com.provedcode.talent.service.TalentService;
 import com.provedcode.user.model.dto.SessionInfoDTO;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.UserInfoRepository;
-import com.provedcode.utill.ValidateTalentForCompliance;
+import com.provedcode.talent.utill.ValidateTalentForCompliance;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

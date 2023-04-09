@@ -59,7 +59,8 @@ public class TalentProofController {
     @PreAuthorize("hasRole('TALENT')")
     @GetMapping("/{talent-id}/proofs/{proof-id}")
     ProofDTO getTalentProof(@PathVariable(value = "talent-id") long talentId,
-                                @PathVariable(value = "proof-id") long proofId) {
-        return talentProofService.getTalentProof(talentId, proofId);
+                            @PathVariable(value = "proof-id") long proofId,
+                            Authentication authentication) {
+        return talentProofService.getTalentProof(talentId, proofId, authentication);
     }
 }

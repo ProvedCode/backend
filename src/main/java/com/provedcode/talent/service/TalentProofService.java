@@ -12,7 +12,7 @@ import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.user.model.dto.SessionInfoDTO;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.UserInfoRepository;
-import com.provedcode.utill.ValidateTalentForCompliance;
+import com.provedcode.talent.utill.ValidateTalentForCompliance;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -169,7 +169,7 @@ public class TalentProofService {
                 .build();
     }
 
-    public ProofDTO getTalentProof(long talentId, long proofId) {
+    public ProofDTO getTalentProof(long talentId, long proofId, Authentication authentication) {
         Optional<TalentProof> talentProof = talentProofRepository.findById(proofId);
         if (talentProof.isPresent()) {
             if (talentProof.get().getTalentId() != talentId) {
@@ -179,12 +179,18 @@ public class TalentProofService {
         } else {
             throw new ResponseStatusException(NOT_FOUND, String.format("proof with id = %d not found", proofId));
         }
-        return ProofDTO.builder()
-                .id(talentProof.get().getTalentId())
-                .link(talentProof.get().getLink())
-                .status(talentProof.get().getStatus())
-                .created(talentProof.get().getCreated().toString())
-                .text(talentProof.get().getText())
-                .build();
+        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
+        if (userInfo.get().getTalentId() == talentId ||
+                talentProof.get().getStatus().equals(ProofStatus.PUBLISHED)) {
+            return ProofDTO.builder()
+                    .id(talentProof.get().getTalentId())
+                    .link(talentProof.get().getLink())
+                    .status(talentProof.get().getStatus())
+                    .created(talentProof.get().getCreated().toString())
+                    .text(talentProof.get().getText())
+                    .build();
+        } else {
+            throw new ResponseStatusException(FORBIDDEN);
+        }
     }
 }
