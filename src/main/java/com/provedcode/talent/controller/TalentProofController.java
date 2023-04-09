@@ -12,9 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -57,5 +54,13 @@ public class TalentProofController {
                                                 @RequestParam(value = "direction") Optional<String> direction,
                                                 @RequestParam(value = "sort", defaultValue = "created") String... sort) {
         return talentProofService.getTalentProofs(talentId, page, size, direction, authentication, sort);
+    }
+
+    @PreAuthorize("hasRole('TALENT')")
+    @GetMapping("/{talent-id}/proofs/{proof-id}")
+    ProofDTO getTalentProof(@PathVariable(value = "talent-id") long talentId,
+                            @PathVariable(value = "proof-id") long proofId,
+                            Authentication authentication) {
+        return talentProofService.getTalentProof(talentId, proofId, authentication);
     }
 }

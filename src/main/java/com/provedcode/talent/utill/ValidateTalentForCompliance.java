@@ -1,4 +1,4 @@
-package com.provedcode.utill;
+package com.provedcode.talent.utill;
 
 import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.model.entity.TalentProof;
@@ -19,7 +19,7 @@ public class ValidateTalentForCompliance {
             throw new ResponseStatusException(NOT_FOUND, String.format("talent with id = %d not found", id));
         }
         if (userInfo.get().getTalent().getId() != id) {
-            throw new ResponseStatusException(FORBIDDEN, "you can`t add proof another user");
+            throw new ResponseStatusException(FORBIDDEN);
         }
     }
 
