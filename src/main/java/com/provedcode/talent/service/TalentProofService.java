@@ -199,4 +199,32 @@ public class TalentProofService {
         }
         return talentProofRepository.save(oldProof);
     }
+
+}
+
+    public ProofDTO getTalentProof(long talentId, long proofId, Authentication authentication) {
+        Optional<TalentProof> talentProof = talentProofRepository.findById(proofId);
+        if (talentProof.isPresent()) {
+            if (talentProof.get().getTalentId() != talentId) {
+                throw new ResponseStatusException(BAD_REQUEST,
+                                                  String.format("proof with id = %d not equal to talent id = %d",
+                                                                proofId, talentId));
+            }
+        } else {
+            throw new ResponseStatusException(NOT_FOUND, String.format("proof with id = %d not found", proofId));
+        }
+        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
+        if (userInfo.get().getTalentId() == talentId ||
+            talentProof.get().getStatus().equals(ProofStatus.PUBLISHED)) {
+            return ProofDTO.builder()
+                           .id(talentProof.get().getTalentId())
+                           .link(talentProof.get().getLink())
+                           .status(talentProof.get().getStatus())
+                           .created(talentProof.get().getCreated().toString())
+                           .text(talentProof.get().getText())
+                           .build();
+        } else {
+            throw new ResponseStatusException(FORBIDDEN);
+        }
+    }
 }

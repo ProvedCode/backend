@@ -65,4 +65,12 @@ public class TalentProofController {
                        @RequestBody @Valid ProofDTO proof) {
         return talentProofMapper.toProofDTO(talentProofService.editTalentProof(talentId, proofId, proof, authentication));
     }
+
+    @GetMapping("/{talent-id}/proofs/{proof-id}")
+    @PreAuthorize("hasRole('TALENT')")
+    ProofDTO getTalentProof(@PathVariable(value = "talent-id") long talentId,
+                            @PathVariable(value = "proof-id") long proofId,
+                            Authentication authentication) {
+        return talentProofService.getTalentProof(talentId, proofId, authentication);
+    }
 }
