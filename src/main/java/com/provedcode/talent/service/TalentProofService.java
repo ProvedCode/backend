@@ -13,7 +13,6 @@ import com.provedcode.talent.utill.ValidateTalentForCompliance;
 import com.provedcode.user.model.dto.SessionInfoDTO;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.UserInfoRepository;
-import com.provedcode.talent.utill.ValidateTalentForCompliance;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -57,60 +56,39 @@ public class TalentProofService {
 
         if (orderBy.isPresent()) {
             if (!orderBy.get().equalsIgnoreCase(Sort.Direction.ASC.name()) &&
-                    !orderBy.get().equalsIgnoreCase(Sort.Direction.DESC.name())) {
+                !orderBy.get().equalsIgnoreCase(Sort.Direction.DESC.name())) {
                 throw new ResponseStatusException(BAD_REQUEST, "'orderBy' query parameter must be ASC or DESC");
             }
             Sort sort =
                     orderBy.get().equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(pageProperties.defaultSortBy())
-                            .ascending()
-                            : Sort.by(pageProperties.defaultSortBy())
-                            .descending();
+                                                                                    .ascending()
+                                                                              : Sort.by(pageProperties.defaultSortBy())
+                                                                                    .descending();
             return talentProofRepository.findByStatus(ProofStatus.PUBLISHED,
-                    PageRequest.of(page.orElse(
-                                    pageProperties.defaultPageNum()),
-                            size.orElse(
-                                    pageProperties.defaultPageSize()), sort));
+                                                      PageRequest.of(page.orElse(
+                                                                             pageProperties.defaultPageNum()),
+                                                                     size.orElse(
+                                                                             pageProperties.defaultPageSize()), sort));
         }
         return talentProofRepository.findByStatus(ProofStatus.PUBLISHED,
-                PageRequest.of(page.orElse(
-                                pageProperties.defaultPageNum()),
-                        size.orElse(
-                                pageProperties.defaultPageSize())));
+                                                  PageRequest.of(page.orElse(
+                                                                         pageProperties.defaultPageNum()),
+                                                                 size.orElse(
+                                                                         pageProperties.defaultPageSize())));
     }
 
-    public SessionInfoDTO deleteProofById(long talentId, long proofId, Authentication authentication) {
-        Optional<Talent> talent = talentRepository.findById(talentId);
-        Optional<TalentProof> talentProof = talentProofRepository.findById(proofId);
-        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
-        validateTalentForCompliance.userAndProofVerification(talent, talentProof, userInfo, talentId, proofId);
-        talentProofRepository.delete(talentProof.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED)));
-        return new SessionInfoDTO("deleted", "null");
-    }
+    public TalentProof getTalentProof(long proofId, Authentication authentication) {
+        TalentProof talentProof = talentProofRepository.findById(proofId).orElseThrow(
+                () -> new ResponseStatusException(NOT_FOUND, String.format("proof with id = %d not found", proofId)));
+        UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName()).orElseThrow(
+                () -> new ResponseStatusException(NOT_FOUND, "user with this token not found"));
 
-    public ResponseEntity<?> addProof(AddProofDTO addProofDTO, long talentId, Authentication authentication) {
-        Optional<Talent> talent = talentRepository.findById(talentId);
-        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
-
-        validateTalentForCompliance.userVerification(talent, userInfo, talentId);
-
-        TalentProof talentProof = TalentProof.builder()
-                .talent(talent.get())
-                .talentId(talentId)
-                .link(addProofDTO.link())
-                .text(addProofDTO.text())
-                .status(ProofStatus.DRAFT)
-                .created(LocalDateTime.now())
-                .build();
-
-        talentProofRepository.save(talentProof);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .replacePath("/api/talents/proofs/{id}")
-                .buildAndExpand(talentProof.getId())
-                .toUri();
-
-        return ResponseEntity.created(location).build();
+        if (talentProof.getTalentId().equals(userInfo.getTalentId()) ||
+            talentProof.getStatus().equals(ProofStatus.PUBLISHED)) {
+            return talentProof;
+        } else {
+            throw new ResponseStatusException(FORBIDDEN);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -118,13 +96,13 @@ public class TalentProofService {
                                         Optional<String> direction, Authentication authentication,
                                         String... sortProperties) {
         Talent talent = talentRepository.findById(talentId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Talent with id = %s not found".formatted(
-                                talentId)));
+                                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                                                       "Talent with id = %s not found".formatted(
+                                                                                               talentId)));
         UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Talent with id = %s not found".formatted(
-                                talentId)));
+                                              .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                                                             "Talent with id = %s not found".formatted(
+                                                                                                     talentId)));
         Page<TalentProof> proofs;
         PageRequest pageRequest;
         String sortDirection = direction.orElseGet(Sort.DEFAULT_DIRECTION::name);
@@ -136,7 +114,7 @@ public class TalentProofService {
             throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
         }
         if (!sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) &&
-                !sortDirection.equalsIgnoreCase(Sort.Direction.DESC.name())) {
+            !sortDirection.equalsIgnoreCase(Sort.Direction.DESC.name())) {
             throw new ResponseStatusException(BAD_REQUEST, "'direction' query param must be equals ASC or DESC");
         }
 
@@ -172,6 +150,32 @@ public class TalentProofService {
                            .build();
     }
 
+    public ResponseEntity<?> addProof(AddProofDTO addProofDTO, long talentId, Authentication authentication) {
+        Optional<Talent> talent = talentRepository.findById(talentId);
+        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
+
+        validateTalentForCompliance.userVerification(talent, userInfo, talentId);
+
+        TalentProof talentProof = TalentProof.builder()
+                                             .talent(talent.get())
+                                             .talentId(talentId)
+                                             .link(addProofDTO.link())
+                                             .text(addProofDTO.text())
+                                             .status(ProofStatus.DRAFT)
+                                             .created(LocalDateTime.now())
+                                             .build();
+
+        talentProofRepository.save(talentProof);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .replacePath("/api/talents/proofs/{id}")
+                .buildAndExpand(talentProof.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
+    }
+
     public TalentProof editTalentProof(long talentId, long proofId, ProofDTO proof, Authentication authentication) {
         Optional<Talent> talent = talentRepository.findById(talentId);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
@@ -201,29 +205,12 @@ public class TalentProofService {
         return talentProofRepository.save(oldProof);
     }
 
-    public ProofDTO getTalentProof(long talentId, long proofId, Authentication authentication) {
+    public SessionInfoDTO deleteProofById(long talentId, long proofId, Authentication authentication) {
+        Optional<Talent> talent = talentRepository.findById(talentId);
         Optional<TalentProof> talentProof = talentProofRepository.findById(proofId);
-        if (talentProof.isPresent()) {
-            if (talentProof.get().getTalentId() != talentId) {
-                throw new ResponseStatusException(BAD_REQUEST,
-                                                  String.format("proof with id = %d not equal to talent id = %d",
-                                                                proofId, talentId));
-            }
-        } else {
-            throw new ResponseStatusException(NOT_FOUND, String.format("proof with id = %d not found", proofId));
-        }
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
-        if (userInfo.get().getTalentId() == talentId ||
-            talentProof.get().getStatus().equals(ProofStatus.PUBLISHED)) {
-            return ProofDTO.builder()
-                           .id(talentProof.get().getTalentId())
-                           .link(talentProof.get().getLink())
-                           .status(talentProof.get().getStatus())
-                           .created(talentProof.get().getCreated().toString())
-                           .text(talentProof.get().getText())
-                           .build();
-        } else {
-            throw new ResponseStatusException(FORBIDDEN);
-        }
+        validateTalentForCompliance.userAndProofVerification(talent, talentProof, userInfo, talentId, proofId);
+        talentProofRepository.delete(talentProof.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED)));
+        return new SessionInfoDTO("deleted", "null");
     }
 }

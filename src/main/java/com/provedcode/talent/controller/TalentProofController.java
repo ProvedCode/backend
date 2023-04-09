@@ -30,20 +30,11 @@ public class TalentProofController {
         return talentProofService.getAllProofsPage(page, size, orderBy).map(talentProofMapper::toProofDTO);
     }
 
-    @DeleteMapping("/{talent-id}/proofs/{proof-id}")
+    @GetMapping("/proofs/{proof-id}")
     @PreAuthorize("hasRole('TALENT')")
-    SessionInfoDTO deleteProof(@PathVariable(value = "talent-id") long talentId,
-                               @PathVariable(value = "proof-id") long proofId,
-                               Authentication authentication) {
-        return talentProofService.deleteProofById(talentId, proofId, authentication);
-    }
-
-    @PostMapping("/{talent-id}/proofs")
-    @PreAuthorize("hasRole('TALENT')")
-    ResponseEntity<?> addProof(@PathVariable(value = "talent-id") long talentId,
-                               @RequestBody AddProofDTO addProofDTO,
-                               Authentication authentication) {
-        return talentProofService.addProof(addProofDTO, talentId, authentication);
+    ProofDTO getTalentProof(@PathVariable(value = "proof-id") long proofId,
+                            Authentication authentication) {
+        return talentProofMapper.toProofDTO(talentProofService.getTalentProof(proofId, authentication));
     }
 
     @GetMapping("/{talent-id}/proofs")
@@ -57,11 +48,12 @@ public class TalentProofController {
         return talentProofService.getTalentProofs(talentId, page, size, orderBy, authentication, sortBy);
     }
 
+    @PostMapping("/{talent-id}/proofs")
     @PreAuthorize("hasRole('TALENT')")
-    @GetMapping("/proofs/{proof-id}")
-    ProofDTO getTalentProof(@PathVariable(value = "proof-id") long proofId,
-                            Authentication authentication) {
-        return talentProofService.getTalentProof(proofId, authentication);
+    ResponseEntity<?> addProof(@PathVariable(value = "talent-id") long talentId,
+                               @RequestBody AddProofDTO addProofDTO,
+                               Authentication authentication) {
+        return talentProofService.addProof(addProofDTO, talentId, authentication);
     }
 
     @PatchMapping("/{talent-id}/proofs/{proof-id}")
@@ -72,5 +64,13 @@ public class TalentProofController {
                        @RequestBody @Valid ProofDTO proof) {
         return talentProofMapper.toProofDTO(
                 talentProofService.editTalentProof(talentId, proofId, proof, authentication));
+    }
+
+    @DeleteMapping("/{talent-id}/proofs/{proof-id}")
+    @PreAuthorize("hasRole('TALENT')")
+    SessionInfoDTO deleteProof(@PathVariable(value = "talent-id") long talentId,
+                               @PathVariable(value = "proof-id") long proofId,
+                               Authentication authentication) {
+        return talentProofService.deleteProofById(talentId, proofId, authentication);
     }
 }
