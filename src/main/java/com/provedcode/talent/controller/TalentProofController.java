@@ -57,20 +57,20 @@ public class TalentProofController {
         return talentProofService.getTalentProofs(talentId, page, size, orderBy, authentication, sortBy);
     }
 
+    @PreAuthorize("hasRole('TALENT')")
+    @GetMapping("/proofs/{proof-id}")
+    ProofDTO getTalentProof(@PathVariable(value = "proof-id") long proofId,
+                            Authentication authentication) {
+        return talentProofService.getTalentProof(proofId, authentication);
+    }
+
     @PatchMapping("/{talent-id}/proofs/{proof-id}")
     @PreAuthorize("hasRole('TALENT')")
     ProofDTO editProof(Authentication authentication,
                        @PathVariable("talent-id") long talentId,
                        @PathVariable("proof-id") long proofId,
                        @RequestBody @Valid ProofDTO proof) {
-        return talentProofMapper.toProofDTO(talentProofService.editTalentProof(talentId, proofId, proof, authentication));
-    }
-
-    @GetMapping("/{talent-id}/proofs/{proof-id}")
-    @PreAuthorize("hasRole('TALENT')")
-    ProofDTO getTalentProof(@PathVariable(value = "talent-id") long talentId,
-                            @PathVariable(value = "proof-id") long proofId,
-                            Authentication authentication) {
-        return talentProofService.getTalentProof(talentId, proofId, authentication);
+        return talentProofMapper.toProofDTO(
+                talentProofService.editTalentProof(talentId, proofId, proof, authentication));
     }
 }

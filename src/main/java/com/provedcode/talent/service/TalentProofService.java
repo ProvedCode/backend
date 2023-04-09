@@ -13,6 +13,7 @@ import com.provedcode.talent.utill.ValidateTalentForCompliance;
 import com.provedcode.user.model.dto.SessionInfoDTO;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.UserInfoRepository;
+import com.provedcode.talent.utill.ValidateTalentForCompliance;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -56,25 +57,25 @@ public class TalentProofService {
 
         if (orderBy.isPresent()) {
             if (!orderBy.get().equalsIgnoreCase(Sort.Direction.ASC.name()) &&
-                !orderBy.get().equalsIgnoreCase(Sort.Direction.DESC.name())) {
+                    !orderBy.get().equalsIgnoreCase(Sort.Direction.DESC.name())) {
                 throw new ResponseStatusException(BAD_REQUEST, "'orderBy' query parameter must be ASC or DESC");
             }
             Sort sort =
                     orderBy.get().equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(pageProperties.defaultSortBy())
-                                                                                    .ascending()
-                                                                              : Sort.by(pageProperties.defaultSortBy())
-                                                                                    .descending();
+                            .ascending()
+                            : Sort.by(pageProperties.defaultSortBy())
+                            .descending();
             return talentProofRepository.findByStatus(ProofStatus.PUBLISHED,
-                                                      PageRequest.of(page.orElse(
-                                                                             pageProperties.defaultPageNum()),
-                                                                     size.orElse(
-                                                                             pageProperties.defaultPageSize()), sort));
+                    PageRequest.of(page.orElse(
+                                    pageProperties.defaultPageNum()),
+                            size.orElse(
+                                    pageProperties.defaultPageSize()), sort));
         }
         return talentProofRepository.findByStatus(ProofStatus.PUBLISHED,
-                                                  PageRequest.of(page.orElse(
-                                                                         pageProperties.defaultPageNum()),
-                                                                 size.orElse(
-                                                                         pageProperties.defaultPageSize())));
+                PageRequest.of(page.orElse(
+                                pageProperties.defaultPageNum()),
+                        size.orElse(
+                                pageProperties.defaultPageSize())));
     }
 
     public SessionInfoDTO deleteProofById(long talentId, long proofId, Authentication authentication) {
@@ -93,19 +94,19 @@ public class TalentProofService {
         validateTalentForCompliance.userVerification(talent, userInfo, talentId);
 
         TalentProof talentProof = TalentProof.builder()
-                                             .talent(talent.get())
-                                             .talentId(talentId)
-                                             .link(addProofDTO.link())
-                                             .text(addProofDTO.text())
-                                             .status(ProofStatus.DRAFT)
-                                             .created(LocalDateTime.now())
-                                             .build();
+                .talent(talent.get())
+                .talentId(talentId)
+                .link(addProofDTO.link())
+                .text(addProofDTO.text())
+                .status(ProofStatus.DRAFT)
+                .created(LocalDateTime.now())
+                .build();
 
         talentProofRepository.save(talentProof);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{id}")
+                .replacePath("/api/talents/proofs/{id}")
                 .buildAndExpand(talentProof.getId())
                 .toUri();
 
@@ -117,13 +118,13 @@ public class TalentProofService {
                                         Optional<String> direction, Authentication authentication,
                                         String... sortProperties) {
         Talent talent = talentRepository.findById(talentId)
-                                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                                                       "Talent with id = %s not found".formatted(
-                                                                                               talentId)));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Talent with id = %s not found".formatted(
+                                talentId)));
         UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
-                                              .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                                                             "Talent with id = %s not found".formatted(
-                                                                                                     talentId)));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Talent with id = %s not found".formatted(
+                                talentId)));
         Page<TalentProof> proofs;
         PageRequest pageRequest;
         String sortDirection = direction.orElseGet(Sort.DEFAULT_DIRECTION::name);
@@ -135,7 +136,7 @@ public class TalentProofService {
             throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
         }
         if (!sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) &&
-            !sortDirection.equalsIgnoreCase(Sort.Direction.DESC.name())) {
+                !sortDirection.equalsIgnoreCase(Sort.Direction.DESC.name())) {
             throw new ResponseStatusException(BAD_REQUEST, "'direction' query param must be equals ASC or DESC");
         }
 
