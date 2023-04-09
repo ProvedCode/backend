@@ -26,13 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.time.format.DateTimeFormatter;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
-import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
 
 @Service
 @AllArgsConstructor
@@ -45,6 +44,7 @@ public class TalentProofService {
     PageProperties pageProperties;
     ValidateTalentForCompliance validateTalentForCompliance;
 
+    @Transactional(readOnly = true)
     public Page<TalentProof> getAllProofsPage(Optional<Integer> page, Optional<Integer> size,
                                               Optional<String> orderBy) {
         if (page.orElse(pageProperties.defaultPageNum()) < 0) {
@@ -77,19 +77,16 @@ public class TalentProofService {
                                                                          pageProperties.defaultPageSize())));
     }
 
-    @Transactional
     public SessionInfoDTO deleteProofById(long talentId, long proofId, Authentication authentication) {
-
         Optional<Talent> talent = talentRepository.findById(talentId);
         Optional<TalentProof> talentProof = talentProofRepository.findById(proofId);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
-        validateTalentForCompliance.userVerification(talent, talentProof, userInfo, talentId, proofId);
+        validateTalentForCompliance.userAndProofVerification(talent, talentProof, userInfo, talentId, proofId);
         talentProofRepository.delete(talentProof.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED)));
         return new SessionInfoDTO("deleted", "null");
     }
 
     public ResponseEntity<?> addProof(AddProofDTO addProofDTO, long talentId, Authentication authentication) {
-
         Optional<Talent> talent = talentRepository.findById(talentId);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
 
@@ -115,6 +112,7 @@ public class TalentProofService {
         return ResponseEntity.created(location).build();
     }
 
+    @Transactional(readOnly = true)
     public FullProofDTO getTalentProofs(Long talentId, Optional<Integer> page, Optional<Integer> size,
                                         Optional<String> direction, Authentication authentication,
                                         String... sortProperties) {
@@ -173,17 +171,14 @@ public class TalentProofService {
                            .build();
     }
 
-    public TalentProof editTalentProof(long talentId, long id, ProofDTO proof, Authentication authentication) {
+    public TalentProof editTalentProof(long talentId, long proofId, ProofDTO proof, Authentication authentication) {
         Optional<Talent> talent = talentRepository.findById(talentId);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
+        Optional<TalentProof> talentProof = talentProofRepository.findById(proofId);
 
-        userVerification(talent, userInfo, talentId);
+        validateTalentForCompliance.userAndProofVerification(talent, talentProof, userInfo, talentId, proofId);
 
-        TalentProof oldProof = talentProofRepository.findById(id)
-                                                    .orElseThrow(
-                                                            () -> new ResponseStatusException(NOT_FOUND, String.format(
-                                                                    "proof with id = %d not found", id)));
-
+        TalentProof oldProof = talentProof.get();
         ProofStatus oldProofStatus = oldProof.getStatus();
 
         if (oldProofStatus != ProofStatus.DRAFT && proof.status() == ProofStatus.DRAFT)
@@ -203,14 +198,5 @@ public class TalentProofService {
                     .setStatus(proof.status());
         }
         return talentProofRepository.save(oldProof);
-    }
-
-    private void userVerification(Optional<Talent> talent, Optional<UserInfo> userInfo, long id) {
-        if (talent.isEmpty() || userInfo.isEmpty()) {
-            throw new ResponseStatusException(NOT_FOUND, String.format("talent with id = %d not found", id));
-        }
-        if (userInfo.get().getTalent().getId() != id) {
-            throw new ResponseStatusException(FORBIDDEN, "you can't delete/update proofs of other talent");
-        }
     }
 }

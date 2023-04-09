@@ -60,21 +60,21 @@ public class SecurityConfig {
 
         http.exceptionHandling(c -> c
                 .authenticationEntryPoint((request, response, authException) -> {
-                            log.info("Authentication failed {}, message:{}",
-                                    describe(request),
-                                    authException.getMessage());
-                            response.sendError(
-                                    HttpStatus.UNAUTHORIZED.value(),
-                                    authException.getMessage());
-                        }
+                                              log.info("Authentication failed {}, message:{}",
+                                                       describe(request),
+                                                       authException.getMessage());
+                                              response.sendError(
+                                                      HttpStatus.UNAUTHORIZED.value(),
+                                                      authException.getMessage());
+                                          }
                 )
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            log.info("Authorization failed {},message: {}",
-                                    describe(request),
-                                    accessDeniedException.getMessage());
-                            response.sendError(HttpStatus.FORBIDDEN.value(),
-                                    accessDeniedException.getMessage());
-                        }
+                                         log.info("Authorization failed {},message: {}",
+                                                  describe(request),
+                                                  accessDeniedException.getMessage());
+                                         response.sendError(HttpStatus.FORBIDDEN.value(),
+                                                            accessDeniedException.getMessage());
+                                     }
                 )
         );
 
@@ -86,10 +86,10 @@ public class SecurityConfig {
         http.sessionManagement().sessionCreationPolicy(STATELESS);
 
         http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-                .exceptionHandling(c -> c
-                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-                );
+            .exceptionHandling(c -> c
+                    .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                    .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+            );
 
         return http.build();
     }
@@ -139,8 +139,8 @@ public class SecurityConfig {
             UserInfoMapper mapper
     ) {
         return login -> repository.findByLogin(login)
-                .map(mapper::toUserDetails)
-                .orElseThrow(() -> new UsernameNotFoundException(login + " not found"));
+                                  .map(mapper::toUserDetails)
+                                  .orElseThrow(() -> new UsernameNotFoundException(login + " not found"));
     }
 
     @Bean

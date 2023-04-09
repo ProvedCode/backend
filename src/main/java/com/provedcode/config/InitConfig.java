@@ -21,9 +21,9 @@ public class InitConfig implements CommandLineRunner {
         // TODO: Method to change passwords for already created users from data.sql
         userInfoRepository.saveAll(
                 userInfoRepository.findAll().stream()
-                        .map(i -> {
-                            i.setPassword(passwordEncoder.encode(i.getPassword()));
-                            return i;
-                        }).toList());
+                                  .map(i -> {
+                                      i.setPassword(passwordEncoder.encode(i.getPassword()));
+                                      return i;
+                                  }).toList());
     }
 }
