@@ -23,9 +23,9 @@ public class ValidateTalentForCompliance {
         }
     }
 
-    public void userVerification(Optional<Talent> talent,
-                                 Optional<TalentProof> talentProof,
-                                 Optional<UserInfo> userInfo, long talentId, long proofId) {
+    public void userAndProofVerification(Optional<Talent> talent,
+                                         Optional<TalentProof> talentProof,
+                                         Optional<UserInfo> userInfo, long talentId, long proofId) {
         if (talent.isEmpty() && userInfo.isEmpty()) {
             throw new ResponseStatusException(NOT_FOUND, String.format("talent with id = %d not found", talentId));
         }

@@ -9,10 +9,10 @@ import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.model.entity.TalentProof;
 import com.provedcode.talent.repo.TalentProofRepository;
 import com.provedcode.talent.repo.TalentRepository;
+import com.provedcode.talent.utill.ValidateTalentForCompliance;
 import com.provedcode.user.model.dto.SessionInfoDTO;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.UserInfoRepository;
-import com.provedcode.utill.ValidateTalentForCompliance;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -199,8 +199,6 @@ public class TalentProofService {
         }
         return talentProofRepository.save(oldProof);
     }
-
-}
 
     public ProofDTO getTalentProof(long talentId, long proofId, Authentication authentication) {
         Optional<TalentProof> talentProof = talentProofRepository.findById(proofId);
