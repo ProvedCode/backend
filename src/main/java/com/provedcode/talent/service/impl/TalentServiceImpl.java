@@ -3,11 +3,15 @@ package com.provedcode.talent.service.impl;
 import com.provedcode.config.PageProperties;
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.entity.*;
+import com.provedcode.talent.repo.TalentProofRepository;
 import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.talent.service.TalentService;
 import com.provedcode.talent.utill.ValidateTalentForCompliance;
+import com.provedcode.user.model.Role;
 import com.provedcode.user.model.dto.SessionInfoDTO;
+import com.provedcode.user.model.entity.Authority;
 import com.provedcode.user.model.entity.UserInfo;
+import com.provedcode.user.repo.AuthorityRepository;
 import com.provedcode.user.repo.UserInfoRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +32,8 @@ import static org.springframework.http.HttpStatus.*;
 @AllArgsConstructor
 @Transactional
 public class TalentServiceImpl implements TalentService {
+    AuthorityRepository authorityRepository;
+    TalentProofRepository talentProofRepository;
     TalentRepository talentRepository;
     UserInfoRepository userInfoRepository;
     PageProperties pageProperties;
@@ -145,8 +151,13 @@ public class TalentServiceImpl implements TalentService {
 
         validateTalentForCompliance.userVerification(talent, userInfo, id);
 
-        userInfoRepository.delete(userInfo.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED)));
-        talentRepository.delete(talent.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED)));
+        UserInfo user = userInfo.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED));
+        Talent entity = talent.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED));
+
+        user.getAuthorities().clear();
+        userInfoRepository.delete(user);
+        talentRepository.delete(entity);
+
         return new SessionInfoDTO("deleted", "null");
     }
 }
