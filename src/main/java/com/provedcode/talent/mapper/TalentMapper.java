@@ -4,6 +4,7 @@ import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
 import com.provedcode.talent.model.entity.*;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 
@@ -28,5 +29,6 @@ public interface TalentMapper {
                             .build();
     }
 
+    @Mapping(target = "talents", expression = "java(talent.getTalentTalents().stream().map(t->t.getTalentName()).toList())")
     ShortTalentDTO talentToShortTalentDTO(Talent talent);
 }
