@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll() // for openAPI
                 .requestMatchers(antMatcher("/swagger-ui/**")).permitAll() // for openAPI
                 .requestMatchers(antMatcher("/swagger-ui.html")).permitAll() // for openAPI
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
         );
 
         http.exceptionHandling(c -> c
