@@ -1,6 +1,7 @@
 package com.provedcode.user.model.dto;
 
 public record TokenDTO(
-        String token
+        String token,
+        Long id
 ) {
 }

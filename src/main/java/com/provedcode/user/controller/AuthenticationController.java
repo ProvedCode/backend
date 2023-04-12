@@ -1,7 +1,6 @@
 package com.provedcode.user.controller;
 
 import com.provedcode.user.model.dto.RegistrationDTO;
-import com.provedcode.user.model.dto.SessionInfoDTO;
 import com.provedcode.user.model.dto.TokenDTO;
 import com.provedcode.user.service.AuthenticationService;
 import jakarta.validation.Valid;
