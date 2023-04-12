@@ -1,7 +1,7 @@
 package com.provedcode.user.controller;
 
 import com.provedcode.user.model.dto.RegistrationDTO;
-import com.provedcode.user.model.dto.TokenDTO;
+import com.provedcode.user.model.dto.UserInfoDTO;
 import com.provedcode.user.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -18,13 +18,13 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    TokenDTO login(Authentication authentication) {
+    UserInfoDTO login(Authentication authentication) {
         return authenticationService.login(authentication.getName(), authentication.getAuthorities());
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    TokenDTO register(@RequestBody @Valid RegistrationDTO user) {
+    UserInfoDTO register(@RequestBody @Valid RegistrationDTO user) {
         return authenticationService.register(user);
     }
 

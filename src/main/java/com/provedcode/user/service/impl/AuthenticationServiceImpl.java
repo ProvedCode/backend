@@ -4,7 +4,7 @@ import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.user.model.Role;
 import com.provedcode.user.model.dto.RegistrationDTO;
-import com.provedcode.user.model.dto.TokenDTO;
+import com.provedcode.user.model.dto.UserInfoDTO;
 import com.provedcode.user.model.entity.Authority;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.AuthorityRepository;
@@ -42,16 +42,30 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     PasswordEncoder passwordEncoder;
 
     @Transactional
-    public TokenDTO login(String name, Collection<? extends GrantedAuthority> authorities) {
+    public UserInfoDTO login(String name, Collection<? extends GrantedAuthority> authorities) {
         Optional<Long> id = userInfoRepository.findByLogin(name).map(userInfo -> userInfo.getTalentId());
         if (id.isEmpty()) {
             throw new ResponseStatusException(NOT_FOUND, String.format("talent with id = %d not found", id));
         }
-        return new TokenDTO(generateJWTToken(name, authorities), id.get());
+
+        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(name);
+        if (userInfo.isEmpty()) {
+            throw new ResponseStatusException(NOT_FOUND, String.format("talent with name = %s not found", name));
+        }
+        Optional<Talent> talent = talentEntityRepository.findById(userInfo.get().getTalentId());
+
+        return UserInfoDTO.builder()
+                .token(generateJWTToken(name, authorities))
+                .id(talent.get().getId())
+                .login(userInfo.get().getLogin())
+                .firstName(talent.get().getFirstName())
+                .lastName(talent.get().getLastName())
+                .image(talent.get().getImage())
+                .build();
     }
 
     @Transactional
-    public TokenDTO register(RegistrationDTO user) {
+    public UserInfoDTO register(RegistrationDTO user) {
         if (userInfoRepository.existsByLogin(user.login())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     String.format("user with login = {%s} already exists", user.login()));
@@ -78,7 +92,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("user with login {%s} was saved, his authorities: %s".formatted(userLogin, userAuthorities));
 
-        return new TokenDTO(generateJWTToken(userLogin, userAuthorities), talent.getId());
+        return UserInfoDTO.builder()
+                .token(generateJWTToken(userLogin, userAuthorities))
+                .id(talent.getId())
+                .login(userInfo.getLogin())
+                .firstName(talent.getFirstName())
+                .lastName(talent.getLastName())
+                .image(talent.getImage())
+                .build();
     }
 
     private String generateJWTToken(String name, Collection<? extends GrantedAuthority> authorities) {
