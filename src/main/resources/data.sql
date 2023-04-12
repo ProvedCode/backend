@@ -11,11 +11,11 @@ values ('Serhii', 'Soloviov', 'Java-Developer', 'https://i.pinimg.com/564x/e1/08
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Serhii Soloviov bio', 'Serhii Soloviov addition info');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://first_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://second_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://third_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'Java Core');
 insert into talent_talents (talent_id, talent_name)
@@ -31,17 +31,17 @@ values ((select id from talent order by id desc limit 1), 'second_contact');
 insert into talent_contact (talent_id, contact)
 values ((select id from talent order by id desc limit 1), 'third_contact');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://first_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://second_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://third_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'PUBLISHED', '2022-01-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to first proof', 'PUBLISHED', '2022-01-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'DRAFT', '2023-03-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to second proof', 'DRAFT', '2023-03-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'HIDDEN', '2021-06-08 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to third proof', 'HIDDEN', '2021-06-08 16:00:19');
 
 insert into user_info (talent_id, login, password)
 values ((select id from talent order by id desc limit 1), 'SerhiiSoloviov@gmail.com', 'password');
@@ -54,11 +54,11 @@ values ('Mykhailo', 'Ordyntsev', 'Java-Developer', 'https://i.pinimg.com/564x/c2
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Mykhailo Ordyntsev bio', 'Mykhailo Ordyntsev addition info');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://MykhailoOrdyntsev_first_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://MykhailoOrdyntsev_second_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://MykhailoOrdyntsev_third_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'Java Core');
 insert into talent_talents (talent_id, talent_name)
@@ -74,17 +74,17 @@ values ((select id from talent order by id desc limit 1), 'MykhailoOrdyntsev_sec
 insert into talent_contact (talent_id, contact)
 values ((select id from talent order by id desc limit 1), 'MykhailoOrdyntsev_third_contact');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://first_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://second_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://third_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'DRAFT', '2022-08-07 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to first proof', 'DRAFT', '2022-08-07 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'HIDDEN', '2022-04-08 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to second proof', 'HIDDEN', '2022-04-08 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'DRAFT', '2022-09-02 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to third proof', 'DRAFT', '2022-09-02 16:00:19');
 
 insert into user_info (talent_id, login, password)
 values ((select id from talent order by id desc limit 1), 'MykhailoOrdyntsev@gmail.com', 'password');
@@ -97,11 +97,11 @@ values ('Denis', 'Boyko', 'Java-Developer', 'https://i.pinimg.com/564x/2a/0c/08/
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Denis Boyko bio', 'Denis Boyko addition info');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://DenisBoyko_first_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://DenisBoyko_second_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://DenisBoyko_third_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'Java Core');
 insert into talent_talents (talent_id, talent_name)
@@ -115,17 +115,17 @@ values ((select id from talent order by id desc limit 1), 'DenisBoyko_second_con
 insert into talent_contact (talent_id, contact)
 values ((select id from talent order by id desc limit 1), 'DenisBoyko_third_contact');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://first_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://second_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://third_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'DRAFT', '2022-02-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to first proof', 'DRAFT', '2022-02-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'DRAFT', '2021-09-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to second proof', 'DRAFT', '2021-09-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'DRAFT', '2023-04-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to third proof', 'DRAFT', '2023-04-04 16:00:19');
 
 insert into user_info (talent_id, login, password)
 values ((select id from talent order by id desc limit 1), 'DenisBoyko@gmail.com', 'password');
@@ -138,11 +138,11 @@ values ('Ihor', 'Schurenko', 'Java-Developer', 'https://i.pinimg.com/564x/e1/11/
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Ihor Shchurenko bio', 'Ihor Shchurenko addition info');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://IhorShchurenko_first_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://IhorShchurenko_second_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://IhorShchurenko_third_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'Java Core');
 insert into talent_talents (talent_id, talent_name)
@@ -154,21 +154,21 @@ values ((select id from talent order by id desc limit 1), 'IhorShchurenko_second
 insert into talent_contact (talent_id, contact)
 values ((select id from talent order by id desc limit 1), 'IhorShchurenko_third_contact');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://first_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://second_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://third_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'PUBLISHED', '2021-08-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to first proof', 'PUBLISHED', '2021-08-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'DRAFT', '2022-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to second proof', 'DRAFT', '2022-06-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'DRAFT', '2023-05-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to third proof', 'DRAFT', '2023-05-04 16:00:19');
 
 insert into user_info (talent_id, login, password)
-values ((select id from talent order by id desc limit 1), 'DmytroUzun@gmail.com', 'password');
+values ((select id from talent order by id desc limit 1), 'IhorShchurenko@gmail.com', 'password');
 insert into user_authorities (user_id, authority_id)
 values ((select id from user_info order by id desc limit 1),
         (select authority.id from authority where id = 1));
@@ -178,11 +178,11 @@ values ('Dmytro', 'Uzun', 'Dev-Ops', 'https://i.pinimg.com/564x/1c/af/87/1caf877
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Dmytro Uzun bio', 'Dmytro Uzun addition info');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://DmytroUzun_first_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://DmytroUzun_second_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://DmytroUzun_third_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'Git');
 insert into talent_talents (talent_id, talent_name)
@@ -196,18 +196,18 @@ values ((select id from talent order by id desc limit 1), 'DmytroUzun_second_con
 insert into talent_contact (talent_id, contact)
 values ((select id from talent order by id desc limit 1), 'DmytroUzun_third_contact');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://first_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://second_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://third_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'PUBLISHED', '2023-02-08 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to first proof', 'PUBLISHED', '2023-02-08 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'DRAFT', '2021-03-03 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to second proof', 'DRAFT', '2021-03-03 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'DRAFT', '2023-09-05 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to third proof', 'DRAFT', '2023-09-05 16:00:19');
 
 insert into user_info (talent_id, login, password)
 values ((select id from talent order by id desc limit 1), 'DmytroUzun@gmail.com', 'password');
@@ -220,11 +220,11 @@ values ('Viktor', 'Voloshko', 'Dev-Ops', 'https://i.pinimg.com/564x/a9/51/ab/a95
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Viktor Voloshko bio', 'Viktor Voloshko addition info');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://ViktorVoloshko_first_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://ViktorVoloshko_second_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://ViktorVoloshko_third_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'Git');
 insert into talent_talents (talent_id, talent_name)
@@ -236,18 +236,18 @@ values ((select id from talent order by id desc limit 1), 'ViktorVoloshko_second
 insert into talent_contact (talent_id, contact)
 values ((select id from talent order by id desc limit 1), 'ViktorVoloshko_third_contact');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://first_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://second_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://third_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'HIDDEN', '2022-02-09 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to first proof', 'HIDDEN', '2022-02-09 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'DRAFT', '2020-04-02 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to second proof', 'DRAFT', '2020-04-02 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'DRAFT', '2023-08-06 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to third proof', 'DRAFT', '2023-08-06 16:00:19');
 
 insert into user_info (talent_id, login, password)
 values ((select id from talent order by id desc limit 1), 'ViktorVoloshko@gmail.com', 'password');
@@ -260,11 +260,11 @@ values ('Olha', 'Moiseienko', 'QA', 'https://i.pinimg.com/564x/6d/9d/43/6d9d437b
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Olha Moiseienko bio', 'Olha Moiseienko addition info');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://OlhaMoiseienko_first_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://OlhaMoiseienko_second_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://OlhaMoiseienko_third_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'Git');
 insert into talent_talents (talent_id, talent_name)
@@ -278,18 +278,18 @@ values ((select id from talent order by id desc limit 1), 'OlhaMoiseienko_second
 insert into talent_contact (talent_id, contact)
 values ((select id from talent order by id desc limit 1), 'OlhaMoiseienko_third_contact');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://first_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://second_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://third_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'HIDDEN', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to first proof', 'HIDDEN', '2023-06-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'PUBLISHED', '2022-09-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to second proof', 'PUBLISHED', '2022-09-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'DRAFT', '2021-01-09 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to third proof', 'DRAFT', '2021-01-09 16:00:19');
 
 insert into user_info (talent_id, login, password)
 values ((select id from talent order by id desc limit 1), 'OlhaMoiseienko@gmail.com', 'password');
@@ -302,11 +302,11 @@ values ('Maxim', 'Kiyashko', 'QA', 'https://i.pinimg.com/564x/80/2d/58/802d58b03
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Maxim Kiyashko', 'Ihor Shchurenko addition info');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://MaximKiyashko_first_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://MaximKiyashko_second_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://MaximKiyashko_third_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'Git');
 insert into talent_talents (talent_id, talent_name)
@@ -318,18 +318,18 @@ values ((select id from talent order by id desc limit 1), 'MaximKiyashko_second_
 insert into talent_contact (talent_id, contact)
 values ((select id from talent order by id desc limit 1), 'MaximKiyashko_third_contact');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://first_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://second_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://third_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'PUBLISHED', '2023-08-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to first proof', 'PUBLISHED', '2023-08-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'DRAFT', '2023-01-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to second proof', 'DRAFT', '2023-01-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'PUBLISHED', '2023-02-09 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to third proof', 'PUBLISHED', '2023-02-09 16:00:19');
 
 insert into user_info (talent_id, login, password)
 values ((select id from talent order by id desc limit 1), 'MaximKiyashko@gmail.com', 'password');
@@ -342,11 +342,11 @@ values ('Nikolaiev', 'Oleksii', 'QA', 'https://i.pinimg.com/564x/54/d1/0d/54d10d
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Nikolaiev Oleksii bio', 'Nikolaiev Oleksii addition info');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://NikolaievOleksii_first_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://NikolaievOleksii_second_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://NikolaievOleksii_third_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'QA');
 insert into talent_talents (talent_id, talent_name)
@@ -360,18 +360,18 @@ values ((select id from talent order by id desc limit 1), 'NikolaievOleksii_seco
 insert into talent_contact (talent_id, contact)
 values ((select id from talent order by id desc limit 1), 'NikolaievOleksii_third_contact');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://first_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://second_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://third_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'PUBLISHED', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to first proof', 'PUBLISHED', '2023-06-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'DRAFT', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to second proof', 'DRAFT', '2023-06-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'HIDDEN', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to third proof', 'HIDDEN', '2023-06-04 16:00:19');
 
 insert into user_info (talent_id, login, password)
 values ((select id from talent order by id desc limit 1), 'NikolaievOleksiio@gmail.com', 'password');
@@ -384,11 +384,11 @@ values ('Artem', 'Lytvynenko', 'QA', 'https://i.pinimg.com/564x/87/63/55/8763550
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Artem Lytvynenko bio', 'Artem Lytvynenko addition info');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://ArtemLytvynenko_first_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://ArtemLytvynenko_second_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://ArtemLytvynenko_third_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'QA');
 insert into talent_talents (talent_id, talent_name)
@@ -400,18 +400,18 @@ values ((select id from talent order by id desc limit 1), 'ArtemLytvynenko_secon
 insert into talent_contact (talent_id, contact)
 values ((select id from talent order by id desc limit 1), 'ArtemLytvynenko_third_contact');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://first_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://second_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://third_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'PUBLISHED', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to first proof', 'PUBLISHED', '2023-06-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'DRAFT', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to second proof', 'DRAFT', '2023-06-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'HIDDEN', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to third proof', 'HIDDEN', '2023-06-04 16:00:19');
 
 insert into user_info (talent_id, login, password)
 values ((select id from talent order by id desc limit 1), 'ArtemLytvynenko@gmail.com', 'password');
@@ -424,11 +424,11 @@ values ('Daniil', 'Yevtukhov', 'Java-Script-Developer', 'https://i.pinimg.com/56
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Daniil Yevtukhov bio', 'Daniil Yevtukhov addition info');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://DaniilYevtukhov_first_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://DaniilYevtukhov_second_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://DaniilYevtukhov_third_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'JavaScript Core');
 insert into talent_talents (talent_id, talent_name)
@@ -440,18 +440,18 @@ values ((select id from talent order by id desc limit 1), 'DaniilYevtukhov_secon
 insert into talent_contact (talent_id, contact)
 values ((select id from talent order by id desc limit 1), 'DaniilYevtukhov_third_contact');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://first_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://second_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://third_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'PUBLISHED', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to first proof', 'PUBLISHED', '2023-06-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'HIDDEN', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to second proof', 'HIDDEN', '2023-06-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'DRAFT', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to third proof', 'DRAFT', '2023-06-04 16:00:19');
 
 insert into user_info (talent_id, login, password)
 values ((select id from talent order by id desc limit 1), 'DaniilYevtukhov@gmail.com', 'password');
@@ -464,11 +464,11 @@ values ('Ruslan', 'Morozov', 'Java-Script-Developer', 'https://i.pinimg.com/736x
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Ruslan Morozov bio', 'Ruslan Morozov addition info');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://RuslanMorozov_first_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://RuslanMorozov_second_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://RuslanMorozov_third_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'JavaScript Core');
 insert into talent_talents (talent_id, talent_name)
@@ -482,18 +482,18 @@ values ((select id from talent order by id desc limit 1), 'RuslanMorozov_second_
 insert into talent_contact (talent_id, contact)
 values ((select id from talent order by id desc limit 1), 'RuslanMorozov_third_contact');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://first_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://second_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://third_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'PUBLISHED', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to first proof', 'PUBLISHED', '2023-06-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'DRAFT', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to second proof', 'DRAFT', '2023-06-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'DRAFT', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to third proof', 'DRAFT', '2023-06-04 16:00:19');
 
 insert into user_info (talent_id, login, password)
 values ((select id from talent order by id desc limit 1), 'RuslanMorozov@gmail.com', 'password');
@@ -506,11 +506,11 @@ values ('Ihor', 'Kopieichykov', 'Java-Script-Developer', 'https://i.pinimg.com/5
 insert into talent_description (talent_id, BIO, addition_info)
 values((select id from talent order by id desc limit 1), 'Ihor Kopieichykov bio', 'Ihor Kopieichykov addition info');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://IhorKopieichykov_first_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://IhorKopieichykov_second_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_link (talent_id, link)
-values ((select id from talent order by id desc limit 1), 'http://IhorKopieichykov_third_link');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_talents (talent_id, talent_name)
 values ((select id from talent order by id desc limit 1), 'JavaScript Core');
 insert into talent_talents (talent_id, talent_name)
@@ -524,18 +524,18 @@ values ((select id from talent order by id desc limit 1), 'IhorKopieichykov_seco
 insert into talent_contact (talent_id, contact)
 values ((select id from talent order by id desc limit 1), 'IhorKopieichykov_third_contact');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://first_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://second_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 insert into talent_attached_file (talent_id, attached_file)
-values ((select id from talent order by id desc limit 1), 'http://third_file');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://first_link', 'text to first proof', 'PUBLISHED', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to first proof', 'PUBLISHED', '2023-06-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://second_link', 'text to second proof', 'PUBLISHED', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to second proof', 'PUBLISHED', '2023-06-04 16:00:19');
 insert into talent_proofs (talent_id, link, text, status, created)
-values ((select id from talent order by id desc limit 1), 'http://third_link', 'text to third proof', 'DRAFT', '2023-06-04 16:00:19');
+values ((select id from talent order by id desc limit 1), 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'text to third proof', 'DRAFT', '2023-06-04 16:00:19');
 
 insert into user_info (talent_id, login, password)
 values ((select id from talent order by id desc limit 1), 'IhorKopieichykov@gmail.com', 'password');
