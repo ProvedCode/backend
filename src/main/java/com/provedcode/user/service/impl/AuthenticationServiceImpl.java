@@ -4,7 +4,7 @@ import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.user.model.Role;
 import com.provedcode.user.model.dto.RegistrationDTO;
-import com.provedcode.user.model.dto.SessionInfoDTO;
+import com.provedcode.user.model.dto.TokenDTO;
 import com.provedcode.user.model.entity.Authority;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.AuthorityRepository;
@@ -40,12 +40,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     PasswordEncoder passwordEncoder;
 
     @Transactional
-    public SessionInfoDTO login(String name, Collection<? extends GrantedAuthority> authorities) {
-        return new SessionInfoDTO("User {%s} log-in".formatted(name), generateJWTToken(name, authorities));
+    public TokenDTO login(String name, Collection<? extends GrantedAuthority> authorities) {
+        return new TokenDTO(generateJWTToken(name, authorities));
     }
 
     @Transactional
-    public SessionInfoDTO register(RegistrationDTO user) {
+    public TokenDTO register(RegistrationDTO user) {
         if (userInfoRepository.existsByLogin(user.login())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                                               String.format("user with login = {%s} already exists", user.login()));
@@ -72,8 +72,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("user with login {%s} was saved, his authorities: %s".formatted(userLogin, userAuthorities));
 
-        return new SessionInfoDTO("User: {%s} was registered".formatted(userLogin),
-                                  generateJWTToken(userLogin, userAuthorities));
+        return new TokenDTO(generateJWTToken(userLogin, userAuthorities));
     }
 
     private String generateJWTToken(String name, Collection<? extends GrantedAuthority> authorities) {

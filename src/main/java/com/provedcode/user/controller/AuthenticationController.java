@@ -2,6 +2,7 @@ package com.provedcode.user.controller;
 
 import com.provedcode.user.model.dto.RegistrationDTO;
 import com.provedcode.user.model.dto.SessionInfoDTO;
+import com.provedcode.user.model.dto.TokenDTO;
 import com.provedcode.user.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -18,13 +19,13 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    SessionInfoDTO login(Authentication authentication) {
+    TokenDTO login(Authentication authentication) {
         return authenticationService.login(authentication.getName(), authentication.getAuthorities());
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    SessionInfoDTO register(@RequestBody @Valid RegistrationDTO user) {
+    TokenDTO register(@RequestBody @Valid RegistrationDTO user) {
         return authenticationService.register(user);
     }
 
