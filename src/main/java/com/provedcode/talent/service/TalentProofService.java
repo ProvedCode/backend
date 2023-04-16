@@ -211,18 +211,7 @@ public class TalentProofService {
 
         validateTalentForCompliance.userAndProofVerification(talent, talentProof, userInfo, talentId, proofId);
 
-        log.info("talentproof={}", talentProof.orElseThrow());
-
-        Talent editableTalent = talent.get();
-
-        List<TalentProof> proofList = editableTalent.getTalentProofs();
-        List<TalentProof> newProofList = proofList.stream().filter(p -> p.getId() != proofId).toList();
-
-        editableTalent.setTalentProofs(newProofList);
-
-//        talentRepository.save(editableTalent);
-
-//        talentProofRepository.delete(talentProof.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED)));
+        talent.get().getTalentProofs().remove(talentProof.get());
         return new StatusDTO("deleted");
     }
 }
