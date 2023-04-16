@@ -29,6 +29,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
@@ -211,7 +212,17 @@ public class TalentProofService {
         validateTalentForCompliance.userAndProofVerification(talent, talentProof, userInfo, talentId, proofId);
 
         log.info("talentproof={}", talentProof.orElseThrow());
-        talentProofRepository.delete(talentProof.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED)));
+
+        Talent editableTalent = talent.get();
+
+        List<TalentProof> proofList = editableTalent.getTalentProofs();
+        List<TalentProof> newProofList = proofList.stream().filter(p -> p.getId() != proofId).toList();
+
+        editableTalent.setTalentProofs(newProofList);
+
+//        talentRepository.save(editableTalent);
+
+//        talentProofRepository.delete(talentProof.orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED)));
         return new StatusDTO("deleted");
     }
 }
