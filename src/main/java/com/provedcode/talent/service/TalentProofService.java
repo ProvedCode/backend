@@ -2,12 +2,12 @@ package com.provedcode.talent.service;
 
 import com.provedcode.config.PageProperties;
 import com.provedcode.talent.model.ProofStatus;
-import com.provedcode.talent.model.dto.AddProofDTO;
 import com.provedcode.talent.model.dto.FullProofDTO;
 import com.provedcode.talent.model.dto.ProofDTO;
 import com.provedcode.talent.model.dto.StatusDTO;
 import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.model.entity.TalentProof;
+import com.provedcode.talent.model.request.AddProof;
 import com.provedcode.talent.repo.TalentProofRepository;
 import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.talent.utill.ValidateTalentForCompliance;
@@ -148,7 +148,7 @@ public class TalentProofService {
                            .build();
     }
 
-    public ResponseEntity<?> addProof(AddProofDTO addProofDTO, long talentId, Authentication authentication) {
+    public ResponseEntity<?> addProof(AddProof addProof, long talentId, Authentication authentication) {
         Optional<Talent> talent = talentRepository.findById(talentId);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
 
@@ -157,8 +157,8 @@ public class TalentProofService {
         TalentProof talentProof = TalentProof.builder()
                                              .talent(talent.get())
                                              .talentId(talentId)
-                                             .link(addProofDTO.link())
-                                             .text(addProofDTO.text())
+                                             .link(addProof.link())
+                                             .text(addProof.text())
                                              .status(ProofStatus.DRAFT)
                                              .created(LocalDateTime.now())
                                              .build();
@@ -196,7 +196,7 @@ public class TalentProofService {
             if (oldProofStatus != ProofStatus.DRAFT)
                 throw new ResponseStatusException(FORBIDDEN, "you cannot edit proofs without DRAFT status");
 
-            oldProof.setLink(proof.link())
+            oldProof.setLink(proof.link() != null ? proof.link() : oldProof.getLink())
                     .setText(proof.text() != null ? proof.text() : oldProof.getText())
                     .setStatus(proof.status());
         }

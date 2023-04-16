@@ -1,7 +1,10 @@
 package com.provedcode.talent.controller;
 
 import com.provedcode.talent.mapper.TalentProofMapper;
-import com.provedcode.talent.model.dto.*;
+import com.provedcode.talent.model.dto.FullProofDTO;
+import com.provedcode.talent.model.dto.ProofDTO;
+import com.provedcode.talent.model.dto.StatusDTO;
+import com.provedcode.talent.model.request.AddProof;
 import com.provedcode.talent.service.TalentProofService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -135,9 +138,9 @@ public class TalentProofController {
     @PostMapping("/{talent-id}/proofs")
     @PreAuthorize("hasRole('TALENT')")
     ResponseEntity<?> addProof(@PathVariable(value = "talent-id") long talentId,
-                               @RequestBody AddProofDTO addProofDTO,
+                               @RequestBody @Valid AddProof addProof,
                                Authentication authentication) {
-        return talentProofService.addProof(addProofDTO, talentId, authentication);
+        return talentProofService.addProof(addProof, talentId, authentication);
     }
 
     @Operation(summary = "Edit information about proof",
@@ -194,7 +197,7 @@ public class TalentProofController {
             @ApiResponse(
                     responseCode = "403",
                     description = "FORBIDDEN (if not the owner wants to delete the proof or " +
-                            "impossible change proofs status from DRAFT to HIDDEN, it should be PUBLISHED)",
+                                  "impossible change proofs status from DRAFT to HIDDEN, it should be PUBLISHED)",
                     content = @Content)
     })
     @DeleteMapping("/{talent-id}/proofs/{proof-id}")
