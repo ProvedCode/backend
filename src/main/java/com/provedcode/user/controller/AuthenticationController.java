@@ -19,9 +19,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @Slf4j
-@RequestMapping("/api/talents")
+@RequestMapping("/api/v2/talents")
 public class AuthenticationController {
     AuthenticationService authenticationService;
+
     @Operation(summary = "Login")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -64,5 +65,4 @@ public class AuthenticationController {
     UserInfoDTO register(@RequestBody @Valid RegistrationDTO user) {
         return authenticationService.register(user);
     }
-
 }

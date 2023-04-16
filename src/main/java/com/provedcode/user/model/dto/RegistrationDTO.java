@@ -7,14 +7,18 @@ import lombok.Builder;
 
 @Builder
 public record RegistrationDTO(
-        @NotEmpty @Email String login,
-        @NotEmpty String password,
+        @NotEmpty
+        @Email
+        String login,
+        @NotEmpty
+        String password,
         @JsonProperty("first_name")
         @NotEmpty
         String firstName,
         @JsonProperty("last_name")
         @NotEmpty
         String lastName,
-        @NotEmpty String specialization
+        @NotEmpty
+        String specialization
 ) {
 }

@@ -24,7 +24,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,6 +33,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Service
 @AllArgsConstructor
 @Slf4j
+@Transactional
 public class AuthenticationServiceImpl implements AuthenticationService {
     JwtEncoder jwtEncoder;
     UserInfoRepository userInfoRepository;
@@ -41,44 +41,38 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     AuthorityRepository authorityRepository;
     PasswordEncoder passwordEncoder;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public UserInfoDTO login(String name, Collection<? extends GrantedAuthority> authorities) {
         UserInfo userInfo = userInfoRepository.findByLogin(name)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, String.format("talent with name = %s not found", name)));
-
-        Talent talent = talentEntityRepository.findById(userInfo.getTalentId())
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, String.format("talent with name = %s not found", name)));
+                                              .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, String.format(
+                                                      "talent with name = %s not found", name)));
 
         return UserInfoDTO.builder()
-                .token(generateJWTToken(name, authorities))
-                .id(talent.getId())
-                .login(userInfo.getLogin())
-                .firstName(talent.getFirstName())
-                .lastName(talent.getLastName())
-                .image(talent.getImage())
-                .build();
+                          .token(generateJWTToken(name, authorities))
+                          .id(userInfo.getTalentId())
+                          .build();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public UserInfoDTO register(RegistrationDTO user) {
         if (userInfoRepository.existsByLogin(user.login())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    String.format("user with login = {%s} already exists", user.login()));
+                                              String.format("user with login = {%s} already exists", user.login()));
         }
+
         Talent talent = Talent.builder()
-                .firstName(user.firstName())
-                .lastName(user.lastName())
-                .specialization(user.specialization())
-                .build();
+                              .firstName(user.firstName())
+                              .lastName(user.lastName())
+                              .specialization(user.specialization())
+                              .build();
         talentEntityRepository.save(talent);
 
         UserInfo userInfo = UserInfo.builder()
-                .talentId(talent.getId())
-                .login(user.login())
-                .password(passwordEncoder.encode(user.password()))
-                .build();
-        userInfo.setAuthorities(Set.of(authorityRepository.findByAuthority(Role.TALENT).orElseThrow()));
-
+                                    .talentId(talent.getId())
+                                    .login(user.login())
+                                    .password(passwordEncoder.encode(user.password()))
+                                    .authorities(Set.of(authorityRepository.findByAuthority(Role.TALENT).orElseThrow()))
+                                    .build();
         userInfoRepository.save(userInfo);
 
         String userLogin = userInfo.getLogin();
@@ -88,13 +82,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.info("user with login {%s} was saved, his authorities: %s".formatted(userLogin, userAuthorities));
 
         return UserInfoDTO.builder()
-                .token(generateJWTToken(userLogin, userAuthorities))
-                .id(talent.getId())
-                .login(userInfo.getLogin())
-                .firstName(talent.getFirstName())
-                .lastName(talent.getLastName())
-                .image(talent.getImage())
-                .build();
+                          .token(generateJWTToken(userLogin, userAuthorities))
+                          .id(talent.getId())
+                          .build();
     }
 
     private String generateJWTToken(String name, Collection<? extends GrantedAuthority> authorities) {
@@ -102,14 +92,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.info("=== POST /login === auth = {}", authorities);
         var now = Instant.now();
         var claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(60, MINUTES))
-                .subject(name)
-                .claim("scope", authorities.stream().map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.joining(" ")))
-                .build();
+                                 .issuer("self")
+                                 .issuedAt(now)
+                                 .expiresAt(now.plus(60, MINUTES))
+                                 .subject(name)
+                                 .claim("scope", authorities.stream().map(GrantedAuthority::getAuthority)
+                                                            .collect(Collectors.joining(" ")))
+                                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
-
 }
