@@ -7,9 +7,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.URL;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 @Builder
 @Accessors(chain = true)
@@ -38,14 +36,14 @@ public class Talent {
     private String image;
     @OneToOne(mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
     private TalentDescription talentDescription;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", orphanRemoval = true)
     private List<TalentLink> talentLinks = new ArrayList<>();
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", orphanRemoval = true)
     private List<TalentTalents> talentTalents = new ArrayList<>();
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", orphanRemoval = true)
     private List<TalentContact> talentContacts = new ArrayList<>();
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", orphanRemoval = true)
     private List<TalentAttachedFile> talentAttachedFiles = new ArrayList<>();
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "talent", orphanRemoval = true)
     private List<TalentProof> talentProofs = new ArrayList<>();
 }

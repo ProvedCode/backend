@@ -207,6 +207,7 @@ public class TalentProofService {
         Optional<Talent> talent = talentRepository.findById(talentId);
         Optional<TalentProof> talentProof = talentProofRepository.findById(proofId);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
+
         validateTalentForCompliance.userAndProofVerification(talent, talentProof, userInfo, talentId, proofId);
 
         log.info("talentproof={}", talentProof.orElseThrow());
