@@ -11,7 +11,6 @@ import com.provedcode.talent.model.entity.TalentProof;
 import com.provedcode.talent.repo.TalentProofRepository;
 import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.talent.utill.ValidateTalentForCompliance;
-import com.provedcode.user.model.dto.SessionInfoDTO;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.UserInfoRepository;
 import lombok.AllArgsConstructor;
@@ -46,38 +45,36 @@ public class TalentProofService {
     ValidateTalentForCompliance validateTalentForCompliance;
 
     @Transactional(readOnly = true)
-    public Page<TalentProof> getAllProofsPage(Optional<Integer> page, Optional<Integer> size,
-                                              Optional<String> orderBy) {
+    public Page<TalentProof> getAllProofsPage(Optional<Integer> page, Optional<Integer> size, Optional<String> orderBy,
+                                              String... sortBy) {
+        PageRequest pageRequest;
+        String sortDirection = orderBy.orElseGet(Sort.DEFAULT_DIRECTION::name);
+
         if (page.orElse(pageProperties.defaultPageNum()) < 0) {
             throw new ResponseStatusException(BAD_REQUEST, "'page' query parameter must be greater than or equal to 0");
         }
         if (size.orElse(pageProperties.defaultPageSize()) <= 0) {
             throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
         }
-
-        if (orderBy.isPresent()) {
-            if (!orderBy.get().equalsIgnoreCase(Sort.Direction.ASC.name()) &&
-                !orderBy.get().equalsIgnoreCase(Sort.Direction.DESC.name())) {
-                throw new ResponseStatusException(BAD_REQUEST, "'orderBy' query parameter must be ASC or DESC");
-            }
-            Sort sort =
-                    orderBy.get().equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(pageProperties.defaultSortBy())
-                                                                                    .ascending()
-                                                                              : Sort.by(pageProperties.defaultSortBy())
-                                                                                    .descending();
-            return talentProofRepository.findByStatus(ProofStatus.PUBLISHED,
-                                                      PageRequest.of(page.orElse(
-                                                                             pageProperties.defaultPageNum()),
-                                                                     size.orElse(
-                                                                             pageProperties.defaultPageSize()), sort));
+        if (!sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) &&
+            !sortDirection.equalsIgnoreCase(Sort.Direction.DESC.name())) {
+            throw new ResponseStatusException(BAD_REQUEST, "'direction' query param must be equals ASC or DESC");
         }
-        return talentProofRepository.findByStatus(ProofStatus.PUBLISHED,
-                                                  PageRequest.of(page.orElse(
-                                                                         pageProperties.defaultPageNum()),
-                                                                 size.orElse(
-                                                                         pageProperties.defaultPageSize())));
+
+        try {
+            pageRequest = PageRequest.of(
+                    page.orElse(pageProperties.defaultPageNum()),
+                    size.orElse(pageProperties.defaultPageSize()),
+                    Sort.Direction.valueOf(sortDirection.toUpperCase()),
+                    sortBy
+            );
+            return talentProofRepository.findByStatus(ProofStatus.PUBLISHED, pageRequest);
+        } catch (RuntimeException exception) {
+            throw new ResponseStatusException(BAD_REQUEST, exception.getMessage());
+        }
     }
 
+    @Transactional(readOnly = true)
     public TalentProof getTalentProof(long proofId, Authentication authentication) {
         TalentProof talentProof = talentProofRepository.findById(proofId).orElseThrow(
                 () -> new ResponseStatusException(NOT_FOUND, String.format("proof with id = %d not found", proofId)));
@@ -177,7 +174,6 @@ public class TalentProofService {
         return ResponseEntity.created(location).build();
     }
 
-    @Transactional
     public TalentProof editTalentProof(long talentId, long proofId, ProofDTO proof, Authentication authentication) {
         Optional<Talent> talent = talentRepository.findById(talentId);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
@@ -191,7 +187,8 @@ public class TalentProofService {
         if (oldProofStatus != ProofStatus.DRAFT && proof.status() == ProofStatus.DRAFT)
             throw new ResponseStatusException(FORBIDDEN, "you cannot change proofs status to DRAFT");
         if (oldProofStatus == ProofStatus.DRAFT && proof.status() == ProofStatus.HIDDEN)
-            throw new ResponseStatusException(FORBIDDEN, "you cannot change proofs status from DRAFT to HIDDEN, it should be PUBLISHED");
+            throw new ResponseStatusException(FORBIDDEN,
+                                              "you cannot change proofs status from DRAFT to HIDDEN, it should be PUBLISHED");
 
         if (proof.link() == null && proof.text() == null) {
             oldProof.setStatus(proof.status());
@@ -206,7 +203,6 @@ public class TalentProofService {
         return talentProofRepository.save(oldProof);
     }
 
-    @Transactional
     public StatusDTO deleteProofById(long talentId, long proofId, Authentication authentication) {
         Optional<Talent> talent = talentRepository.findById(talentId);
         Optional<TalentProof> talentProof = talentProofRepository.findById(proofId);

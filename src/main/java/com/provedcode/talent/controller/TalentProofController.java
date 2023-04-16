@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/talents")
+@RequestMapping("/api/v2/talents")
 public class TalentProofController {
     TalentProofService talentProofService;
     TalentProofMapper talentProofMapper;
@@ -45,8 +45,9 @@ public class TalentProofController {
     @GetMapping("/proofs")
     Page<ProofDTO> getAllProofs(@RequestParam(value = "page") Optional<Integer> page,
                                 @RequestParam(value = "size") Optional<Integer> size,
-                                @RequestParam(value = "order-by") Optional<String> orderBy) {
-        return talentProofService.getAllProofsPage(page, size, orderBy).map(talentProofMapper::toProofDTO);
+                                @RequestParam(value = "order-by") Optional<String> orderBy,
+                                @RequestParam(value = "sort-by", defaultValue = "created") String... sortBy) {
+        return talentProofService.getAllProofsPage(page, size, orderBy, sortBy).map(talentProofMapper::toProofDTO);
     }
 
     @Operation(summary = "Get proof")
