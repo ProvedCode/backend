@@ -37,5 +37,4 @@ public class S3Controller {
     public List<String> getAllFiles() {
         return s3Service.listAllFiles();
     }
-
 }

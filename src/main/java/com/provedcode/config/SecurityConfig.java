@@ -50,7 +50,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(c -> c
                 .requestMatchers("/actuator/health").permitAll() // for DevOps
                 .requestMatchers(antMatcher("/h2/**")).permitAll()
-                .requestMatchers(antMatcher("/api/talents/**")).permitAll()
+                .requestMatchers(antMatcher("/talents/**")).permitAll()
                 .requestMatchers(antMatcher("/error")).permitAll()
                 .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll() // for openAPI
                 .requestMatchers(antMatcher("/swagger-ui/**")).permitAll() // for openAPI
