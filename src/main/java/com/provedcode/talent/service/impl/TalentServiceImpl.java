@@ -1,15 +1,13 @@
 package com.provedcode.talent.service.impl;
 
 import com.provedcode.config.PageProperties;
-import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.entity.*;
+import com.provedcode.talent.model.request.EditTalent;
 import com.provedcode.talent.repo.TalentProofRepository;
 import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.talent.service.TalentService;
 import com.provedcode.talent.utill.ValidateTalentForCompliance;
-import com.provedcode.user.model.Role;
 import com.provedcode.user.model.dto.SessionInfoDTO;
-import com.provedcode.user.model.entity.Authority;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.AuthorityRepository;
 import com.provedcode.user.repo.UserInfoRepository;
@@ -39,7 +37,6 @@ public class TalentServiceImpl implements TalentService {
     PageProperties pageProperties;
     ValidateTalentForCompliance validateTalentForCompliance;
 
-
     @Override
     @Transactional(readOnly = true)
     public Page<Talent> getTalentsPage(Optional<Integer> page, Optional<Integer> size) {
@@ -51,7 +48,6 @@ public class TalentServiceImpl implements TalentService {
         }
         return talentRepository.findAll(PageRequest.of(page.orElse(pageProperties.defaultPageNum()),
                                                        size.orElse(pageProperties.defaultPageSize())));
-
     }
 
     @Override
@@ -65,83 +61,94 @@ public class TalentServiceImpl implements TalentService {
     }
 
     @Override
-    public Talent editTalent(long id, FullTalentDTO fullTalent, Authentication authentication) {
+    public Talent editTalent(long id, EditTalent editTalent, Authentication authentication) {
+        if (editTalent.firstName() == null && editTalent.lastName() == null && editTalent.image() == null &&
+            editTalent.specialization() == null && editTalent.additionalInfo() == null && editTalent.bio() == null &&
+            editTalent.talents() == null && editTalent.links() == null && editTalent.contacts() == null &&
+            editTalent.attachedFiles() == null)
+            throw new ResponseStatusException(BAD_REQUEST, "you did not provide information to make changes");
+
         Optional<Talent> talent = talentRepository.findById(id);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
 
         validateTalentForCompliance.userVerification(talent, userInfo, id);
 
-        Talent oldTalent = talent.get();
-        long oldTalentId = oldTalent.getId();
+        Talent editableTalent = talent.get();
+        long idEditableTalent = editableTalent.getId();
 
-        TalentDescription oldTalentDescription = oldTalent.getTalentDescription();
-        List<TalentTalents> oldTalentTalents = oldTalent.getTalentTalents();
-        List<TalentLink> oldTalentLinks = oldTalent.getTalentLinks();
-        List<TalentContact> oldTalentContacts = oldTalent.getTalentContacts();
-        List<TalentAttachedFile> oldTalentAttachedFile = oldTalent.getTalentAttachedFiles();
+        TalentDescription editableTalentDescription = editableTalent.getTalentDescription();
+        List<TalentTalents> editableTalentTalents = editableTalent.getTalentTalents();
+        List<TalentLink> editableTalentLinks = editableTalent.getTalentLinks();
+        List<TalentContact> editableTalentContacts = editableTalent.getTalentContacts();
+        List<TalentAttachedFile> editableTalentAttachedFile = editableTalent.getTalentAttachedFiles();
 
-        if (oldTalentDescription != null) {
-            oldTalentDescription
-                    .setAdditionalInfo(fullTalent.additionalInfo())
-                    .setBio(fullTalent.bio());
+        if (editableTalentDescription != null) {
+            editableTalentDescription
+                    .setAdditionalInfo(editTalent.additionalInfo() != null ? editTalent.additionalInfo()
+                                                                           : editableTalentDescription.getAdditionalInfo())
+                    .setBio(editTalent.bio() != null ? editTalent.bio() : editableTalentDescription.getBio());
         } else {
-            oldTalentDescription = TalentDescription.builder()
-                                                    .talentId(oldTalentId)
-                                                    .additionalInfo(fullTalent.additionalInfo())
-                                                    .bio(fullTalent.bio())
-                                                    .talent(oldTalent)
-                                                    .build();
+            editableTalentDescription = TalentDescription.builder()
+                                                         .talentId(idEditableTalent)
+                                                         .additionalInfo(editTalent.additionalInfo())
+                                                         .bio(editTalent.bio())
+                                                         .talent(editableTalent)
+                                                         .build();
         }
 
-        oldTalentTalents.clear();
-        if (fullTalent.talents() != null) {
-            oldTalentTalents.addAll(fullTalent.talents().stream().map(s -> TalentTalents.builder()
-                                                                                        .talentId(oldTalentId)
-                                                                                        .talent(oldTalent)
-                                                                                        .talentName(s)
-                                                                                        .build()).toList());
+        if (editTalent.talents() != null) {
+            editableTalentTalents.clear();
+            editableTalentTalents.addAll(editTalent.talents().stream().map(s -> TalentTalents.builder()
+                                                                                             .talentId(idEditableTalent)
+                                                                                             .talent(editableTalent)
+                                                                                             .talentName(s)
+                                                                                             .build()).toList());
         }
 
-        oldTalentLinks.clear();
-        if (fullTalent.links() != null) {
-            oldTalentLinks.addAll(fullTalent.links().stream().map(l -> TalentLink.builder()
-                                                                                 .talentId(oldTalentId)
-                                                                                 .talent(oldTalent)
-                                                                                 .link(l)
-                                                                                 .build()).toList());
+        if (editTalent.links() != null) {
+            editableTalentLinks.clear();
+            editableTalentLinks.addAll(editTalent.links().stream().map(l -> TalentLink.builder()
+                                                                                      .talentId(idEditableTalent)
+                                                                                      .talent(editableTalent)
+                                                                                      .link(l)
+                                                                                      .build()).toList());
         }
 
-        oldTalentContacts.clear();
-        if (fullTalent.contacts() != null) {
-            oldTalentContacts.addAll(fullTalent.contacts().stream().map(s -> TalentContact.builder()
-                                                                                          .talentId(oldTalentId)
-                                                                                          .talent(oldTalent)
-                                                                                          .contact(s)
-                                                                                          .build()).toList());
+        if (editTalent.contacts() != null) {
+            editableTalentContacts.clear();
+            editableTalentContacts.addAll(editTalent.contacts().stream().map(s -> TalentContact.builder()
+                                                                                               .talentId(
+                                                                                                       idEditableTalent)
+                                                                                               .talent(editableTalent)
+                                                                                               .contact(s)
+                                                                                               .build()).toList());
         }
 
-        oldTalentAttachedFile.clear();
-        if (fullTalent.attachedFiles() != null) {
-            oldTalentAttachedFile.addAll(fullTalent.attachedFiles().stream().map(s -> TalentAttachedFile.builder()
-                                                                                                        .talentId(
-                                                                                                                oldTalentId)
-                                                                                                        .talent(oldTalent)
-                                                                                                        .attachedFile(s)
-                                                                                                        .build())
-                                                   .toList());
+        if (editTalent.attachedFiles() != null) {
+            editableTalentAttachedFile.clear();
+            editableTalentAttachedFile.addAll(editTalent.attachedFiles().stream().map(s -> TalentAttachedFile.builder()
+                                                                                                             .talentId(
+                                                                                                                     idEditableTalent)
+                                                                                                             .talent(editableTalent)
+                                                                                                             .attachedFile(
+                                                                                                                     s)
+                                                                                                             .build())
+                                                        .toList());
         }
 
-        oldTalent.setFirstName(fullTalent.firstName())
-                 .setLastName(fullTalent.lastName())
-                 .setSpecialization(fullTalent.specialization())
-                 .setImage(fullTalent.image())
-                 .setTalentDescription(oldTalentDescription)
-                 .setTalentTalents(oldTalentTalents)
-                 .setTalentLinks(oldTalentLinks)
-                 .setTalentContacts(oldTalentContacts)
-                 .setTalentAttachedFiles(oldTalentAttachedFile);
+        editableTalent.setFirstName(
+                              editTalent.firstName() != null ? editTalent.firstName() : editableTalent.getFirstName())
+                      .setLastName(editTalent.lastName() != null ? editTalent.lastName() : editableTalent.getLastName())
+                      .setSpecialization(editTalent.specialization() != null ? editTalent.specialization()
+                                                                             : editableTalent.getSpecialization())
+                      .setImage(editTalent.image() != null ? editTalent.image() : editableTalent.getImage())
+                      .setTalentDescription(editableTalentDescription)
+                      .setTalentTalents(editableTalentTalents)
+                      .setTalentLinks(editableTalentLinks)
+                      .setTalentContacts(editableTalentContacts)
+                      .setTalentAttachedFiles(editableTalentAttachedFile);
 
-        return talentRepository.save(oldTalent);
+        return talentRepository.save(editableTalent);
     }
 
     @Override
