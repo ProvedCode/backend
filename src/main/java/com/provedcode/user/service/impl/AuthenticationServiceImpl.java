@@ -49,7 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         return UserInfoDTO.builder()
                           .token(generateJWTToken(name, authorities))
-                          .id(userInfo.getTalentId())
+                          .id(userInfo.getTalent().getId())
                           .build();
     }
 
@@ -68,7 +68,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         talentEntityRepository.save(talent);
 
         UserInfo userInfo = UserInfo.builder()
-                                    .talentId(talent.getId())
+                                    .talent(talent)
                                     .login(user.login())
                                     .password(passwordEncoder.encode(user.password()))
                                     .authorities(Set.of(authorityRepository.findByAuthority(Role.TALENT).orElseThrow()))

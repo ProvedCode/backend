@@ -1,5 +1,6 @@
 package com.provedcode.talent.model.entity;
 
+import com.provedcode.cudos.model.Cudos;
 import com.provedcode.talent.model.ProofStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -24,8 +25,9 @@ public class TalentProof {
     @Column(name = "id", nullable = false)
     private Long id;
     @NotNull
-    @Column(name = "talent_id", nullable = false)
-    private Long talentId;
+    @ManyToOne
+    @JoinColumn(name = "talent_id", updatable = false)
+    private Talent talent;
     @NotEmpty
     @URL
     @Column(name = "link", length = 100)
@@ -36,8 +38,6 @@ public class TalentProof {
     @Column(length = 20)
     private ProofStatus status;
     private LocalDateTime created;
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "talent_id", insertable = false, updatable = false)
-    private Talent talent;
+    @OneToOne(mappedBy = "proof", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Cudos cudos;
 }

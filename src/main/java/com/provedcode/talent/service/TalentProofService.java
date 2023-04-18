@@ -82,7 +82,7 @@ public class TalentProofService {
         UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName()).orElseThrow(
                 () -> new ResponseStatusException(NOT_FOUND, "user with this token not found"));
 
-        if (talentProof.getTalentId().equals(userInfo.getTalentId()) ||
+        if (talentProof.getTalent().getId().equals(userInfo.getTalent().getId()) ||
             talentProof.getStatus().equals(ProofStatus.PUBLISHED)) {
             return talentProof;
         } else {
@@ -157,7 +157,6 @@ public class TalentProofService {
 
         TalentProof talentProof = TalentProof.builder()
                                              .talent(talent.get())
-                                             .talentId(talentId)
                                              .link(addProof.link())
                                              .text(addProof.text())
                                              .status(ProofStatus.DRAFT)

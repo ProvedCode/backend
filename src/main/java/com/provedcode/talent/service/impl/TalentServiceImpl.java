@@ -89,7 +89,6 @@ public class TalentServiceImpl implements TalentService {
                     .setBio(editTalent.bio() != null ? editTalent.bio() : editableTalentDescription.getBio());
         } else {
             editableTalentDescription = TalentDescription.builder()
-                                                         .talentId(idEditableTalent)
                                                          .additionalInfo(editTalent.additionalInfo())
                                                          .bio(editTalent.bio())
                                                          .talent(editableTalent)
@@ -99,7 +98,6 @@ public class TalentServiceImpl implements TalentService {
         if (editTalent.talents() != null) {
             editableTalentTalents.clear();
             editableTalentTalents.addAll(editTalent.talents().stream().map(s -> TalentTalents.builder()
-                                                                                             .talentId(idEditableTalent)
                                                                                              .talent(editableTalent)
                                                                                              .talentName(s)
                                                                                              .build()).toList());
@@ -108,7 +106,6 @@ public class TalentServiceImpl implements TalentService {
         if (editTalent.links() != null) {
             editableTalentLinks.clear();
             editableTalentLinks.addAll(editTalent.links().stream().map(l -> TalentLink.builder()
-                                                                                      .talentId(idEditableTalent)
                                                                                       .talent(editableTalent)
                                                                                       .link(l)
                                                                                       .build()).toList());
@@ -117,8 +114,6 @@ public class TalentServiceImpl implements TalentService {
         if (editTalent.contacts() != null) {
             editableTalentContacts.clear();
             editableTalentContacts.addAll(editTalent.contacts().stream().map(s -> TalentContact.builder()
-                                                                                               .talentId(
-                                                                                                       idEditableTalent)
                                                                                                .talent(editableTalent)
                                                                                                .contact(s)
                                                                                                .build()).toList());
@@ -127,8 +122,6 @@ public class TalentServiceImpl implements TalentService {
         if (editTalent.attachedFiles() != null) {
             editableTalentAttachedFile.clear();
             editableTalentAttachedFile.addAll(editTalent.attachedFiles().stream().map(s -> TalentAttachedFile.builder()
-                                                                                                             .talentId(
-                                                                                                                     idEditableTalent)
                                                                                                              .talent(editableTalent)
                                                                                                              .attachedFile(
                                                                                                                      s)
