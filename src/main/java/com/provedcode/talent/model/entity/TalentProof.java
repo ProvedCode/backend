@@ -1,6 +1,6 @@
 package com.provedcode.talent.model.entity;
 
-import com.provedcode.cudos.model.Cudos;
+import com.provedcode.kudos.model.entity.Kudos;
 import com.provedcode.talent.model.ProofStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -39,5 +39,5 @@ public class TalentProof {
     private ProofStatus status;
     private LocalDateTime created;
     @OneToOne(mappedBy = "proof", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Cudos cudos;
+    private Kudos kudos;
 }

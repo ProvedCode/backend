@@ -94,8 +94,8 @@ create table user_info
 );
 
 
-drop table if exists cudos cascade;
-create table cudos
+drop table if exists kudos cascade;
+create table kudos
 (
     id bigserial not null,
     proof_id bigint,
@@ -121,7 +121,7 @@ alter table if exists user_authorities
     add constraint FKhrxn11h0wl1txiaukxjp01uji foreign key (user_id) references user_info;
 alter table if exists user_info
     add constraint FKng34qd4ikmdcwg4f8bcpghar9 foreign key (talent_id) references talent;
-alter table if exists cudos
+alter table if exists kudos
     add constraint FKkk086iax3mb3yn50g6q4u4gx9 foreign key (proof_id) references talent_proofs;
-alter table if exists cudos
+alter table if exists kudos
     add constraint FKsgluvtc41jxfpn3v6ymv8t39k foreign key (talent_id) references talent;

@@ -1,16 +1,18 @@
-package com.provedcode.cudos.model;
+package com.provedcode.kudos.model.entity;
 
 import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.model.entity.TalentProof;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "cudos")
-public class Cudos {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "kudos")
+public class Kudos {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
