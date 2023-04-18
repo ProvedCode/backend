@@ -19,14 +19,11 @@ public class TalentDescription {
     @Column(nullable = false)
     private Long id;
     @NotNull
-    @Column(name = "talent_id", nullable = false)
-    private Long talentId;
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "talent_id", updatable = false)
+    private Talent talent;
     @Column(name = "BIO")
     private String bio;
     @Column(name = "addition_info")
     private String additionalInfo;
-    @NotNull
-    @OneToOne(orphanRemoval = true)
-    @JoinColumn(name = "talent_id", insertable = false, updatable = false)
-    private Talent talent;
 }

@@ -35,7 +35,7 @@ public class ValidateTalentForCompliance {
         if (talentProof.isEmpty()) {
             throw new ResponseStatusException(NOT_FOUND, String.format("proof with id = %d not found", proofId));
         }
-        if (talentProof.get().getTalentId() != talentId) {
+        if (talentProof.get().getTalent().getId() != talentId) {
             throw new ResponseStatusException(FORBIDDEN, "you can`t delete/update another proof");
         }
     }

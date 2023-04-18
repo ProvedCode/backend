@@ -22,8 +22,9 @@ public class UserInfo {
     @Column(name = "id", nullable = false)
     private Long id;
     @NotNull
-    @Column(name = "talent_id")
-    private Long talentId;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "talent_id", updatable = false)
+    private Talent talent;
     @NotEmpty
     @NotNull
     @Column(name = "login", length = 100)
@@ -32,9 +33,6 @@ public class UserInfo {
     @NotNull
     @Column(name = "password")
     private String password;
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "talent_id", insertable = false, updatable = false)
-    private Talent talent;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_authorities",
             joinColumns = @JoinColumn(name = "user_id"),

@@ -1,4 +1,3 @@
-
 drop table if exists authority cascade ;
 create table authority
 (
@@ -94,6 +93,16 @@ create table user_info
     primary key (id)
 );
 
+
+drop table if exists kudos cascade;
+create table kudos
+(
+    id bigserial not null,
+    proof_id bigint,
+    talent_id bigint,
+    primary key (id)
+);
+
 alter table if exists talent_attached_file
     add constraint FKdtjomr27q99ufe065trf8jr7b foreign key (talent_id) references talent;
 alter table if exists talent_contact
@@ -112,3 +121,7 @@ alter table if exists user_authorities
     add constraint FKhrxn11h0wl1txiaukxjp01uji foreign key (user_id) references user_info;
 alter table if exists user_info
     add constraint FKng34qd4ikmdcwg4f8bcpghar9 foreign key (talent_id) references talent;
+alter table if exists kudos
+    add constraint FKkk086iax3mb3yn50g6q4u4gx9 foreign key (proof_id) references talent_proofs;
+alter table if exists kudos
+    add constraint FKsgluvtc41jxfpn3v6ymv8t39k foreign key (talent_id) references talent;

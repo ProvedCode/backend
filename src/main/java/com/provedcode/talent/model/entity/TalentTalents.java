@@ -17,12 +17,9 @@ public class TalentTalents {
     @Column(name = "id", nullable = false)
     private Long id;
     @NotNull
-    @Column(name = "talent_id", nullable = false)
-    private Long talentId;
+    @ManyToOne
+    @JoinColumn(name = "talent_id", updatable = false)
+    private Talent talent;
     @Column(name = "talent_name")
     private String talentName;
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "talent_id", insertable = false, updatable = false)
-    private Talent talent;
 }

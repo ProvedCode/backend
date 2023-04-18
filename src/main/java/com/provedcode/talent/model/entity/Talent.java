@@ -1,5 +1,6 @@
 package com.provedcode.talent.model.entity;
 
+import com.provedcode.kudos.model.entity.Kudos;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
@@ -46,4 +47,6 @@ public class Talent {
     private List<TalentAttachedFile> talentAttachedFiles = new ArrayList<>();
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TalentProof> talentProofs = new ArrayList<>();
+    @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Kudos> cudoses = new ArrayList<>();
 }

@@ -17,13 +17,10 @@ public class TalentAttachedFile {
     @Column(name = "id", nullable = false)
     private Long id;
     @NotNull
-    @Column(name = "talent_id", nullable = false)
-    private Long talentId;
+    @ManyToOne
+    @JoinColumn(name = "talent_id", updatable = false)
+    private Talent talent;
     @URL
     @Column(name = "attached_file", length = 100)
     private String attachedFile;
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "talent_id", insertable = false, updatable = false)
-    private Talent talent;
 }
