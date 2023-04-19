@@ -15,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -64,9 +66,12 @@ public class KudosService {
         if (!kudosRepository.existsByTalent(talent)) {
             throw new ResponseStatusException(CONFLICT, "kudos don`t exist");
         }
-        Kudos kudos = talentProof.getKudos();
-        kudos.setProof(null);
-        talentProof.setKudos(null);
-        talentProofRepository.save(talentProof);
+
+        List<Kudos> talentKudos = talent.getCudoses();
+        Kudos removableKudos = talentKudos.stream().filter(i -> i.getProof().equals(talentProof)).findFirst().orElseThrow();
+        talentKudos.remove(removableKudos);
+        talent.setCudoses(talentKudos);
+
+        talentRepository.save(talent);
     }
 }
