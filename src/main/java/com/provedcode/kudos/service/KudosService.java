@@ -3,6 +3,7 @@ package com.provedcode.kudos.service;
 import com.provedcode.kudos.model.entity.Kudos;
 import com.provedcode.kudos.model.response.KudosAmount;
 import com.provedcode.kudos.repository.KudosRepository;
+import com.provedcode.talent.model.ProofStatus;
 import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.model.entity.TalentProof;
 import com.provedcode.talent.repo.TalentProofRepository;
@@ -17,8 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @Service
 @AllArgsConstructor
@@ -29,6 +29,13 @@ public class KudosService {
     UserInfoRepository userInfoRepository;
 
     public KudosAmount getAmountKudosProof(long id) {
+        TalentProof talentProof = talentProofRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "proof with id = %s not found".formatted(id)));
+
+        if (!talentProof.getStatus().equals(ProofStatus.PUBLISHED)) {
+            throw new ResponseStatusException(FORBIDDEN);
+        }
+
         long count = kudosRepository.countByProof_Id(id);
         return new KudosAmount(count);
     }
@@ -43,10 +50,13 @@ public class KudosService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Proof with id = %s not found".formatted(id)));
 
         if (talent.getId().equals(talentProof.getTalent().getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Talent can’t give “kudos“ to himself");
+            throw new ResponseStatusException(FORBIDDEN, "Talent can’t give `kudos` to himself");
         }
         if (kudosRepository.existsByTalent(talent)) {
-            throw new ResponseStatusException(CONFLICT, "Talent can give only one “kudos“ for one proof");
+            throw new ResponseStatusException(CONFLICT, "Talent can give only one `kudos` for one proof");
+        }
+        if (!talentProof.getStatus().equals(ProofStatus.PUBLISHED)) {
+            throw new ResponseStatusException(FORBIDDEN);
         }
 
         kudosRepository.save(Kudos.builder()

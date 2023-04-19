@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 public class KudosController {
     KudosService kudosService;
 
-    @PreAuthorize("hasRole('TALENT')")
     @GetMapping("/proofs/{proof-id}/kudos")
     KudosAmount getKudosProof(@PathVariable("proof-id") long id) {
         return kudosService.getAmountKudosProof(id);
