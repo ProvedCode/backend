@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -22,12 +23,14 @@ import static org.springframework.http.HttpStatus.*;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class KudosService {
     KudosRepository kudosRepository;
     TalentRepository talentRepository;
     TalentProofRepository talentProofRepository;
     UserInfoRepository userInfoRepository;
 
+    @Transactional(readOnly = true)
     public KudosAmount getAmountKudosProof(long id) {
         TalentProof talentProof = talentProofRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "proof with id = %s not found".formatted(id)));
