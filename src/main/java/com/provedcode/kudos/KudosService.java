@@ -44,7 +44,7 @@ public class KudosService {
         }
 
         if (kudosRepository.existsByTalent(talent)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "Talent can give only one “kudos“ for one proof");
         }
 
