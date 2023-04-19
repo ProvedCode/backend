@@ -67,10 +67,9 @@ public class KudosService {
             throw new ResponseStatusException(CONFLICT, "kudos don`t exist");
         }
 
-        List<Kudos> talentKudos = talent.getCudoses();
-        Kudos removableKudos = talentKudos.stream().filter(i -> i.getProof().equals(talentProof)).findFirst().orElseThrow();
-        talentKudos.remove(removableKudos);
-        talent.setCudoses(talentKudos);
+        Kudos kudos = talent.getCudoses().stream().filter(i -> i.getProof().getId().equals(id)).findFirst().orElseThrow();
+        talentProof.getKudos().remove(kudos);
+        talent.getCudoses().remove(kudos);
 
         talentRepository.save(talent);
     }
