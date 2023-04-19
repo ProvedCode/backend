@@ -5,6 +5,8 @@ import com.provedcode.talent.model.entity.TalentProof;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -20,7 +22,7 @@ public class Kudos {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "talent_id")
     private Talent talent;
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne
     @JoinColumn(name = "proof_id")
     private TalentProof proof;
 }

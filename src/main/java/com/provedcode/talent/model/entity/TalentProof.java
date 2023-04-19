@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Accessors(chain = true)
 @NoArgsConstructor
@@ -38,6 +39,6 @@ public class TalentProof {
     @Column(length = 20)
     private ProofStatus status;
     private LocalDateTime created;
-    @OneToOne(mappedBy = "proof", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Kudos kudos;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "proof", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Kudos> kudos;
 }
