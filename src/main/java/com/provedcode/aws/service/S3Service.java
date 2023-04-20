@@ -80,10 +80,12 @@ public class S3Service implements FileService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "user with login = {%s} not found".formatted(authentication.getName())));
 
         String fileName = file.getOriginalFilename();
+
         String userLogin = authentication.getName();
-        String fullPath = "%s/%s".formatted(userLogin, "image");
+        String fullPath = "%s/%s".formatted(userLogin, fileName);
         try {
             File f = convertMultiPartToFile(file);
+
             s3.putObject(awsProperties.bucket(), fullPath, f);
 
             log.info("image = {}", s3.getUrl(awsProperties.bucket(), fullPath).toString());

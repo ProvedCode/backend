@@ -11,7 +11,7 @@ create table talent
 (
     id             bigserial not null,
     first_name     varchar(20),
-    image          varchar(100),
+    image          varchar(300),
     last_name      varchar(20),
     specialization varchar(30),
     primary key (id)

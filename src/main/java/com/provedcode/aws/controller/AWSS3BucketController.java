@@ -21,4 +21,10 @@ public class AWSS3BucketController {
                               Authentication authentication) {
         fileService.setNewUserImage(file, authentication);
     }
+
+    @PreAuthorize("hasRole('TALENT')")
+    @GetMapping("/files")
+    List<String> getAllFiles() {
+        return fileService.listAllFiles();
+    }
 }
