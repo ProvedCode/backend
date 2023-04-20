@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,6 +32,7 @@ public class S3Service implements FileService {
     AmazonS3 s3;
     UserInfoRepository userInfoRepository;
     TalentRepository talentRepository;
+
     @Override
     public String saveFile(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
@@ -41,7 +41,7 @@ public class S3Service implements FileService {
             PutObjectResult objectResult = s3.putObject(awsProperties.bucket(), originalFilename, file1);
             return objectResult.getContentMd5();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ResponseStatusException(NOT_IMPLEMENTED);
         }
     }
 
@@ -52,7 +52,7 @@ public class S3Service implements FileService {
         try {
             return IOUtils.toByteArray(objectContent);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ResponseStatusException(NOT_IMPLEMENTED);
         }
     }
 
@@ -81,7 +81,7 @@ public class S3Service implements FileService {
 
         String fileName = file.getOriginalFilename();
         String userLogin = authentication.getName();
-        String fullPath = "%s/%s".formatted(userLogin, fileName);
+        String fullPath = "%s/%s".formatted(userLogin, "image");
         try {
             File f = convertMultiPartToFile(file);
             s3.putObject(awsProperties.bucket(), fullPath, f);
@@ -89,14 +89,13 @@ public class S3Service implements FileService {
             log.info("image = {}", s3.getUrl(awsProperties.bucket(), fullPath).toString());
             user.getTalent().setImage(s3.getUrl(awsProperties.bucket(), fullPath).toString());
             talentRepository.save(user.getTalent());
-        } catch (RuntimeException e) {
-            throw new RuntimeException();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (RuntimeException | IOException e) {
+            throw new ResponseStatusException(NOT_IMPLEMENTED);
         }
     }
 
-    private File convertMultiPartToFile(MultipartFile file) throws IOException {
+    private File convertMultiPartToFile(MultipartFile file)
+            throws IOException {
         File convFile = new File(file.getOriginalFilename());
         FileOutputStream fos = new FileOutputStream(convFile);
         fos.write(file.getBytes());

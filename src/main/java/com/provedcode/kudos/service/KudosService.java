@@ -76,6 +76,9 @@ public class KudosService {
         TalentProof talentProof = talentProofRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Proof with id = %s not found".formatted(id)));
 
+        if (!talentProof.getStatus().equals(ProofStatus.PUBLISHED)) {
+            throw new ResponseStatusException(FORBIDDEN);
+        }
         if (!kudosRepository.existsByTalent(talent)) {
             throw new ResponseStatusException(CONFLICT, "kudos don`t exist");
         }
