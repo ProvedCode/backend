@@ -18,7 +18,7 @@ public class InitConfig implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // TODO: Method to change passwords for already created users from data.sql
+        // TODO: Method to change passwords for already created users from data1.sql
         userInfoRepository.saveAll(
                 userInfoRepository.findAll().stream()
                                   .map(i -> {
