@@ -42,4 +42,10 @@ public class SponsorController {
         return sponsorMapper.toDto(sponsorService.editSponsorById(id, sponsorEditDTO, authentication));
     }
 
+    @PreAuthorize("hasRole('SPONSOR')")
+    @DeleteMapping("/sponsors/{id}")
+    void deleteSponsor(@PathVariable("id") long id, Authentication authentication) {
+        sponsorService.deleteSponsor(id, authentication);
+    }
+
 }

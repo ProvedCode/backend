@@ -62,9 +62,8 @@ public class SponsorService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "sponsor with id = %s not found".formatted(id)));
         UserInfo user = userInfoRepository.findByLogin(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED, "login is not valid"));
-
         if (!sponsor.getId().equals(user.getSponsor().getId())) {
-            throw new ResponseStatusException(FORBIDDEN, "The user cannot view someone else's profile");
+            throw new ResponseStatusException(FORBIDDEN, "The user cannot edit someone else's profile");
         }
 
         if (sponsorEditDTO.firstName() != null) {
@@ -90,5 +89,16 @@ public class SponsorService {
             }
         }
         return sponsorRepository.save(sponsor);
+    }
+
+    public void deleteSponsor(long id, Authentication authentication) {
+        Sponsor sponsor = sponsorRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "sponsor with id = %s not found".formatted(id)));
+        UserInfo user = userInfoRepository.findByLogin(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(NOT_IMPLEMENTED, "login is not valid"));
+        if (!sponsor.getId().equals(user.getSponsor().getId())) {
+            throw new ResponseStatusException(FORBIDDEN, "The user cannot edit someone else's profile");
+        }
+        userInfoRepository.delete(user);
     }
 }
