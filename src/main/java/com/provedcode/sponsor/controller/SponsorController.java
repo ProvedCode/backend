@@ -32,4 +32,12 @@ public class SponsorController {
     SponsorDTO getSponsor(@PathVariable("id") long id, Authentication authentication) {
         return sponsorMapper.toDto(sponsorService.getSponsorById(id, authentication));
     }
+
+    @PreAuthorize("hasRole('SPONSOR')")
+    @PatchMapping("/sponsors/{id}")
+    SponsorDTO editSponsor(@PathVariable("id") long id,
+                           @RequestBody SponsorDTO sponsorDTO,
+                           Authentication authentication) {
+        return sponsorMapper.toDto(sponsorService.editSponsorById(id, sponsorDTO, authentication));
+    }
 }
