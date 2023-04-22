@@ -30,6 +30,6 @@ public class Sponsor {
     @URL
     @Column(name = "image", length = 300)
     private String image;
-    @OneToMany(mappedBy = "sponsor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "sponsor")
     private List<Kudos> kudoses = new ArrayList<>();
 }

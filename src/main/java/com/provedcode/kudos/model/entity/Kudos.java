@@ -17,7 +17,7 @@ public class Kudos {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "sponsor_id")
     private Sponsor sponsor;
     @ManyToOne(cascade = CascadeType.ALL)

@@ -99,6 +99,9 @@ public class SponsorService {
         if (!sponsor.getId().equals(user.getSponsor().getId())) {
             throw new ResponseStatusException(FORBIDDEN, "The user cannot edit someone else's profile");
         }
+
+        List<Kudos> kudosList = sponsor.getKudoses().stream().map(i -> {i.setSponsor(null); return i;}).toList();
+        sponsor.setKudoses(kudosList);
         userInfoRepository.delete(user);
     }
 }
