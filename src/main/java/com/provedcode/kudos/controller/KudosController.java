@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/v3/talent")
+@RequestMapping("/api/v3/")
 public class KudosController {
     KudosService kudosService;
 

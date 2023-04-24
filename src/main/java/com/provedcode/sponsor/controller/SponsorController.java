@@ -46,5 +46,4 @@ public class SponsorController {
     void deleteSponsor(@PathVariable("id") long id, Authentication authentication) {
         sponsorService.deleteSponsor(id, authentication);
     }
-
 }

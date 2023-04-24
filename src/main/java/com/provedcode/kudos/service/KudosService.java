@@ -70,7 +70,7 @@ public class KudosService {
                 () -> new ResponseStatusException(NOT_FOUND,
                         String.format("sponsor with id = %d not found", id)));
         if (sponsor.getId() != userInfo.getSponsor().getId()) {
-            throw new ResponseStatusException(FORBIDDEN);
+            throw new ResponseStatusException(FORBIDDEN, "Only the account owner can view the number of kudos");
         }
         return new KudosAmount(sponsor.getAmountKudos());
     }
