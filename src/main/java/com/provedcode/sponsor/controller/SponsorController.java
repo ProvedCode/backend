@@ -4,7 +4,6 @@ import com.provedcode.sponsor.mapper.SponsorMapper;
 import com.provedcode.sponsor.model.dto.SponsorDTO;
 import com.provedcode.sponsor.model.dto.SponsorEditDTO;
 import com.provedcode.sponsor.service.SponsorService;
-import com.provedcode.talent.model.dto.FullTalentDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

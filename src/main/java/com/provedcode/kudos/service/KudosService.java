@@ -2,8 +2,12 @@ package com.provedcode.kudos.service;
 
 import com.provedcode.kudos.model.entity.Kudos;
 import com.provedcode.kudos.model.response.KudosAmount;
+import com.provedcode.kudos.model.response.KudosAmountWithSponsor;
 import com.provedcode.kudos.repository.KudosRepository;
-import com.provedcode.talent.model.ProofStatus;
+import com.provedcode.sponsor.mapper.SponsorMapper;
+import com.provedcode.sponsor.model.dto.SponsorDTO;
+import com.provedcode.sponsor.model.entity.Sponsor;
+import com.provedcode.sponsor.repository.SponsorRepository;
 import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.model.entity.TalentProof;
 import com.provedcode.talent.repo.TalentProofRepository;
@@ -11,13 +15,14 @@ import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.UserInfoRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -25,68 +30,79 @@ import static org.springframework.http.HttpStatus.*;
 @AllArgsConstructor
 @Transactional
 public class KudosService {
-//    KudosRepository kudosRepository;
-//    TalentRepository talentRepository;
-//    TalentProofRepository talentProofRepository;
-//    UserInfoRepository userInfoRepository;
-//
-//    @Transactional(readOnly = true)
-//    public KudosAmount getAmountKudosProof(long id) {
-//        TalentProof talentProof = talentProofRepository.findById(id)
-//                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "proof with id = %s not found".formatted(id)));
-//
-//        if (!talentProof.getStatus().equals(ProofStatus.PUBLISHED)) {
-//            throw new ResponseStatusException(FORBIDDEN);
-//        }
-//
-//        long count = kudosRepository.countByProof_Id(id);
-//        return new KudosAmount(count);
-//    }
-//
-//    public void addKudosToProof(long id, Authentication authentication) {
-//        UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
-//                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Talent with id = %s not found".formatted(id)));
-//
-//        Talent talent = userInfo.getTalent();
-//
-//        TalentProof talentProof = talentProofRepository.findById(id)
-//                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Proof with id = %s not found".formatted(id)));
-//
-//        if (talent.getId().equals(talentProof.getTalent().getId())) {
-//            throw new ResponseStatusException(FORBIDDEN, "Talent can’t give `kudos` to himself");
-//        }
-//        if (kudosRepository.existsByTalent(talent)) {
-//            throw new ResponseStatusException(CONFLICT, "Talent can give only one `kudos` for one proof");
-//        }
-//        if (!talentProof.getStatus().equals(ProofStatus.PUBLISHED)) {
-//            throw new ResponseStatusException(FORBIDDEN);
-//        }
-//
-//        kudosRepository.save(Kudos.builder()
-//                .proof(talentProof)
-//                .talent(talent)
-//                .build());
-//    }
-//
-//    public void deleteKudosFromProof(long id, Authentication authentication) {
-//        UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
-//                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Talent with id = %s not found".formatted(id)));
-//        Talent talent = userInfo.getTalent();
-//
-//        TalentProof talentProof = talentProofRepository.findById(id)
-//                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Proof with id = %s not found".formatted(id)));
-//
-//        if (!talentProof.getStatus().equals(ProofStatus.PUBLISHED)) {
-//            throw new ResponseStatusException(FORBIDDEN);
-//        }
-//        if (!kudosRepository.existsByTalent(talent)) {
-//            throw new ResponseStatusException(CONFLICT, "kudos don`t exist");
-//        }
-//
-//        Kudos kudos = talent.getCudoses().stream().filter(i -> i.getProof().getId().equals(id)).findFirst().orElseThrow();
-//        talentProof.getKudos().remove(kudos);
-//        talent.getCudoses().remove(kudos);
-//
-//        talentRepository.save(talent);
-//    }
+    KudosRepository kudosRepository;
+    TalentProofRepository talentProofRepository;
+    UserInfoRepository userInfoRepository;
+    SponsorRepository sponsorRepository;
+    TalentRepository talentRepository;
+    SponsorMapper sponsorMapper;
+
+
+    public void addKudosToProof(long id, Long amount, Authentication authentication) {
+        UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "Sponsor with id = %s not found".formatted(id)));
+        Sponsor sponsor = sponsorRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(NOT_FOUND,
+                        String.format("sponsor with id = %d not found", id)));
+        TalentProof talentProof = talentProofRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Proof with id = %s not found".formatted(id)));
+        if (sponsor.getAmountKudos() < amount) {
+            throw new ResponseStatusException(FORBIDDEN, "The sponsor cannot give more kudos than he has");
+        }
+        sponsor.setAmountKudos(sponsor.getAmountKudos() - amount);
+        kudosRepository.save(Kudos.builder()
+                .amountKudos(amount)
+                .proof(talentProof)
+                .sponsor(sponsor)
+                .build());
+    }
+
+    @Transactional(readOnly = true)
+    public KudosAmount getKudosForSponsor(long id, Authentication authentication) {
+        UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "Sponsor with id = %s not found".formatted(id)));
+        Sponsor sponsor = sponsorRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(NOT_FOUND,
+                        String.format("sponsor with id = %d not found", id)));
+        if (sponsor.getId() != userInfo.getSponsor().getId()) {
+            throw new ResponseStatusException(FORBIDDEN);
+        }
+        return new KudosAmount(sponsor.getAmountKudos());
+    }
+
+    @Transactional(readOnly = true)
+    public KudosAmountWithSponsor getProofKudos(long id, Authentication authentication) {
+        UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "Sponsor with id = %s not found".formatted(id)));
+        Talent talent = talentRepository.findById(userInfo.getId())
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "Talent with id = %s not found".formatted(id)));
+        TalentProof talentProof = talentProofRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "Proof with id = %s not found".formatted(id)));
+
+        if (talent.getId() == talentProof.getTalent().getId()) {
+            Map<SponsorDTO, Long> kudosFromSponsor = talentProof.getKudos().stream()
+                    .collect(Collectors.toMap(
+                            sponsor -> sponsorMapper.toDto(sponsor.getSponsor()),
+                            Kudos::getAmountKudos,
+                            (sponsor, kudos) -> sponsor,
+                            HashMap::new
+                    ));
+            Long counter = talentProof.getKudos().stream().map(i -> i.getAmountKudos())
+                    .mapToLong(Long::intValue).sum();
+            return KudosAmountWithSponsor.builder()
+                    .allKudosOnProof(counter)
+                    .kudosFromSponsor(kudosFromSponsor).build();
+        } else {
+            Long counter = talentProof.getKudos().stream().map(i -> i.getAmountKudos())
+                    .mapToLong(Long::intValue).sum();
+            return KudosAmountWithSponsor.builder()
+                    .allKudosOnProof(counter)
+                    .kudosFromSponsor(null).build();
+        }
+    }
 }

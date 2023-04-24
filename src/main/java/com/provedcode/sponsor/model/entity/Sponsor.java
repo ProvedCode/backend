@@ -21,6 +21,8 @@ public class Sponsor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+    @Column(name = "amount_kudos")
+    private Long amountKudos;
     @NotEmpty
     @Column(name = "first_name", length = 20)
     private String firstName;

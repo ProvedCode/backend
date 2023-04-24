@@ -549,38 +549,47 @@ insert into user_authorities (user_id, authority_id)
 values ((select id from user_info order by id desc limit 1),
        (select authority.id from authority where id = 1));
 
-insert into sponsor (first_name, last_name, image)
-values ('Maksym', 'Khudoliy', 'https://i.pinimg.com/564x/e1/08/49/e10849923a8b2e85a7adf494ebd063e6.jpg');
+insert into sponsor (amount_kudos, first_name, last_name, image)
+values (888, 'Maksym', 'Khudoliy', 'https://i.pinimg.com/564x/e1/08/49/e10849923a8b2e85a7adf494ebd063e6.jpg');
 
 insert into user_info (sponsor_id, login, password)
 values ((select id from sponsor order by id desc limit 1), 'MaksymKhudoliy@gmail.com', 'password');
 insert into user_authorities (user_id, authority_id)
 values ((select id from user_info order by id desc limit 1),
-       (select authority.id from authority where id = 2));
+       (select authority.id from authority where id = 2) );
 
-insert into sponsor (first_name, last_name, image)
-values ('Oleksandr', 'Butrym', 'https://i.pinimg.com/564x/c2/41/31/c24131fe00218467721ba5bacdf0a256.jpg');
+insert into sponsor (amount_kudos, first_name, last_name, image)
+values (888, 'Oleksandr', 'Butrym', 'https://i.pinimg.com/564x/c2/41/31/c24131fe00218467721ba5bacdf0a256.jpg');
 
 insert into user_info (sponsor_id, login, password)
 values ((select id from sponsor order by id desc limit 1), 'OleksandrButrym@gmail.com', 'password');
 insert into user_authorities (user_id, authority_id)
 values ((select id from user_info order by id desc limit 1),
-       (select authority.id from authority where id = 2));
+       (select authority.id from authority where id = 2) );
 
-insert into sponsor (first_name, last_name, image)
-values ('Olha', 'Shutylieva', 'https://i.pinimg.com/564x/2a/0c/08/2a0c08c421e253ca895c3fdc8c9e08d9.jpg');
+insert into sponsor (amount_kudos, first_name, last_name, image)
+values (888, 'Olha', 'Shutylieva', 'https://i.pinimg.com/564x/2a/0c/08/2a0c08c421e253ca895c3fdc8c9e08d9.jpg');
 
 insert into user_info (sponsor_id, login, password)
 values ((select id from sponsor order by id desc limit 1), 'OlhaShutylieva@gmail.com', 'password');
 insert into user_authorities (user_id, authority_id)
 values ((select id from user_info order by id desc limit 1),
-       (select authority.id from authority where id = 2));
+       (select authority.id from authority where id = 2) );
 
-insert into sponsor (first_name, last_name, image)
-values ('Vladyslav', 'Khrychov', 'https://i.pinimg.com/564x/e1/11/2f/e1112f0b7b63644dc3e313084936dedb.jpg');
+insert into sponsor (amount_kudos, first_name, last_name, image)
+values (888, 'Vladyslav', 'Khrychov', 'https://i.pinimg.com/564x/e1/11/2f/e1112f0b7b63644dc3e313084936dedb.jpg');
 
 insert into user_info (sponsor_id, login, password)
 values ((select id from sponsor order by id desc limit 1), 'VladyslavKhrychov@gmail.com', 'password');
 insert into user_authorities (user_id, authority_id)
 values ((select id from user_info order by id desc limit 1),
-       (select authority.id from authority where id = 2));
+       (select authority.id from authority where id = 2) );
+
+insert into kudos (amount_kudos, sponsor_id, proof_id)
+values (100, 1, 1);
+insert into kudos (amount_kudos, sponsor_id, proof_id)
+values (200, 2, 1);
+insert into kudos (amount_kudos, sponsor_id, proof_id)
+values (200, 3, 1);
+insert into kudos (amount_kudos, sponsor_id, proof_id)
+values (300, 4, 1);

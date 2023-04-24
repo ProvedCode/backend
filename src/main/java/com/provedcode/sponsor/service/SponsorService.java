@@ -2,8 +2,6 @@ package com.provedcode.sponsor.service;
 
 import com.provedcode.config.PageProperties;
 import com.provedcode.kudos.model.entity.Kudos;
-import com.provedcode.kudos.repository.KudosRepository;
-import com.provedcode.sponsor.model.dto.SponsorDTO;
 import com.provedcode.sponsor.model.dto.SponsorEditDTO;
 import com.provedcode.sponsor.model.entity.Sponsor;
 import com.provedcode.sponsor.repository.SponsorRepository;
@@ -19,8 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -31,7 +27,6 @@ public class SponsorService {
     PageProperties pageProperties;
     SponsorRepository sponsorRepository;
     UserInfoRepository userInfoRepository;
-    private final KudosRepository kudosRepository;
 
     @Transactional(readOnly = true)
     public Page<Sponsor> getAllSponsors(Optional<Integer> page, Optional<Integer> size) {
@@ -77,13 +72,7 @@ public class SponsorService {
         }
         if (sponsorEditDTO.countOfKudos() != null) {
             if (sponsorEditDTO.countOfKudos() > 0) {
-                List<Kudos> kudosList = IntStream.iterate(0, i -> i < sponsorEditDTO.countOfKudos(), i -> i + 1).boxed()
-                        .map(i -> Kudos.builder()
-                                .sponsor(sponsor)
-                                .build())
-                        .toList();
-                kudosRepository.saveAll(kudosList);
-                sponsor.getKudoses().addAll(kudosList);
+                sponsor.setAmountKudos(sponsor.getAmountKudos() + sponsorEditDTO.countOfKudos());
             } else {
                 throw new ResponseStatusException(BAD_REQUEST, "count of kudos must be greater than 0");
             }
