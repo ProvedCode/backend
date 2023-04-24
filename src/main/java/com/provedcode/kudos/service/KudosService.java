@@ -68,7 +68,7 @@ public class KudosService {
                         "Sponsor with id = %s not found".formatted(id)));
         Sponsor sponsor = sponsorRepository.findById(userInfo.getSponsor().getId()).orElseThrow(
                 () -> new ResponseStatusException(NOT_FOUND,
-                        String.format("sponsor with id = %d not found", id)));
+                        String.format("Sponsor with id = %d not found", id)));
         if (sponsor.getId() != userInfo.getSponsor().getId()) {
             throw new ResponseStatusException(FORBIDDEN, "Only the account owner can view the number of kudos");
         }

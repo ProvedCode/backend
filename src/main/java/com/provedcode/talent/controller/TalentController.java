@@ -33,7 +33,7 @@ public class TalentController {
     TalentService talentService;
     TalentMapper talentMapper;
 
-    @Operation(summary = "Get all talents",
+    @Operation(summary = "Get all talents (ShortTalentDTO)",
             description = "As a guest I want to see a page with a list of all “talents” cards displayed with a short description about them")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -114,8 +114,7 @@ public class TalentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "SUCCESS",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = FullTalentDTO.class))),
+                    content = @Content),
             @ApiResponse(responseCode = "404",
                     description = "NOT FOUND ",
                     content = @Content),

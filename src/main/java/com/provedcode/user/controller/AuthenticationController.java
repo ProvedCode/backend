@@ -67,6 +67,20 @@ public class AuthenticationController {
         return authenticationService.register(user);
     }
 
+    @Operation(summary = "Sponsor Registration")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201",
+                    description = "CREATED",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = UserInfoDTO.class))),
+            @ApiResponse(responseCode = "409",
+                    description = "CONFLICT (user with login already exists)",
+                    content = @Content),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "BAD_REQUEST",
+                    content = @Content),
+    })
     @PostMapping("/v3/sponsors/register")
     @ResponseStatus(HttpStatus.CREATED)
     UserInfoDTO register(@RequestBody @Valid SponsorRegistrationDTO user) {
