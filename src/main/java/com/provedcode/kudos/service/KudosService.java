@@ -42,13 +42,16 @@ public class KudosService {
         UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "Sponsor with id = %s not found".formatted(id)));
-        Sponsor sponsor = sponsorRepository.findById(id).orElseThrow(
+        Sponsor sponsor = sponsorRepository.findById(userInfo.getSponsor().getId()).orElseThrow(
                 () -> new ResponseStatusException(NOT_FOUND,
                         String.format("sponsor with id = %d not found", id)));
         TalentProof talentProof = talentProofRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Proof with id = %s not found".formatted(id)));
         if (sponsor.getAmountKudos() < amount) {
             throw new ResponseStatusException(FORBIDDEN, "The sponsor cannot give more kudos than he has");
+        }
+        if (amount <= 0) {
+            throw new ResponseStatusException(BAD_REQUEST, "amount of kudos must be greater than 0");
         }
         sponsor.setAmountKudos(sponsor.getAmountKudos() - amount);
         kudosRepository.save(Kudos.builder()
@@ -63,7 +66,7 @@ public class KudosService {
         UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "Sponsor with id = %s not found".formatted(id)));
-        Sponsor sponsor = sponsorRepository.findById(id).orElseThrow(
+        Sponsor sponsor = sponsorRepository.findById(userInfo.getSponsor().getId()).orElseThrow(
                 () -> new ResponseStatusException(NOT_FOUND,
                         String.format("sponsor with id = %d not found", id)));
         if (sponsor.getId() != userInfo.getSponsor().getId()) {
@@ -96,7 +99,8 @@ public class KudosService {
                     .mapToLong(Long::intValue).sum();
             return KudosAmountWithSponsor.builder()
                     .allKudosOnProof(counter)
-                    .kudosFromSponsor(kudosFromSponsor).build();
+                    .kudosFromSponsor(kudosFromSponsor)
+                    .build();
         } else {
             Long counter = talentProof.getKudos().stream().map(i -> i.getAmountKudos())
                     .mapToLong(Long::intValue).sum();
