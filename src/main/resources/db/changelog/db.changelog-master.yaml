@@ -7,5 +7,5 @@ databaseChangeLog:
           file: db/changelog/changeset/V4/drop-V4.sql
     - include:
           file: db/changelog/changeset/V4/schema-V4.sql
-    # - include:
-    #       file: db/changelog/changeset/V2/data-V4.sql
+    - include:
+          file: db/changelog/changeset/V4/data-V4.sql
