@@ -3,6 +3,7 @@ package com.provedcode.aws.service;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URL;
 import java.util.List;
 
 public interface FileService {
@@ -16,4 +17,6 @@ public interface FileService {
     List<String> listAllFiles();
 
     void setNewUserImage(MultipartFile file, Authentication authentication);
+
+    URL generetePresingedUrlFor7Days(String fileFullPath);
 }

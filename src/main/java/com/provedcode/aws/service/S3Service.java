@@ -97,12 +97,7 @@ public class S3Service implements FileService {
 
             user.getTalent().setImageName(fullPath);
 
-            GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(awsProperties.bucket(), fullPath)
-                    .withMethod(HttpMethod.GET);
-
-            Instant expiration = Instant.now().plusMillis(1000L * 60 * 60 * 24 * 7); // expiration time
-            urlRequest.setExpiration(Date.from(expiration));
-            URL url = amazonS3.generatePresignedUrl(urlRequest); // generation url with expiration
+            URL url = generetePresingedUrlFor7Days(fullPath); // generation url with expiration
 
             log.info("image = {}", amazonS3.getUrl(awsProperties.bucket(), fullPath).toString());
             log.info("image-url = {}", url);
@@ -110,10 +105,19 @@ public class S3Service implements FileService {
             user.getTalent().setImage(url.toString());
 
             talentRepository.save(user.getTalent());
-        } catch (Exception e) {
+        } catch (AmazonS3Exception | IOException e) {
             throw new ResponseStatusException(SERVICE_UNAVAILABLE, "problems with connection to aws s3");
         }
 
+    }
+
+    public URL generetePresingedUrlFor7Days(String fileFullPath) {
+        GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(awsProperties.bucket(), fileFullPath)
+                .withMethod(HttpMethod.GET);
+
+        Instant expiration = Instant.now().plusMillis(1000L * 60 * 60 * 24 * 7); // expiration time
+        urlRequest.setExpiration(Date.from(expiration));
+        return amazonS3.generatePresignedUrl(urlRequest); // generation url with expiration
     }
 
     private String getFullPath(String fileType, String userLogin) {
