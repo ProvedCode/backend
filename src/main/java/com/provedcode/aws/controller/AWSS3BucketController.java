@@ -57,9 +57,9 @@ public class AWSS3BucketController {
         GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(awsProperties.bucket(), "MykhailoOrdyntsev@gmail.com/image.jpeg")
                 .withMethod(HttpMethod.GET);
         Instant expiration = Instant.now().plusMillis(1000L * 60 * 60 * 24 * 7);
-
         urlRequest.setExpiration(Date.from(expiration));
         URL url = amazonS3.generatePresignedUrl(urlRequest);
+
         return url;
     }
 
