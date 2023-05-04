@@ -1,6 +1,7 @@
 package com.provedcode.aws.service;
 
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
@@ -20,10 +21,11 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
+import java.net.URL;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
-import static org.apache.http.entity.ContentType.*;
 import static org.springframework.http.HttpStatus.*;
 
 @Service
@@ -32,7 +34,7 @@ import static org.springframework.http.HttpStatus.*;
 @Transactional
 public class S3Service implements FileService {
     AWSProperties awsProperties;
-    AmazonS3 s3;
+    AmazonS3 amazonS3;
     UserInfoRepository userInfoRepository;
     TalentRepository talentRepository;
     PhotoService photoService;
@@ -42,7 +44,7 @@ public class S3Service implements FileService {
         String originalFilename = file.getOriginalFilename();
         try {
             File file1 = convertMultiPartToFile(file);
-            PutObjectResult objectResult = s3.putObject(awsProperties.bucket(), originalFilename, file1);
+            PutObjectResult objectResult = amazonS3.putObject(awsProperties.bucket(), originalFilename, file1);
             return objectResult.getContentMd5();
         } catch (IOException e) {
             throw new ResponseStatusException(NOT_IMPLEMENTED);
@@ -51,7 +53,7 @@ public class S3Service implements FileService {
 
     @Override
     public byte[] downloadFile(String filename) {
-        S3Object object = s3.getObject(awsProperties.bucket(), filename);
+        S3Object object = amazonS3.getObject(awsProperties.bucket(), filename);
         S3ObjectInputStream objectContent = object.getObjectContent();
         try {
             return IOUtils.toByteArray(objectContent);
@@ -62,13 +64,13 @@ public class S3Service implements FileService {
 
     @Override
     public String deleteFile(String filename) {
-        s3.deleteObject(awsProperties.bucket(), filename);
+        amazonS3.deleteObject(awsProperties.bucket(), filename);
         return "file deleted";
     }
 
     @Override
     public List<String> listAllFiles() {
-        ListObjectsV2Result listObjectsV2Result = s3.listObjectsV2(awsProperties.bucket());
+        ListObjectsV2Result listObjectsV2Result = amazonS3.listObjectsV2(awsProperties.bucket());
         return listObjectsV2Result.getObjectSummaries().stream().map(S3ObjectSummary::getKey).toList();
     }
 
@@ -84,27 +86,46 @@ public class S3Service implements FileService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "user with login = {%s} not found".formatted(authentication.getName())));
 
         try {
-            String fileType = file.getContentType().split("/")[1];
-            String userLogin = authentication.getName();
+            String fileType = getFileType(file);
+            String fullPath = getFullPath(fileType, authentication.getName());
+            File degradePhoto = photoService.degradePhoto(convertMultiPartToFile(file));
 
-            String fullPath = "%s/%s".formatted(userLogin, "image.%s".formatted(fileType));
-            File f = photoService.degradePhoto(convertMultiPartToFile(file));
+            if (user.getTalent().getImageName() != null) // delete old user image
+                amazonS3.deleteObject(awsProperties.bucket(), user.getTalent().getImageName());
 
-            if (user.getTalent().getImageName() != null)
-                s3.deleteObject(awsProperties.bucket(), user.getTalent().getImageName());
+            amazonS3.putObject(awsProperties.bucket(), fullPath, degradePhoto);
 
-            s3.putObject(awsProperties.bucket(), fullPath, f);
-
-            log.info("image = {}", s3.getUrl(awsProperties.bucket(), fullPath).toString());
-
-            user.getTalent().setImage(s3.getUrl(awsProperties.bucket(), fullPath).toString());
             user.getTalent().setImageName(fullPath);
 
+            URL url = generetePresingedUrlFor7Days(fullPath); // generation url with expiration
+
+            log.info("image = {}", amazonS3.getUrl(awsProperties.bucket(), fullPath).toString());
+            log.info("image-url = {}", url);
+
+            user.getTalent().setImage(url.toString());
+
             talentRepository.save(user.getTalent());
-        } catch (Exception e) {
+        } catch (AmazonS3Exception | IOException e) {
             throw new ResponseStatusException(SERVICE_UNAVAILABLE, "problems with connection to aws s3");
         }
 
+    }
+
+    public URL generetePresingedUrlFor7Days(String fileFullPath) {
+        GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(awsProperties.bucket(), fileFullPath)
+                .withMethod(HttpMethod.GET);
+
+        Instant expiration = Instant.now().plusMillis(1000L * 60 * 60 * 24 * 7); // expiration time
+        urlRequest.setExpiration(Date.from(expiration));
+        return amazonS3.generatePresignedUrl(urlRequest); // generation url with expiration
+    }
+
+    private String getFullPath(String fileType, String userLogin) {
+        return "%s/%s".formatted(userLogin, "image.%s".formatted(fileType));
+    }
+
+    private String getFileType(MultipartFile file) {
+        return file.getContentType().split("/")[1];
     }
 
     private File convertMultiPartToFile(MultipartFile file)

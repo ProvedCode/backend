@@ -33,7 +33,7 @@ public class Talent {
     @Column(name = "specialization", length = 30)
     private String specialization;
     @URL
-    @Column(name = "image", length = 300)
+    @Column(name = "image", length = 1000)
     private String image;
     @Column(name = "image_name", length = 100)
     private String imageName;
