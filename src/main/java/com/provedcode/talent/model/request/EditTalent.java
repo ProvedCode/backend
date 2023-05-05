@@ -17,7 +17,7 @@ public record EditTalent(
         @JsonProperty("additional_info")
         String additionalInfo,
         String bio,
-        List<String> talents,
+//        List<String> talents,
         @UrlList
         List<String> links,
         List<String> contacts,

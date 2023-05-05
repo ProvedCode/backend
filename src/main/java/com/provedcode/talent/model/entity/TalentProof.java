@@ -10,7 +10,9 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Accessors(chain = true)
 @NoArgsConstructor
@@ -41,4 +43,9 @@ public class TalentProof {
     private LocalDateTime created;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "proof", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Kudos> kudos;
+    @ManyToMany
+    @JoinTable(name = "talent_skills",
+            joinColumns = @JoinColumn(name = "proof_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    private Set<Skills> skillses = new LinkedHashSet<>();
 }
