@@ -18,14 +18,14 @@ import static org.apache.http.entity.ContentType.*;
 @AllArgsConstructor
 public class PhotoService {
     public File degradePhoto(File photoFile) throws IOException {
-        // загружаем изображение из файла
+        // Load image from file
         BufferedImage originalImage = ImageIO.read(photoFile);
 
-        // устанавливаем новый размер для изображения
+        // New size for image
         int newWidth = 300;
         int newHeight = 300;
 
-        // создаем новое изображение с новым размером
+        // Creating new image with new size
         Image resizedImage = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
 
         // создаем новый файл для уменьшенного изображения
