@@ -1,5 +1,6 @@
 package com.provedcode.talent.service;
 
+import com.provedcode.talent.model.ProofStatus;
 import com.provedcode.talent.model.dto.ProofSkillsDTO;
 import com.provedcode.talent.model.entity.Skills;
 import com.provedcode.talent.model.entity.TalentProof;
@@ -37,19 +38,22 @@ public class TalentSkillsService {
     private final TalentProofRepository talentProofRepository;
 
     public void addSkillsOnProof(long talentId, long proofId, ProofSkillsDTO skills, Authentication authentication) {
-        if (talentRepository.existsById(talentId)) {
+        if (!talentRepository.existsById(talentId)) {
             throw new ResponseStatusException(NOT_FOUND, "talent with id = %s not found".formatted(talentId));
         }
         UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
         TalentProof talentProof = talentProofRepository.findById(proofId)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "proof with id = %s not found".formatted(proofId)));
+        if (!talentProof.getStatus().equals(ProofStatus.DRAFT)) {
+            throw new ResponseStatusException(CONFLICT, "proof status must be DRAFT");
+        }
 
         isValidUserEditTalent.accept(talentId, userInfo);
 
         Set<Skills> skillsSet = new HashSet<>(skillsRepository.findAllById(skills.skills()));
 
-        talentProof.getSkillses().addAll(skillsSet);
+        talentProof.getSkills().addAll(skillsSet);
         talentProofRepository.save(talentProof);
     }
 

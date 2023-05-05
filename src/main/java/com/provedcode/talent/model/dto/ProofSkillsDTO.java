@@ -1,13 +1,13 @@
 package com.provedcode.talent.model.dto;
 
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 
 import java.util.List;
 
 @Builder
 public record ProofSkillsDTO(
-        @Positive
+        @NotEmpty
         List<Long> skills
 ) {
 }
