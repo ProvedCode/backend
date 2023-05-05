@@ -16,11 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @Transactional
 @Service
@@ -29,13 +29,13 @@ public class TalentSkillsService {
     SkillsRepository skillsRepository;
     TalentRepository talentRepository;
     UserInfoRepository userInfoRepository;
+    TalentProofRepository talentProofRepository;
 
     static BiConsumer<Long, UserInfo> isValidUserEditTalent = (talentId, userInfo) -> {
         if (!userInfo.getTalent().getId().equals(talentId)) {
             throw new ResponseStatusException(CONFLICT, "you can`t change another talent");
         }
     };
-    private final TalentProofRepository talentProofRepository;
 
     public void addSkillsOnProof(long talentId, long proofId, ProofSkillsDTO skills, Authentication authentication) {
         if (!talentRepository.existsById(talentId)) {
@@ -50,6 +50,9 @@ public class TalentSkillsService {
         }
 
         isValidUserEditTalent.accept(talentId, userInfo);
+        if (skills.skills().stream().anyMatch(i -> !skillsRepository.existsById(i))) {
+            throw new ResponseStatusException(BAD_REQUEST, "no such skill with id");
+        }
 
         Set<Skills> skillsSet = new HashSet<>(skillsRepository.findAllById(skills.skills()));
 
