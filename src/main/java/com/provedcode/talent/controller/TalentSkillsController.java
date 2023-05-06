@@ -1,6 +1,7 @@
 package com.provedcode.talent.controller;
 
 import com.provedcode.talent.model.dto.ProofSkillsDTO;
+import com.provedcode.talent.model.dto.SkillsOnProofDTO;
 import com.provedcode.talent.service.TalentSkillsService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,5 +25,12 @@ public class TalentSkillsController {
                          @RequestBody @Valid ProofSkillsDTO skills,
                          Authentication authentication) {
         talentSkillsService.addSkillsOnProof(talentId, proofId, skills, authentication);
+    }
+
+    @GetMapping("/{talent-id}/proofs/{proof-id}")
+    SkillsOnProofDTO getAllSkillsOnProof(@PathVariable("talent-id") long talentId,
+                                         @PathVariable("proof-id") long proofId,
+                                         Authentication authentication) {
+        return talentSkillsService.getAllSkillsOnProof(talentId, proofId, authentication);
     }
 }
