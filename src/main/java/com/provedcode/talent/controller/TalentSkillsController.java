@@ -27,7 +27,7 @@ public class TalentSkillsController {
         talentSkillsService.addSkillsOnProof(talentId, proofId, skills, authentication);
     }
 
-    @GetMapping("/{talent-id}/proofs/{proof-id}")
+    @GetMapping("/{talent-id}/proofs/{proof-id}/skills")
     SkillsOnProofDTO getAllSkillsOnProof(@PathVariable("talent-id") long talentId,
                                          @PathVariable("proof-id") long proofId,
                                          Authentication authentication) {
