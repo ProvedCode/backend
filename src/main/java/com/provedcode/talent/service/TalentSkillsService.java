@@ -63,6 +63,7 @@ public class TalentSkillsService {
         talentProofRepository.save(talentProof);
     }
 
+    @Transactional(readOnly = true)
     public SkillsOnProofDTO getAllSkillsOnProof(long talentId, long proofId, Authentication authentication) {
         TalentProof talentProof = talentProofRepository.findById(proofId)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
@@ -86,5 +87,27 @@ public class TalentSkillsService {
             throw new ResponseStatusException(FORBIDDEN, "you can't see proofs in DRAFT and HIDDEN status");
         }
         return new SkillsOnProofDTO(Collections.emptySet());
+    }
+
+    public void deleteSkillOnProof(long talentId, long proofId, long skillId, Authentication authentication) {
+        Talent talent = talentRepository.findById(talentId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "talent with id = %s not found".formatted(talentId)));
+        UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
+        TalentProof talentProof = talentProofRepository.findById(proofId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "proof with id = %s not found".formatted(proofId)));
+        if (!talentProof.getStatus().equals(ProofStatus.DRAFT)) {
+            throw new ResponseStatusException(CONFLICT, "proof status must be DRAFT");
+        }
+        if (!talent.getId().equals(talentProof.getTalent().getId())) {
+            throw new ResponseStatusException(BAD_REQUEST,
+                    "talentId with id = %s and proofId with id = %s do not match".formatted(talentId, proofId));
+        }
+        isValidUserEditTalent.accept(talentId, userInfo);
+        Skills skills = skillsRepository.findById(skillId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "skill with id = %s not found".formatted(skillId)));
+        talentProof.getSkills().remove(skills);
     }
 }
