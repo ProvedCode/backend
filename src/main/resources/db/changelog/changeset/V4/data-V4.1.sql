@@ -10,10 +10,10 @@ VALUES (1, 3);
 INSERT INTO talent_skill (proof_id, skill_id)
 VALUES (1, 4);
 INSERT INTO talent_skill (proof_id, skill_id)
-VALUES (2, 1);
+VALUES (4, 1);
 INSERT INTO talent_skill (proof_id, skill_id)
-VALUES (2, 2);
+VALUES (5, 2);
 INSERT INTO talent_skill (proof_id, skill_id)
-VALUES (2, 3);
+VALUES (6, 3);
 
 

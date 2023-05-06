@@ -34,7 +34,7 @@ public class TalentSkillsController {
         return talentSkillsService.getAllSkillsOnProof(talentId, proofId, authentication);
     }
 
-    @DeleteMapping("/talents/{talent-id}/proofs/{proof-id}/skills/{skill-id}")
+    @DeleteMapping("/{talent-id}/proofs/{proof-id}/skills/{skill-id}")
     void deleteSkillOnProof(@PathVariable("talent-id") long talentId,
                             @PathVariable("proof-id") long proofId,
                             @PathVariable("skill-id") long skillId,

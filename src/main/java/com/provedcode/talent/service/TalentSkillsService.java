@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
@@ -75,18 +73,20 @@ public class TalentSkillsService {
             throw new ResponseStatusException(BAD_REQUEST,
                     "talentId with id = %s and proofId with id = %s do not match".formatted(talentId, proofId));
         }
-        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
 
         if (talentProof.getStatus().equals(ProofStatus.PUBLISHED)) {
             return SkillsOnProofDTO.builder().skills(talentProof.getSkills()).build();
-        } else if (userInfo.isPresent()) {
-            if (userInfo.get().getTalent().getId().equals(talentProof.getTalent().getId())) {
+        } else if (authentication != null) {
+            UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
+                    .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
+            if (userInfo.getTalent().getId().equals(talentProof.getTalent().getId())) {
                 return SkillsOnProofDTO.builder().skills(talentProof.getSkills()).build();
+            } else {
+                throw new ResponseStatusException(FORBIDDEN, "you can't see proofs in DRAFT and HIDDEN status");
             }
         } else {
             throw new ResponseStatusException(FORBIDDEN, "you can't see proofs in DRAFT and HIDDEN status");
         }
-        return new SkillsOnProofDTO(Collections.emptySet());
     }
 
     public void deleteSkillOnProof(long talentId, long proofId, long skillId, Authentication authentication) {
