@@ -125,7 +125,8 @@ public class S3Service implements FileService {
     }
 
     private String getFileType(MultipartFile file) {
-        return file.getContentType().split("/")[1];
+        String fileName = file.getOriginalFilename();
+        return fileName != null ? fileName.substring(fileName.lastIndexOf('.') + 1) : null;
     }
 
     private File convertMultiPartToFile(MultipartFile file)

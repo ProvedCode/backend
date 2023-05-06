@@ -44,8 +44,8 @@ public class TalentProof {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "proof", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Kudos> kudos;
     @ManyToMany
-    @JoinTable(name = "talent_skills",
+    @JoinTable(name = "talent_skill",
             joinColumns = @JoinColumn(name = "proof_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id"))
-    private Set<Skills> skillses = new LinkedHashSet<>();
+    private Set<Skills> skills = new LinkedHashSet<>();
 }
