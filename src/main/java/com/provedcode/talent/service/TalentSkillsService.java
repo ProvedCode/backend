@@ -108,6 +108,10 @@ public class TalentSkillsService {
         Skills skills = skillsRepository.findById(skillId)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "skill with id = %s not found".formatted(skillId)));
+        if (!talentProof.getSkills().contains(skills)) {
+            throw new ResponseStatusException(NOT_FOUND,
+                    "you dont have skill with id = %s on proof with id = %s".formatted(skillId, proofId));
+        }
         talentProof.getSkills().remove(skills);
     }
 }
