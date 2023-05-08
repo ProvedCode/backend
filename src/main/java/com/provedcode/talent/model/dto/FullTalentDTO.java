@@ -1,7 +1,7 @@
 package com.provedcode.talent.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.provedcode.annotations.UrlList;
+import com.provedcode.util.annotations.UrlList;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 

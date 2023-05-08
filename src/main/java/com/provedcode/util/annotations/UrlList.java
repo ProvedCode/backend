@@ -1,6 +1,6 @@
-package com.provedcode.annotations;
+package com.provedcode.util.annotations;
 
-import com.provedcode.annotations.impl.UrlListValidator;
+import com.provedcode.util.annotations.impl.UrlListValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

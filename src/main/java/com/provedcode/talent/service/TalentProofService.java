@@ -31,7 +31,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @AllArgsConstructor
@@ -45,33 +46,15 @@ public class TalentProofService {
     ValidateTalentForCompliance validateTalentForCompliance;
 
     @Transactional(readOnly = true)
-    public Page<TalentProof> getAllProofsPage(Optional<Integer> page, Optional<Integer> size, Optional<String> orderBy,
+    public Page<TalentProof> getAllProofsPage(Integer page, Integer size, String orderBy,
                                               String... sortBy) {
-        PageRequest pageRequest;
-        String sortDirection = orderBy.orElseGet(Sort.DEFAULT_DIRECTION::name);
-
-        if (page.orElse(pageProperties.defaultPageNum()) < 0) {
-            throw new ResponseStatusException(BAD_REQUEST, "'page' query parameter must be greater than or equal to 0");
-        }
-        if (size.orElse(pageProperties.defaultPageSize()) <= 0) {
-            throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
-        }
-        if (!sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) &&
-                !sortDirection.equalsIgnoreCase(Sort.Direction.DESC.name())) {
-            throw new ResponseStatusException(BAD_REQUEST, "'direction' query param must be equals ASC or DESC");
-        }
-
-        try {
-            pageRequest = PageRequest.of(
-                    page.orElse(pageProperties.defaultPageNum()),
-                    size.orElse(pageProperties.defaultPageSize()),
-                    Sort.Direction.valueOf(sortDirection.toUpperCase()),
-                    sortBy
-            );
-            return talentProofRepository.findByStatus(ProofStatus.PUBLISHED, pageRequest);
-        } catch (RuntimeException exception) {
-            throw new ResponseStatusException(BAD_REQUEST, exception.getMessage());
-        }
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                size,
+                Sort.Direction.valueOf(orderBy.toUpperCase()),
+                sortBy
+        );
+        return talentProofRepository.findByStatus(ProofStatus.PUBLISHED, pageRequest);
     }
 
     @Transactional(readOnly = true)
@@ -90,53 +73,23 @@ public class TalentProofService {
     }
 
     @Transactional(readOnly = true)
-    public FullProofDTO getTalentProofs(Long talentId, Optional<Integer> page, Optional<Integer> size,
-                                        Optional<String> direction, Authentication authentication,
-                                        String... sortProperties) {
+    public FullProofDTO getTalentProofs(Long talentId, Integer page, Integer size, String direction,
+                                        Authentication authentication, String... sortProperties) {
         Talent talent = talentRepository.findById(talentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Talent with id = %s not found".formatted(
+                        "Talent with id = %d not found".formatted(
                                 talentId)));
-
         UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
         Page<TalentProof> proofs;
-        PageRequest pageRequest;
-        String sortDirection = direction.orElseGet(Sort.DEFAULT_DIRECTION::name);
-
-        if (page.orElse(pageProperties.defaultPageNum()) < 0) {
-            throw new ResponseStatusException(BAD_REQUEST, "'page' query parameter must be greater than or equal to 0");
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.valueOf(direction.toUpperCase()),
+                sortProperties
+        );
+        if (!userInfo.getTalent().getId().equals(talentId)) {
+            proofs = talentProofRepository.findByTalentIdAndStatus(talentId, ProofStatus.PUBLISHED, pageRequest);
+        } else {
+            proofs = talentProofRepository.findByTalentId(talentId, pageRequest);
         }
-        if (size.orElse(pageProperties.defaultPageSize()) <= 0) {
-            throw new ResponseStatusException(BAD_REQUEST, "'size' query parameter must be greater than or equal to 1");
-        }
-        if (!sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) &&
-                !sortDirection.equalsIgnoreCase(Sort.Direction.DESC.name())) {
-            throw new ResponseStatusException(BAD_REQUEST, "'direction' query param must be equals ASC or DESC");
-        }
-
-        try {
-            pageRequest = PageRequest.of(
-                    page.orElse(pageProperties.defaultPageNum()),
-                    size.orElse(pageProperties.defaultPageSize()),
-                    Sort.Direction.valueOf(sortDirection.toUpperCase()),
-                    sortProperties
-            );
-            if (!userInfo.getTalent().getId().equals(talentId)) {
-                proofs = talentProofRepository.findByTalentIdAndStatus(talentId, ProofStatus.PUBLISHED, pageRequest);
-            } else {
-                proofs = talentProofRepository.findByTalentId(talentId, pageRequest);
-            }
-//            if (!userInfo.getLogin().equals(authentication.getName())) {
-//                proofs = talentProofRepository.findByTalentIdAndStatus(talentId, ProofStatus.PUBLISHED, pageRequest);
-//            } else {
-//                proofs = talentProofRepository.findByTalentId(talentId, pageRequest);
-//            }
-        } catch (RuntimeException exception) {
-            throw new ResponseStatusException(BAD_REQUEST, exception.getMessage());
-        }
-
         return FullProofDTO.builder()
                 .id(talent.getId())
                 .image(talent.getImage())
@@ -166,7 +119,6 @@ public class TalentProofService {
                 .status(ProofStatus.DRAFT)
                 .created(LocalDateTime.now())
                 .build();
-
         talentProofRepository.save(talentProof);
 
         URI location = ServletUriComponentsBuilder

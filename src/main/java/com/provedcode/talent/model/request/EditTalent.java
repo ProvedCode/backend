@@ -1,8 +1,7 @@
 package com.provedcode.talent.model.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.provedcode.annotations.UrlList;
-import jakarta.validation.constraints.NotEmpty;
+import com.provedcode.util.annotations.UrlList;
 import lombok.Builder;
 
 import java.util.List;

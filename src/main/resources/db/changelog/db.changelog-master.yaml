@@ -1,6 +1,9 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/changeset/create-tables.sql
-
+      file: db/changelog/changeset/V1/drop-V1.sql
   - include:
-      file: db/changelog/changeset/add-data.sql
+      file: db/changelog/changeset/V2/drop-V2.sql
+  - include:
+      file: db/changelog/changeset/V2/schema-V2.sql
+  - include:
+      file: db/changelog/changeset/V2/data-V2.sql

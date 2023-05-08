@@ -17,7 +17,6 @@
         <java.version>17</java.version>
     </properties>
     <dependencies>
-
         <!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui -->
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -98,7 +97,6 @@
             <version>4.21.1</version>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -133,5 +131,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
