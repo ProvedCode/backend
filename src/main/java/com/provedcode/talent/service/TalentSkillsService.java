@@ -51,11 +51,17 @@ public class TalentSkillsService {
         }
 
         isValidUserEditTalent.accept(talentId, userInfo);
-        if (skills.skills().stream().anyMatch(i -> !skillsRepository.existsById(i))) {
-            throw new ResponseStatusException(BAD_REQUEST, "no such skill with id");
-        }
+        skills.skills().forEach(skillId -> {
+            if (!skillsRepository.existsById(skillId))
+                throw new ResponseStatusException(NOT_FOUND, "no such skill with id = " + skillId);
+        });
 
         Set<Skills> skillsSet = new HashSet<>(skillsRepository.findAllById(skills.skills()));
+        talentProof.getSkills().forEach(skill -> {
+            if (skillsSet.contains(skill))
+                throw new ResponseStatusException(CONFLICT,
+                        "skill with id = %s already on skill".formatted(skill.getId()));
+        });
 
         talentProof.getSkills().addAll(skillsSet);
         talentProofRepository.save(talentProof);
