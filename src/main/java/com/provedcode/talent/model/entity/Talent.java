@@ -1,6 +1,5 @@
 package com.provedcode.talent.model.entity;
 
-import com.provedcode.kudos.model.entity.Kudos;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
