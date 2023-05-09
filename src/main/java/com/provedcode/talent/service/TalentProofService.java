@@ -11,6 +11,7 @@ import com.provedcode.talent.model.request.AddProof;
 import com.provedcode.talent.repo.TalentProofRepository;
 import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.talent.utill.ValidateTalentForCompliance;
+import com.provedcode.user.model.Role;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.UserInfoRepository;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -81,14 +83,15 @@ public class TalentProofService {
                                 talentId)));
         UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Page<TalentProof> proofs;
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.valueOf(direction.toUpperCase()),
                 sortProperties
         );
-        if (!userInfo.getTalent().getId().equals(talentId)) {
+        Page<TalentProof> proofs = talentProofRepository.findByTalentId(talentId, pageRequest);
+        if (authentication.getAuthorities().contains(Role.SPONSOR)) {
             proofs = talentProofRepository.findByTalentIdAndStatus(talentId, ProofStatus.PUBLISHED, pageRequest);
-        } else {
-            proofs = talentProofRepository.findByTalentId(talentId, pageRequest);
+        }
+        if (userInfo.getTalent() != null && !userInfo.getTalent().getId().equals(talentId)) {
+            proofs = talentProofRepository.findByTalentIdAndStatus(talentId, ProofStatus.PUBLISHED, pageRequest);
         }
         return FullProofDTO.builder()
                 .id(talent.getId())
