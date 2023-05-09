@@ -52,8 +52,8 @@ public class S3Service implements FileService {
     }
 
     @Override
-    public byte[] downloadFile(String filename) {
-        S3Object object = amazonS3.getObject(awsProperties.bucket(), filename);
+    public byte[] downloadFile(String fullFilePath) {
+        S3Object object = amazonS3.getObject(awsProperties.bucket(), fullFilePath);
         S3ObjectInputStream objectContent = object.getObjectContent();
         try {
             return IOUtils.toByteArray(objectContent);
@@ -63,8 +63,8 @@ public class S3Service implements FileService {
     }
 
     @Override
-    public String deleteFile(String filename) {
-        amazonS3.deleteObject(awsProperties.bucket(), filename);
+    public String deleteFile(String fullFilePath) {
+        amazonS3.deleteObject(awsProperties.bucket(), fullFilePath);
         return "file deleted";
     }
 
