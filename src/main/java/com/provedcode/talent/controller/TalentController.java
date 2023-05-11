@@ -4,6 +4,7 @@ import com.provedcode.config.PageProperties;
 import com.provedcode.talent.mapper.TalentMapper;
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
+import com.provedcode.talent.model.dto.SkillIdDTO;
 import com.provedcode.talent.model.request.EditTalent;
 import com.provedcode.talent.service.TalentService;
 import com.provedcode.user.model.dto.SessionInfoDTO;
@@ -68,5 +69,13 @@ public class TalentController {
     @DeleteMapping("/talents/{id}")
     SessionInfoDTO deleteTalent(@PathVariable("id") long id, Authentication authentication) {
         return talentService.deleteTalentById(id, authentication);
+    }
+
+    @PreAuthorize("hasRole('TALENT')")
+    @PostMapping("/talents/{talent-id}/skills")
+    void addSkillOnProof(@PathVariable("talent-id") long id,
+                         @RequestBody SkillIdDTO skillIdDTO,
+                         Authentication authentication) {
+        talentService.addSkillOnProof(id, skillIdDTO, authentication);
     }
 }
