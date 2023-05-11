@@ -89,44 +89,39 @@ public class KudosService {
 
     @Transactional(readOnly = true)
     public KudosAmountWithSponsor getProofKudos(long proofId, Authentication authentication) {
-        String login = authentication.getName();
-        UserInfo userInfo = userInfoRepository.findByLogin(login)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-                        "User with login = %s not found".formatted(
-                                login)));
-        Talent talent = talentRepository.findById(userInfo.getId())
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-                        "Talent with login = %s not found".formatted(
-                                login)));
-        TalentProof talentProof = talentProofRepository.findById(proofId)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-                        "Proof with id = %s not found".formatted(
-                                proofId)));
+            String login = authentication.getName();
+            UserInfo userInfo = userInfoRepository.findByLogin(login)
+                            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                                            "User with login = %s not found".formatted(login)));
+            Talent talent = talentRepository.findById(userInfo.getTalent().getId())
+                            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                                            "Talent with login = %s not found".formatted(login)));
+            TalentProof talentProof = talentProofRepository.findById(proofId)
+                            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                                            "Proof with id = %s not found".formatted(proofId)));
 
-        Long countOfAllKudos = talentProof.getKudos().stream()
-                .map(Kudos::getAmount)
-                .reduce(0L, (prev, next) -> prev + next);
+            Long countOfAllKudos = talentProof.getKudos().stream()
+                            .map(Kudos::getAmount)
+                            .reduce(0L, (prev, next) -> prev + next);
 
-        if (talent.getId().equals(talentProof.getTalent().getId())) {
-            Map<Long, SponsorDTO> kudosFromSponsor = talentProof.getKudos().stream()
-                    .collect(Collectors.toMap(
-                            Kudos::getAmount,
-                            proof -> proof.getSponsor() != null
-                                    ? sponsorMapper.toDto(
-                                    proof.getSponsor())
-                                    : SponsorDTO.builder().build(),
-                            (prev, next) -> next,
-                            HashMap::new
-                    ));
+            if (talent.getId().equals(talentProof.getTalent().getId())) {
+                    Map<Long, SponsorDTO> kudosFromSponsor = talentProof.getKudos().stream()
+                                    .collect(Collectors.toMap(
+                                                    Kudos::getAmount,
+                                                    proof -> proof.getSponsor() != null
+                                                                    ? sponsorMapper.toDto(proof.getSponsor())
+                                                                    : SponsorDTO.builder().build(),
+                                                    (prev, next) -> next,
+                                                    HashMap::new));
 
-            return KudosAmountWithSponsor.builder()
-                    .allKudosOnProof(countOfAllKudos)
-                    .kudosFromSponsor(kudosFromSponsor)
-                    .build();
-        } else {
-            return KudosAmountWithSponsor.builder()
-                    .allKudosOnProof(countOfAllKudos)
-                    .kudosFromSponsor(null).build();
-        }
+                    return KudosAmountWithSponsor.builder()
+                                    .allKudosOnProof(countOfAllKudos)
+                                    .kudosFromSponsor(kudosFromSponsor)
+                                    .build();
+            } else {
+                    return KudosAmountWithSponsor.builder()
+                                    .allKudosOnProof(countOfAllKudos)
+                                    .kudosFromSponsor(null).build();
+            }
     }
 }

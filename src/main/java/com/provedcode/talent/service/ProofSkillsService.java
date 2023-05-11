@@ -26,7 +26,7 @@ import static org.springframework.http.HttpStatus.*;
 @Transactional
 @Service
 @AllArgsConstructor
-public class TalentSkillsService {
+public class ProofSkillsService {
     SkillsRepository skillsRepository;
     TalentRepository talentRepository;
     UserInfoRepository userInfoRepository;
