@@ -158,12 +158,15 @@ public class TalentService {
                         "Skill with id = %d not found".formatted(
                                 skillIdDTO.id())));
         validateTalentForCompliance.userVerification(talent, userInfo, id);
-
         Talent talentObject = talent.get();
+        if (!talentObject.getSkills().isEmpty() && talentObject.getSkills().contains(skill)) {
+            throw new ResponseStatusException(BAD_REQUEST, "you have already specified the skill");
+        }
         talentObject.getTalentProofs().stream().filter(proof -> proof.getSkills()
                 .contains(skill)).findFirst().orElseThrow(() -> new ResponseStatusException(FORBIDDEN,
                 "Skill with id = %d not found in talent's proofs".formatted(
                         skillIdDTO.id())));
         talentObject.getSkills().add(skill);
+        talentRepository.save(talentObject);
     }
 }
