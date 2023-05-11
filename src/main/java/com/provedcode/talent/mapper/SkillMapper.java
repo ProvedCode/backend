@@ -9,4 +9,5 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface SkillMapper {
     SkillDTO skillToSkillDTO(Skills skills);
+
 }
