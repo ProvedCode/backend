@@ -2,7 +2,7 @@ package com.provedcode.talent.controller;
 
 import com.provedcode.talent.model.dto.ProofSkillsDTO;
 import com.provedcode.talent.model.dto.SkillsOnProofDTO;
-import com.provedcode.talent.service.TalentSkillsService;
+import com.provedcode.talent.service.ProofSkillsService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v4/talents")
 public class TalentSkillsController {
-    TalentSkillsService talentSkillsService;
+    ProofSkillsService talentSkillsService;
 
     @PostMapping("/{talent-id}/proofs/{proof-id}/skills")
     void addSkillOnProof(@PathVariable("talent-id") long talentId,
