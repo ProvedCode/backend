@@ -1,19 +1,22 @@
 --liquibase formatted sql
 --changeset dennis:3
--- Skill
-INSERT INTO talent_skill (proof_id, skill_id)
+-- Skill in proof
+INSERT INTO proof_skill (proof_id, skill_id)
 VALUES (1, 1);
-INSERT INTO talent_skill (proof_id, skill_id)
+INSERT INTO proof_skill (proof_id, skill_id)
 VALUES (1, 2);
-INSERT INTO talent_skill (proof_id, skill_id)
+INSERT INTO proof_skill (proof_id, skill_id)
 VALUES (1, 3);
-INSERT INTO talent_skill (proof_id, skill_id)
+INSERT INTO proof_skill (proof_id, skill_id)
 VALUES (1, 4);
-INSERT INTO talent_skill (proof_id, skill_id)
+INSERT INTO proof_skill (proof_id, skill_id)
 VALUES (4, 1);
-INSERT INTO talent_skill (proof_id, skill_id)
+INSERT INTO proof_skill (proof_id, skill_id)
 VALUES (5, 2);
-INSERT INTO talent_skill (proof_id, skill_id)
+INSERT INTO proof_skill (proof_id, skill_id)
 VALUES (6, 3);
-
-
+-- Skill in talent
+INSERT INTO talent_skill (talent_id, skill_id)
+VALUES(1, 1);
+INSERT INTO talent_skill (talent_id, skill_id)
+VALUES(1, 2);
