@@ -1,5 +1,6 @@
 package com.provedcode.talent.service;
 
+import com.provedcode.talent.mapper.SkillMapper;
 import com.provedcode.talent.model.ProofStatus;
 import com.provedcode.talent.model.dto.ProofSkillsDTO;
 import com.provedcode.talent.model.dto.SkillDTO;
@@ -34,6 +35,8 @@ public class ProofSkillsService {
     TalentRepository talentRepository;
     UserInfoRepository userInfoRepository;
     TalentProofRepository talentProofRepository;
+    SkillMapper skillMapper;
+
 
     static BiConsumer<Long, UserInfo> isValidUserEditTalent = (talentId, userInfo) -> {
         if (!userInfo.getTalent().getId().equals(talentId)) {
@@ -82,13 +85,8 @@ public class ProofSkillsService {
             throw new ResponseStatusException(BAD_REQUEST,
                     "talentId with id = %s and proofId with id = %s do not match".formatted(talentId, proofId));
         }
-        Set<SkillDTO> skills = talentProof.getSkills().stream().map(skill -> {
-            return SkillDTO.builder()
-                    .skill(skill.getSkill())
-                    .id(skill.getId())
-                    .build();
-        }).collect(Collectors.toSet());
-
+        Set<SkillDTO> skills = talentProof.getSkills().stream()
+                .map(skillMapper::skillToSkillDTO).collect(Collectors.toSet());
         if (talentProof.getStatus().equals(ProofStatus.PUBLISHED)) {
             return SkillsOnProofDTO.builder().skills(skills).build();
         } else if (authentication != null) {
