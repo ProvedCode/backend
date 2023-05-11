@@ -94,7 +94,7 @@ public class KudosService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "User with login = %s not found".formatted(
                                 login)));
-        Talent talent = talentRepository.findById(userInfo.getId())
+        Talent talent = talentRepository.findById(userInfo.getTalent().getId())
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "Talent with login = %s not found".formatted(
                                 login)));
