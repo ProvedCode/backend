@@ -70,7 +70,7 @@ public class TalentController {
     @PreAuthorize("hasRole('TALENT')")
     @PostMapping("v4/talents/{talent-id}/skills")
     void addSkillOnTalent(@PathVariable("talent-id") long id,
-                          @RequestBody SkillIdDTO skillIdDTO,
+                          @RequestBody @Valid SkillIdDTO skillIdDTO,
                           Authentication authentication) {
         talentService.addSkillOnTalent(id, skillIdDTO, authentication);
     }
