@@ -1,6 +1,5 @@
 package com.provedcode.talent.controller;
 
-import com.provedcode.config.PageProperties;
 import com.provedcode.talent.mapper.TalentMapper;
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
@@ -20,13 +19,10 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -73,9 +69,18 @@ public class TalentController {
 
     @PreAuthorize("hasRole('TALENT')")
     @PostMapping("v4/talents/{talent-id}/skills")
-    void addSkillOnProof(@PathVariable("talent-id") long id,
-                         @RequestBody SkillIdDTO skillIdDTO,
-                         Authentication authentication) {
-        talentService.addSkillOnProof(id, skillIdDTO, authentication);
+    void addSkillOnTalent(@PathVariable("talent-id") long id,
+                          @RequestBody SkillIdDTO skillIdDTO,
+                          Authentication authentication) {
+        talentService.addSkillOnTalent(id, skillIdDTO, authentication);
     }
+
+    @PreAuthorize("hasRole('TALENT')")
+    @DeleteMapping("/talents/{talent-id}/skills/{skill-id}")
+    void deleteSkillFromTalent(@PathVariable("talent-id") long talentId,
+                               @PathVariable("skill-id") long skillId,
+                               Authentication authentication) {
+        talentService.deleteSkillFromTalent(talentId, skillId, authentication);
+    }
+
 }

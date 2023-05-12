@@ -150,7 +150,7 @@ public class TalentService {
             throw new ResponseStatusException(BAD_REQUEST, "you did not provide information to make changes");
     }
 
-    public void addSkillOnProof(long id, SkillIdDTO skillIdDTO, Authentication authentication) {
+    public void addSkillOnTalent(long id, SkillIdDTO skillIdDTO, Authentication authentication) {
         Optional<Talent> talent = talentRepository.findById(id);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
         Skills skill = skillsRepository.findById(skillIdDTO.id())
