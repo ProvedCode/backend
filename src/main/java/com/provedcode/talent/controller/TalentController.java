@@ -76,7 +76,7 @@ public class TalentController {
     }
 
     @PreAuthorize("hasRole('TALENT')")
-    @DeleteMapping("/talents/{talent-id}/skills/{skill-id}")
+    @DeleteMapping("v4/talents/{talent-id}/skills/{skill-id}")
     void deleteSkillFromTalent(@PathVariable("talent-id") long talentId,
                                @PathVariable("skill-id") long skillId,
                                Authentication authentication) {
