@@ -1,7 +1,9 @@
 package com.provedcode.talent.service;
 
+import com.provedcode.talent.mapper.SkillMapper;
 import com.provedcode.talent.model.ProofStatus;
 import com.provedcode.talent.model.dto.ProofSkillsDTO;
+import com.provedcode.talent.model.dto.SkillDTO;
 import com.provedcode.talent.model.dto.SkillsOnProofDTO;
 import com.provedcode.talent.model.entity.Skills;
 import com.provedcode.talent.model.entity.Talent;
@@ -18,8 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -31,6 +35,8 @@ public class ProofSkillsService {
     TalentRepository talentRepository;
     UserInfoRepository userInfoRepository;
     TalentProofRepository talentProofRepository;
+    SkillMapper skillMapper;
+
 
     static BiConsumer<Long, UserInfo> isValidUserEditTalent = (talentId, userInfo) -> {
         if (!userInfo.getTalent().getId().equals(talentId)) {
@@ -79,14 +85,15 @@ public class ProofSkillsService {
             throw new ResponseStatusException(BAD_REQUEST,
                     "talentId with id = %s and proofId with id = %s do not match".formatted(talentId, proofId));
         }
-
+        Set<SkillDTO> skills = talentProof.getSkills().stream()
+                .map(skillMapper::skillToSkillDTO).collect(Collectors.toSet());
         if (talentProof.getStatus().equals(ProofStatus.PUBLISHED)) {
-            return SkillsOnProofDTO.builder().skills(talentProof.getSkills()).build();
+            return SkillsOnProofDTO.builder().skills(skills).build();
         } else if (authentication != null) {
             UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
                     .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
             if (userInfo.getTalent().getId().equals(talentProof.getTalent().getId())) {
-                return SkillsOnProofDTO.builder().skills(talentProof.getSkills()).build();
+                return SkillsOnProofDTO.builder().skills(skills).build();
             } else {
                 throw new ResponseStatusException(FORBIDDEN, "you can't see proofs in DRAFT and HIDDEN status");
             }

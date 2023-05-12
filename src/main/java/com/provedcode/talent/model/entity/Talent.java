@@ -66,7 +66,7 @@ public class Talent {
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TalentProof> talentProofs = new ArrayList<>();
     @ManyToMany
-    @JoinTable(name = "talent_skills",
+    @JoinTable(name = "talent_skill",
             joinColumns = @JoinColumn(name = "talent_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private Set<Skills> skills = new LinkedHashSet<>();

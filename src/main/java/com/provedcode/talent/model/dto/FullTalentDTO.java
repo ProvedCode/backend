@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 
 import java.util.List;
+import java.util.Set;
 
 @Builder
 public record FullTalentDTO(
@@ -22,7 +23,7 @@ public record FullTalentDTO(
         @JsonProperty("additional_info")
         String additionalInfo,
         String bio,
-        List<String> talents,
+        Set<SkillDTO> skills,
         @UrlList
         List<String> links,
         List<String> contacts,

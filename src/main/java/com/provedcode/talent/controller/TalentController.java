@@ -1,9 +1,9 @@
 package com.provedcode.talent.controller;
 
-import com.provedcode.config.PageProperties;
 import com.provedcode.talent.mapper.TalentMapper;
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
+import com.provedcode.talent.model.dto.SkillIdDTO;
 import com.provedcode.talent.model.request.EditTalent;
 import com.provedcode.talent.service.TalentService;
 import com.provedcode.user.model.dto.SessionInfoDTO;
@@ -19,18 +19,15 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/v2")
+@RequestMapping("/api/")
 @Tag(name = "talent", description = "Talent API")
 @Validated
 public class TalentController {
@@ -38,7 +35,7 @@ public class TalentController {
     TalentMapper talentMapper;
 
     @GetAllTalentsApiDoc
-    @GetMapping("/talents")
+    @GetMapping("v2/talents")
     @Validated
     Page<ShortTalentDTO> getTalents(@RequestParam(value = "page", defaultValue = "0") @PositiveOrZero Integer page,
                                     @RequestParam(value = "size", defaultValue = "5") @Min(1) @Max(1000) Integer size) {
@@ -47,7 +44,7 @@ public class TalentController {
 
     @GetTalentApiDoc
     @PreAuthorize("hasRole('TALENT')")
-    @GetMapping("/talents/{id}")
+    @GetMapping("v2/talents/{id}")
     FullTalentDTO getTalent(@PathVariable("id") long id, Authentication authentication) {
         log.info("get-talent auth = {}", authentication);
         log.info("get-talent auth.name = {}", authentication.getAuthorities());
@@ -56,7 +53,7 @@ public class TalentController {
 
     @PatchEditTalentApiDoc
     @PreAuthorize("hasRole('TALENT')")
-    @PatchMapping("/talents/{talent-id}")
+    @PatchMapping("v2/talents/{talent-id}")
     FullTalentDTO editTalent(@PathVariable("talent-id") long id,
                              @RequestBody @Valid EditTalent editTalent,
                              Authentication authentication) {
@@ -65,8 +62,25 @@ public class TalentController {
 
     @DeleteTalentApiDoc
     @PreAuthorize("hasRole('TALENT')")
-    @DeleteMapping("/talents/{id}")
+    @DeleteMapping("v2/talents/{id}")
     SessionInfoDTO deleteTalent(@PathVariable("id") long id, Authentication authentication) {
         return talentService.deleteTalentById(id, authentication);
     }
+
+    @PreAuthorize("hasRole('TALENT')")
+    @PostMapping("v4/talents/{talent-id}/skills")
+    void addSkillOnTalent(@PathVariable("talent-id") long id,
+                          @RequestBody @Valid SkillIdDTO skillIdDTO,
+                          Authentication authentication) {
+        talentService.addSkillOnTalent(id, skillIdDTO, authentication);
+    }
+
+    @PreAuthorize("hasRole('TALENT')")
+    @DeleteMapping("v4/talents/{talent-id}/skills/{skill-id}")
+    void deleteSkillFromTalent(@PathVariable("talent-id") long talentId,
+                               @PathVariable("skill-id") long skillId,
+                               Authentication authentication) {
+        talentService.deleteSkillFromTalent(talentId, skillId, authentication);
+    }
+
 }
