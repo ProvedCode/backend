@@ -31,7 +31,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/v2")
+@RequestMapping("/api/")
 @Tag(name = "talent", description = "Talent API")
 @Validated
 public class TalentController {
@@ -39,7 +39,7 @@ public class TalentController {
     TalentMapper talentMapper;
 
     @GetAllTalentsApiDoc
-    @GetMapping("/talents")
+    @GetMapping("v2/talents")
     @Validated
     Page<ShortTalentDTO> getTalents(@RequestParam(value = "page", defaultValue = "0") @PositiveOrZero Integer page,
                                     @RequestParam(value = "size", defaultValue = "5") @Min(1) @Max(1000) Integer size) {
@@ -48,7 +48,7 @@ public class TalentController {
 
     @GetTalentApiDoc
     @PreAuthorize("hasRole('TALENT')")
-    @GetMapping("/talents/{id}")
+    @GetMapping("v2/talents/{id}")
     FullTalentDTO getTalent(@PathVariable("id") long id, Authentication authentication) {
         log.info("get-talent auth = {}", authentication);
         log.info("get-talent auth.name = {}", authentication.getAuthorities());
@@ -57,7 +57,7 @@ public class TalentController {
 
     @PatchEditTalentApiDoc
     @PreAuthorize("hasRole('TALENT')")
-    @PatchMapping("/talents/{talent-id}")
+    @PatchMapping("v2/talents/{talent-id}")
     FullTalentDTO editTalent(@PathVariable("talent-id") long id,
                              @RequestBody @Valid EditTalent editTalent,
                              Authentication authentication) {
@@ -66,13 +66,13 @@ public class TalentController {
 
     @DeleteTalentApiDoc
     @PreAuthorize("hasRole('TALENT')")
-    @DeleteMapping("/talents/{id}")
+    @DeleteMapping("v2/talents/{id}")
     SessionInfoDTO deleteTalent(@PathVariable("id") long id, Authentication authentication) {
         return talentService.deleteTalentById(id, authentication);
     }
 
     @PreAuthorize("hasRole('TALENT')")
-    @PostMapping("/talents/{talent-id}/skills")
+    @PostMapping("v4/talents/{talent-id}/skills")
     void addSkillOnProof(@PathVariable("talent-id") long id,
                          @RequestBody SkillIdDTO skillIdDTO,
                          Authentication authentication) {

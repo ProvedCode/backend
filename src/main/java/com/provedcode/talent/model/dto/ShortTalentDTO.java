@@ -2,7 +2,7 @@ package com.provedcode.talent.model.dto;
 
 import lombok.Builder;
 
-import java.util.List;
+import java.util.Set;
 
 @Builder
 public record ShortTalentDTO(
@@ -11,6 +11,6 @@ public record ShortTalentDTO(
         String firstName,
         String lastName,
         String specialization,
-        List<String> talents
+        Set<SkillDTO> skills
 ) {
 }
