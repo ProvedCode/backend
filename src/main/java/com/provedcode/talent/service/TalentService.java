@@ -169,4 +169,18 @@ public class TalentService {
         talentObject.getSkills().add(skill);
         talentRepository.save(talentObject);
     }
+
+    public void deleteSkillFromTalent(long talentId, long skillId, Authentication authentication) {
+        Optional<Talent> talent = talentRepository.findById(talentId);
+        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
+        Skills skill = skillsRepository.findById(skillId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "Skill with id = %d not found".formatted(skillId)));
+        validateTalentForCompliance.userVerification(talent, userInfo, talentId);
+        Talent talentObject = talent.get();
+        if (!talentObject.getSkills().remove(skill)) {
+            throw new ResponseStatusException(NOT_FOUND,
+                    "Skill with id = %d not found".formatted(skillId));
+        }
+    }
 }
