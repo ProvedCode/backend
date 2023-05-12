@@ -21,8 +21,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -153,21 +156,29 @@ public class TalentService {
     public void addSkillOnTalent(long id, SkillIdDTO skillIdDTO, Authentication authentication) {
         Optional<Talent> talent = talentRepository.findById(id);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
-        Skills skill = skillsRepository.findById(skillIdDTO.id())
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-                        "Skill with id = %d not found".formatted(
-                                skillIdDTO.id())));
         validateTalentForCompliance.userVerification(talent, userInfo, id);
         Talent talentObject = talent.get();
-        if (!talentObject.getSkills().isEmpty() && talentObject.getSkills().contains(skill)) {
-            throw new ResponseStatusException(BAD_REQUEST, "you have already specified the skill");
-        }
-        talentObject.getTalentProofs().stream().filter(proof -> proof.getSkills()
-                .contains(skill)).findFirst().orElseThrow(() -> new ResponseStatusException(FORBIDDEN,
-                "Skill with id = %d not found in talent's proofs".formatted(
-                        skillIdDTO.id())));
-        talentObject.getSkills().add(skill);
-        talentRepository.save(talentObject);
+
+        Set<Skills> skillsFromRepo = skillIdDTO.id().stream()
+                .map(element -> skillsRepository.findById(element)
+                        .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                                "Skill with id = %d not found".formatted(element))))
+                .collect(Collectors.toSet());
+
+        Set<Skills> skillsFromProofs = talentObject.getTalentProofs().stream()
+                .flatMap(talentProof -> talentProof.getSkills().stream())
+                .collect(Collectors.toSet());
+
+        skillsFromRepo.stream()
+                .filter(skill -> !skillsFromProofs.contains(skill))
+                .findFirst()
+                .ifPresent(skill -> {
+                    throw new ResponseStatusException(FORBIDDEN,
+                            "Skill with id = %d not found in talent's proofs".formatted(skill.getId()));
+                });
+
+        skillsFromRepo.stream()
+                .forEach(skill -> talentObject.getSkills().add(skill));
     }
 
     public void deleteSkillFromTalent(long talentId, long skillId, Authentication authentication) {
