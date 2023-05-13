@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -198,7 +199,9 @@ public class TalentService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Talent> getFilteredBySkillsTalentsPage(@PositiveOrZero Integer page, @Min(1) @Max(1000) Integer size, String filterBy) {
-        return talentRepository.findBySkills_SkillContainsIgnoreCase(filterBy, PageRequest.of(page, size));
+    public Page<Talent> getFilteredBySkillsTalentsPage(@PositiveOrZero Integer page,
+                                                       @Min(1) @Max(1000) Integer size,
+                                                       String... filterBy) {
+        return talentRepository.findBySkills_SkillsInIgnoreCase(PageRequest.of(page, size), Arrays.stream(filterBy).toList());
     }
 }
