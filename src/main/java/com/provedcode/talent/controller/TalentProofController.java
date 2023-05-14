@@ -88,9 +88,9 @@ public class TalentProofController {
     @DeleteProofApiDoc
     @DeleteMapping("/{talent-id}/proofs/{proof-id}")
     @PreAuthorize("hasRole('TALENT')")
-    StatusDTO deleteProof(@PathVariable(value = "talent-id") long talentId,
+    void deleteProof(@PathVariable(value = "talent-id") long talentId,
                           @PathVariable(value = "proof-id") long proofId,
                           Authentication authentication) {
-        return talentProofService.deleteProofById(talentId, proofId, authentication);
+        talentProofService.deleteProofById(talentId, proofId, authentication);
     }
 }

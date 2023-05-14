@@ -1,5 +1,6 @@
 package com.provedcode.handlers;
 
+import com.provedcode.handlers.dto.ErrorDTO;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -65,7 +66,7 @@ public class TalentExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     private ResponseEntity<?> responseStatusExceptionHandler(ConstraintViolationException exception) {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, exception.getMessage(), exception.toString());
-        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+        return new ResponseEntity<>(new ErrorDTO(apiError.getMessage()), new HttpHeaders(), apiError.getStatus());
     }
 
 //    @ExceptionHandler({ Exception.class })

@@ -12,6 +12,9 @@ import com.provedcode.user.model.dto.SessionInfoDTO;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.AuthorityRepository;
 import com.provedcode.user.repo.UserInfoRepository;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,7 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -193,5 +196,14 @@ public class TalentService {
             throw new ResponseStatusException(NOT_FOUND,
                     "Skill with id = %d not found".formatted(skillId));
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Talent> getFilteredBySkillsTalentsPage(@PositiveOrZero Integer page,
+                                                       @Min(1) @Max(1000) Integer size,
+                                                       String... filterBy) {
+        return filterBy != null ?
+                talentRepository.findBySkills_SkillsInIgnoreCase(PageRequest.of(page, size), Arrays.stream(filterBy).map(String::toUpperCase).toList())
+                : talentRepository.findAll(PageRequest.of(page, size));
     }
 }
