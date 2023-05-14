@@ -19,9 +19,7 @@ import java.lang.annotation.Target;
         description = "As a talent I want to have an opportunity to delete my personal proofs")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200",
-                description = "SUCCESS",
-                content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                        schema = @Schema(implementation = StatusDTO.class))),
+                description = "SUCCESS"),
         @ApiResponse(responseCode = "404",
                 description = "NOT FOUND",
                 content = @Content),
