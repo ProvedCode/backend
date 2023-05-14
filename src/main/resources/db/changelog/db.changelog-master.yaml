@@ -11,3 +11,5 @@ databaseChangeLog:
           file: db/changelog/changeset/V4/data-V4.sql
     - include:
         file: db/changelog/changeset/V4/data-V4.1.sql
+    - include:
+        file: db/changelog/changeset/V4/data-V4.2.sql

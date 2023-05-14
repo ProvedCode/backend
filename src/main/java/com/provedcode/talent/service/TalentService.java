@@ -202,6 +202,8 @@ public class TalentService {
     public Page<Talent> getFilteredBySkillsTalentsPage(@PositiveOrZero Integer page,
                                                        @Min(1) @Max(1000) Integer size,
                                                        String... filterBy) {
-        return talentRepository.findBySkills_SkillsInIgnoreCase(PageRequest.of(page, size), Arrays.stream(filterBy).toList());
+        return filterBy != null ?
+                talentRepository.findBySkills_SkillsInIgnoreCase(PageRequest.of(page, size), Arrays.stream(filterBy).map(String::toUpperCase).toList())
+                : talentRepository.findAll(PageRequest.of(page, size));
     }
 }

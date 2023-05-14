@@ -86,7 +86,7 @@ public class TalentController {
     @GetMapping("v4/talents")
     Page<ShortTalentDTO> getFilteredBySkillsTalents(@RequestParam(value = "page", defaultValue = "0") @PositiveOrZero Integer page,
                                                     @RequestParam(value = "size", defaultValue = "5") @Min(1) @Max(1000) Integer size,
-                                                    @RequestParam(value = "filter-by", defaultValue = "") String... filterBy) {
+                                                    @RequestParam(value = "filter-by", required = false) String... filterBy) {
         return talentService.getFilteredBySkillsTalentsPage(page, size, filterBy).map(talentMapper::talentToShortTalentDTO);
     }
 

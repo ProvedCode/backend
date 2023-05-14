@@ -15,8 +15,4 @@ INSERT INTO proof_skill (proof_id, skill_id)
 VALUES (5, 2);
 INSERT INTO proof_skill (proof_id, skill_id)
 VALUES (6, 3);
--- Skill in talent
-INSERT INTO talent_skill (talent_id, skill_id)
-VALUES(1, 1);
-INSERT INTO talent_skill (talent_id, skill_id)
-VALUES(1, 2);
+
