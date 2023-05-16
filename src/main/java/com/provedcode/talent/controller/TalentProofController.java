@@ -51,7 +51,7 @@ public class TalentProofController {
 
     @GetTalentInformationWithProofsApiDoc
     @GetMapping("/{talent-id}/proofs")
-    @PreAuthorize("hasRole('TALENT')")
+    @PreAuthorize("hasAnyRole('TALENT','SPONSOR')")
     FullProofDTO getTalentInformationWithProofs(Authentication authentication,
                                                 @PathVariable("talent-id") Long talentId,
                                                 @RequestParam(value = "page", defaultValue = "0") @PositiveOrZero Integer page,

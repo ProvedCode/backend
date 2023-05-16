@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @AllArgsConstructor
 public class UpdateScheduler {
-
     FileService fileService;
     TalentRepository talentRepository;
     

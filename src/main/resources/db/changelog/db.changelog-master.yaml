@@ -1,9 +1,13 @@
 databaseChangeLog:
-  - include:
-      file: db/changelog/changeset/V1/drop-V1.sql
-  - include:
-      file: db/changelog/changeset/V2/drop-V2.sql
-  - include:
-      file: db/changelog/changeset/V2/schema-V2.sql
-  - include:
-      file: db/changelog/changeset/V2/data-V2.sql
+    - include:
+          file: db/changelog/changeset/V1/drop-V1.sql
+    - include:
+          file: db/changelog/changeset/V2/drop-V2.sql
+    - include:
+          file: db/changelog/changeset/V4/drop-V4.sql
+    - include:
+          file: db/changelog/changeset/V4/schema-V4.sql
+    - include:
+          file: db/changelog/changeset/V4/data-V4.sql
+    - include:
+        file: db/changelog/changeset/V4/data-V4.1.sql

@@ -56,7 +56,7 @@ public class TalentService {
         Talent editableTalent = talent.get();
 
         TalentDescription editableTalentDescription = editableTalent.getTalentDescription();
-        List<TalentTalents> editableTalentTalents = editableTalent.getTalentTalents();
+//        List<TalentSkills> editableTalentTalents = editableTalent.getTalentTalents();
         List<TalentLink> editableTalentLinks = editableTalent.getTalentLinks();
         List<TalentContact> editableTalentContacts = editableTalent.getTalentContacts();
         List<TalentAttachedFile> editableTalentAttachedFiles = editableTalent.getTalentAttachedFiles();
@@ -88,14 +88,14 @@ public class TalentService {
             }
             editableTalent.setTalentDescription(editableTalentDescription);
         }
-        if (editTalent.talents() != null) {
-            editableTalentTalents.clear();
-            editableTalentTalents.addAll(editTalent.talents().stream().map(s -> TalentTalents.builder()
-                                                                                             .talent(editableTalent)
-                                                                                             .talentName(s)
-                                                                                             .build()).toList());
-            editableTalent.setTalentTalents(editableTalentTalents);
-        }
+//        if (editTalent.talents() != null) {
+//            editableTalentTalents.clear();
+//            editableTalentTalents.addAll(editTalent.talents().stream().map(s -> TalentSkills.builder()
+//                                                                                             .talent(editableTalent)
+//                                                                                             .talentName(s)
+//                                                                                             .build()).toList());
+//            editableTalent.setTalentTalents(editableTalentTalents);
+//        }
         if (editTalent.links() != null) {
             editableTalentLinks.clear();
             editableTalentLinks.addAll(editTalent.links().stream().map(s -> TalentLink.builder()
@@ -144,8 +144,7 @@ public class TalentService {
     private void checkEditTalentNull(EditTalent editTalent) {
         if (editTalent.firstName() == null && editTalent.lastName() == null && editTalent.image() == null &&
             editTalent.specialization() == null && editTalent.additionalInfo() == null && editTalent.bio() == null &&
-            editTalent.talents() == null && editTalent.links() == null && editTalent.contacts() == null &&
-            editTalent.attachedFiles() == null)
+            editTalent.links() == null && editTalent.contacts() == null && editTalent.attachedFiles() == null)
             throw new ResponseStatusException(BAD_REQUEST, "you did not provide information to make changes");
     }
 }

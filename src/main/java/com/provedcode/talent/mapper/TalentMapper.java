@@ -14,10 +14,10 @@ public interface TalentMapper {
     @Mapping(target = "additionalInfo", expression = "java(talent.getTalentDescription() != null ? talent.getTalentDescription().getAdditionalInfo() : null)")
     @Mapping(target = "links", expression = "java(talent.getTalentLinks().stream().map(l -> l.getLink()).toList())")
     @Mapping(target = "contacts", expression = "java(talent.getTalentContacts().stream().map(c -> c.getContact()).toList())")
-    @Mapping(target = "talents", expression = "java(talent.getTalentTalents().stream().map(t -> t.getTalentName()).toList())")
+//    @Mapping(target = "talents", expression = "java(talent.getTalentTalents().stream().map(t -> t.getTalentName()).toList())")
     @Mapping(target = "attachedFiles", expression = "java(talent.getTalentAttachedFiles().stream().map(a -> a.getAttachedFile()).toList())")
     FullTalentDTO talentToFullTalentDTO(Talent talent);
 
-    @Mapping(target = "talents", expression = "java(talent.getTalentTalents().stream().map(t -> t.getTalentName()).toList())")
+//    @Mapping(target = "talents", expression = "java(talent.getTalentTalents().stream().map(t -> t.getTalentName()).toList())")
     ShortTalentDTO talentToShortTalentDTO(Talent talent);
 }

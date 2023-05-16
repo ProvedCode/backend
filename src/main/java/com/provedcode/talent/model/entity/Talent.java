@@ -41,8 +41,8 @@ public class Talent {
     private TalentDescription talentDescription;
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TalentLink> talentLinks = new ArrayList<>();
-    @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TalentTalents> talentTalents = new ArrayList<>();
+//    @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<TalentSkills> talentTalents = new ArrayList<>();
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TalentContact> talentContacts = new ArrayList<>();
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
