@@ -4,8 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record UserInfoDTO(
-        String token,
-        Long id,
-        String role
+        String token
 ) {
 }

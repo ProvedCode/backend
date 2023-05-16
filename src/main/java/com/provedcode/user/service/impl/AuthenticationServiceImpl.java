@@ -15,9 +15,11 @@ import com.provedcode.user.repo.UserInfoRepository;
 import com.provedcode.user.service.AuthenticationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -28,6 +30,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
@@ -53,12 +56,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         Role userRole = userInfo.getAuthorities().stream().findFirst().orElseThrow().getAuthority();
 
-        return UserInfoDTO.builder()
-                .token(generateJWTToken(name, authorities))
-                .id(userRole.equals(Role.TALENT) ? userInfo.getTalent().getId()
-                        : userInfo.getSponsor().getId())
-                .role(userRole.name())
-                .build();
+        BiFunction<UserInfo, Role, Long> getUserIdFunction = (user, role) -> role.equals(Role.TALENT) ? user.getTalent().getId()
+                : user.getSponsor().getId();
+
+        return new UserInfoDTO(generateJWTToken(getUserIdFunction.apply(userInfo, userRole), name, authorities).getTokenValue());
     }
 
     public UserInfoDTO register(TalentRegistrationDTO user) {
@@ -88,11 +89,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("user with login {%s} was saved, his authorities: %s".formatted(userLogin, userAuthorities));
 
-        return UserInfoDTO.builder()
-                .token(generateJWTToken(userLogin, userAuthorities))
-                .id(talent.getId())
-                .role(Role.TALENT.name())
-                .build();
+        return new UserInfoDTO(generateJWTToken(talent.getId(), userLogin, userAuthorities).getTokenValue());
     }
 
     public UserInfoDTO register(SponsorRegistrationDTO user) {
@@ -123,25 +120,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("user with login {%s} was saved, his authorities: %s".formatted(userLogin, userAuthorities));
 
-        return UserInfoDTO.builder()
-                .token(generateJWTToken(userLogin, userAuthorities))
-                .id(sponsor.getId())
-                .role(Role.SPONSOR.name())
-                .build();
+        return new UserInfoDTO(generateJWTToken(sponsor.getId(), userLogin, userAuthorities).getTokenValue());
     }
 
-    private String generateJWTToken(String name, Collection<? extends GrantedAuthority> authorities) {
-        log.info("=== POST /login === auth.name = {}", name);
+    private Jwt generateJWTToken(Long id, String login, Collection<? extends GrantedAuthority> authorities) {
+        log.info("=== POST /login === auth.login = {}", login);
         log.info("=== POST /login === auth = {}", authorities);
         var now = Instant.now();
         var claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
                 .expiresAt(now.plus(60, MINUTES))
-                .subject(name)
+                .subject(login)
                 .claim("scope", authorities.stream().map(GrantedAuthority::getAuthority)
                         .collect(Collectors.joining(" ")))
+                .claim("role", authorities.stream().map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.joining(" ")).replace("ROLE_", ""))
+                .claim("id", id)
                 .build();
-        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        return jwtEncoder.encode(JwtEncoderParameters.from(claims));
     }
 }
