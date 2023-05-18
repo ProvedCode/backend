@@ -8,6 +8,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 
+import com.provedcode.kudos.model.entity.Kudos;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Builder
@@ -30,6 +34,9 @@ public class ProofSkill {
     @ManyToOne
     @JoinColumn(name = "skill_id")
     private Skills skill;
+
+    @OneToMany(mappedBy = "skill", orphanRemoval = true)
+    private List<Kudos> kudoses = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

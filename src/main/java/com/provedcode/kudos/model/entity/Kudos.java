@@ -1,6 +1,7 @@
 package com.provedcode.kudos.model.entity;
 
 import com.provedcode.sponsor.model.entity.Sponsor;
+import com.provedcode.talent.model.entity.ProofSkill;
 import com.provedcode.talent.model.entity.TalentProof;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,7 +23,7 @@ public class Kudos {
     @ManyToOne
     @JoinColumn(name = "sponsor_id")
     private Sponsor sponsor;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "proof_id")
-    private TalentProof proof;
+    @ManyToOne
+    @JoinColumn(name = "proof_skill_id")
+    private ProofSkill skill;
 }

@@ -61,8 +61,6 @@ public class TalentProof {
     @Column(length = 20)
     private ProofStatus status;
     private LocalDateTime created;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "proof", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Kudos> kudos;
     @OneToMany(mappedBy = "talentProof", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProofSkill> proofSkills = new LinkedHashSet<>();
 }
