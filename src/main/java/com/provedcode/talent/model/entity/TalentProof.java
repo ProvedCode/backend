@@ -41,11 +41,11 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Entity
-@Table(name = "talent_proofs")
+@Table(name = "proofs")
 public class TalentProof {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", nullable = false, insertable = false, updatable = false)
     private Long id;
     @NotNull
     @ManyToOne
