@@ -5,7 +5,7 @@ import com.provedcode.talent.model.ProofStatus;
 import com.provedcode.talent.model.dto.ProofSkillsDTO;
 import com.provedcode.talent.model.dto.SkillDTO;
 import com.provedcode.talent.model.dto.SkillsOnProofDTO;
-import com.provedcode.talent.model.entity.Skills;
+import com.provedcode.talent.model.entity.Skill;
 import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.model.entity.TalentProof;
 import com.provedcode.talent.repo.SkillsRepository;
