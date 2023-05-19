@@ -17,5 +17,7 @@ databaseChangeLog:
       file: db/changelog/changeset/V5/drop-V5.sql
   - include:
       file: db/changelog/changeset/V5/schema-V5.sql
+  - include:
+      file: db/changelog/changeset/V5/data-V5.sql
 
 
