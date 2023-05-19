@@ -19,7 +19,7 @@ import java.util.Optional;
 @RestController
 @AllArgsConstructor
 @Validated
-@RequestMapping("/api/v3/")
+@RequestMapping("/api/v5/")
 public class KudosController {
     KudosService kudosService;
 
@@ -36,13 +36,13 @@ public class KudosController {
     KudosAmountWithSponsor getProofKudos(@PathVariable("proof-id") long proofId, Authentication authentication) {
         return kudosService.getProofKudos(proofId, authentication);
     }
-//
-//    @PostAddKudosToProofApiDoc
-//    @PreAuthorize("hasRole('SPONSOR')")
-//    @PostMapping("/proofs/{proof-id}/kudos")
-//    void addKudosToProof(@PathVariable("proof-id") long proofId,
-//                         @RequestBody @Valid Optional<SetAmountKudos> amount,
-//                         Authentication authentication) {
-//        kudosService.addKudosToProof(proofId, amount, authentication);
-//    }
+
+    @PostAddKudosToProofApiDoc
+    @PreAuthorize("hasRole('SPONSOR')")
+    @PostMapping("/proofs/{proof-id}/kudos")
+    void addKudosToProof(@PathVariable("proof-id") long proofId,
+                         @RequestBody @Valid SetAmountKudos amount,
+                         Authentication authentication) {
+        kudosService.addKudosToProof(proofId, amount, authentication);
+    }
 }
