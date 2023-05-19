@@ -19,8 +19,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "skill")
-public class Skills {
+@Table(name = "skills")
+public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -29,6 +29,8 @@ public class Skills {
     private String skill;
     @ManyToMany(mappedBy = "skills")
     private Set<Talent> talents = new LinkedHashSet<>();
+    @ManyToMany(mappedBy = "skill")
+    private Set<ProofSkill> proofSkills = new LinkedHashSet<>();
 
     @Override
     public boolean equals(Object o) {
@@ -36,7 +38,7 @@ public class Skills {
             return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
             return false;
-        Skills skills = (Skills) o;
+        Skill skills = (Skill) o;
         return getId() != null && Objects.equals(getId(), skills.getId());
     }
 

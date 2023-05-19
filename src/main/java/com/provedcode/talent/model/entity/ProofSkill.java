@@ -1,18 +1,27 @@
 package com.provedcode.talent.model.entity;
 
-import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import org.hibernate.Hibernate;
+
+import com.provedcode.kudos.model.entity.Kudos;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.Hibernate;
-
-import com.provedcode.kudos.model.entity.Kudos;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Builder
 @Entity
@@ -20,23 +29,20 @@ import java.util.Objects;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "proof_skill")
+@Table(name = "proofs_skills")
 public class ProofSkill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, insertable = false, updatable = false)
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "proof_id")
     private TalentProof talentProof;
-
     @ManyToOne
     @JoinColumn(name = "skill_id")
-    private Skills skill;
-
-    @OneToMany(mappedBy = "skill", orphanRemoval = true)
-    private List<Kudos> kudoses = new ArrayList<>();
+    private Skill skill;
+    @OneToMany(mappedBy = "skill")
+    private List<Kudos> kudos = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
