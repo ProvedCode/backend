@@ -34,7 +34,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Entity
-@Table(name = "talent")
+@Table(name = "talents")
 public class Talent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,8 +66,6 @@ public class Talent {
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TalentProof> talentProofs = new ArrayList<>();
     @ManyToMany
-    @JoinTable(name = "talent_skill",
-            joinColumns = @JoinColumn(name = "talent_id"),
-            inverseJoinColumns = @JoinColumn(name = "skill_id"))
-    private Set<Skills> skills = new LinkedHashSet<>();
+    @JoinTable(name = "talents_skills", joinColumns = @JoinColumn(name = "talent_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    private Set<Skill> skills = new LinkedHashSet<>();
 }
