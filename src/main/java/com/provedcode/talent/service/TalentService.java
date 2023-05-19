@@ -162,18 +162,18 @@ public class TalentService {
         validateTalentForCompliance.userVerification(talent, userInfo, id);
         Talent talentObject = talent.get();
 
-        Set<Skills> skillsFromRepo = skillIdDTO.id().stream()
+        Set<Skill> skillsFromRepo = skillIdDTO.id().stream()
                 .map(element -> skillsRepository.findById(element)
                         .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                                 "Skill with id = %d not found".formatted(element))))
                 .collect(Collectors.toSet());
 
-        Set<Skills> skillsFromProofs = talentObject.getTalentProofs().stream()
+        Set<Skill> skillsFromProofs = talentObject.getTalentProofs().stream()
                 .flatMap(talentProof -> talentProof.getProofSkills()
                         .stream().map(skill -> skill.getSkill())).collect(Collectors.toSet());
 
-        for (Skills skill : talentObject.getSkills()) {
-            for (Skills skillForAdd : skillsFromRepo) {
+        for (Skill skill : talentObject.getSkills()) {
+            for (Skill skillForAdd : skillsFromRepo) {
                 if (skill.equals(skillForAdd)) {
                     throw new ResponseStatusException(BAD_REQUEST,
                             "Skill with id = %d found in talent's skills".formatted(skill.getId()));
@@ -195,7 +195,7 @@ public class TalentService {
     public void deleteSkillFromTalent(long talentId, long skillId, Authentication authentication) {
         Optional<Talent> talent = talentRepository.findById(talentId);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
-        Skills skill = skillsRepository.findById(skillId)
+        Skill skill = skillsRepository.findById(skillId)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "Skill with id = %d not found".formatted(skillId)));
         validateTalentForCompliance.userVerification(talent, userInfo, talentId);
