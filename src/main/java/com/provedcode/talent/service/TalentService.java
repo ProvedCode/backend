@@ -172,6 +172,14 @@ public class TalentService {
                 .flatMap(talentProof -> talentProof.getProofSkills()
                         .stream().map(skill -> skill.getSkill())).collect(Collectors.toSet());
 
+        for (Skills skill : talentObject.getSkills()) {
+            for (Skills skillForAdd : skillsFromRepo) {
+                if (skill.equals(skillForAdd)) {
+                    throw new ResponseStatusException(BAD_REQUEST,
+                            "Skill with id = %d found in talent's skills".formatted(skill.getId()));
+                }
+            }
+        }
         skillsFromRepo.stream()
                 .filter(skill -> !skillsFromProofs.contains(skill))
                 .findFirst()
