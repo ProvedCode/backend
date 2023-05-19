@@ -41,6 +41,14 @@ public class ProofSkillsService {
     ProofSkillRepository proofSkillRepository;
     SkillMapper skillMapper;
 
+    final BiConsumer<Talent, TalentProof> isValidTalentEditProof = (talent, talentProof) -> {
+        if (!talent.getId().equals(talentProof.getTalent().getId())) {
+            throw new ResponseStatusException(BAD_REQUEST,
+                    "talentId with id = %s and proofId with id = %s do not match"
+                            .formatted(talent.getId(), talentProof.getId()));
+        }
+    };
+
     final BiConsumer<Long, UserInfo> isValidUserEditTalent = (talentId, userInfo) -> {
         if (!userInfo.getTalent().getId().equals(talentId)) {
             throw new ResponseStatusException(CONFLICT, "you can`t change another talent");
@@ -83,6 +91,7 @@ public class ProofSkillsService {
         proof.getProofSkills().addAll(addedSkills);
     }
 
+    @Transactional(readOnly = true)
     public SkillsOnProofDTO getAllSkillsOnProof(long talentId, long proofId, Authentication authentication) {
         TalentProof talentProof = talentProofRepository.findById(proofId)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
@@ -114,35 +123,25 @@ public class ProofSkillsService {
 
     }
 
+    public void deleteSkillOnProof(long talentId, long proofId, long skillId, Authentication authentication) {
+        UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
+        isValidUserEditTalent.accept(talentId, userInfo);
 
-//    @Transactional(readOnly = true)
-//    public SkillsOnProofDTO getAllSkillsOnProof(long talentId, long proofId, Authentication authentication) {
-//        TalentProof talentProof = talentProofRepository.findById(proofId)
-//                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-//                        "proof with id = %s not found".formatted(proofId)));
-//        Talent talent = talentRepository.findById(talentId)
-//                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-//                        "talent with id = %s not found".formatted(talentId)));
-//        if (!talent.getId().equals(talentProof.getTalent().getId())) {
-//            throw new ResponseStatusException(BAD_REQUEST,
-//                    "talentId with id = %s and proofId with id = %s do not match".formatted(talentId, proofId));
-//        }
-//        Set<SkillDTO> skills = talentProof.getSkills().stream()
-//                .map(skillMapper::skillToSkillDTO).collect(Collectors.toSet());
-//        if (talentProof.getStatus().equals(ProofStatus.PUBLISHED)) {
-//            return SkillsOnProofDTO.builder().skills(skills).build();
-//        } else if (authentication != null) {
-//            UserInfo userInfo = userInfoRepository.findByLogin(authentication.getName())
-//                    .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
-//            if (userInfo.getTalent().getId().equals(talentProof.getTalent().getId())) {
-//                return SkillsOnProofDTO.builder().skills(skills).build();
-//            } else {
-//                throw new ResponseStatusException(FORBIDDEN, "you can't see proofs in DRAFT and HIDDEN status");
-//            }
-//        } else {
-//            throw new ResponseStatusException(FORBIDDEN, "you can't see proofs in DRAFT and HIDDEN status");
-//        }
-//    }
+        Talent talent = talentRepository.findById(talentId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "talent with id = %s not found".formatted(talentId)));
+
+        TalentProof talentProof = talentProofRepository.findById(proofId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "proof with id = %s not found".formatted(proofId)));
+        if (!talentProof.getStatus().equals(ProofStatus.DRAFT)) {
+            throw new ResponseStatusException(CONFLICT, "proof status must be DRAFT");
+        }
+        isValidTalentEditProof.accept(talent, talentProof);
+
+        talentProof.getProofSkills().removeIf(i -> i.getSkill().getId().equals(skillId));
+    }
+
 
 //    public void deleteSkillOnProof(long talentId, long proofId, long skillId, Authentication authentication) {
 //        Talent talent = talentRepository.findById(talentId)
