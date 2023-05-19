@@ -28,8 +28,6 @@ public class Skills {
     @Column(name = "skill", length = 30)
     private String skill;
     @ManyToMany(mappedBy = "skills")
-    private Set<TalentProof> talentProofs = new LinkedHashSet<>();
-    @ManyToMany(mappedBy = "skills")
     private Set<Talent> talents = new LinkedHashSet<>();
 
     @Override

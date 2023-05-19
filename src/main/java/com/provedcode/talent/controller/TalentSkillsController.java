@@ -20,26 +20,26 @@ import org.springframework.web.bind.annotation.*;
 public class TalentSkillsController {
     ProofSkillsService talentSkillsService;
 
-    @PostMapping("/{talent-id}/proofs/{proof-id}/skills")
-    void addSkillOnProof(@PathVariable("talent-id") long talentId,
-                         @PathVariable("proof-id") long proofId,
-                         @RequestBody @Valid ProofSkillsDTO skills,
-                         Authentication authentication) {
-        talentSkillsService.addSkillsOnProof(talentId, proofId, skills, authentication);
-    }
-
-    @GetMapping("/{talent-id}/proofs/{proof-id}/skills")
-    SkillsOnProofDTO getAllSkillsOnProof(@PathVariable("talent-id") long talentId,
-                                         @PathVariable("proof-id") long proofId,
-                                         Authentication authentication) {
-        return talentSkillsService.getAllSkillsOnProof(talentId, proofId, authentication);
-    }
-    @PreAuthorize("hasRole('TALENT')")
-    @DeleteMapping("/{talent-id}/proofs/{proof-id}/skills/{skill-id}")
-    void deleteSkillOnProof(@PathVariable("talent-id") long talentId,
-                            @PathVariable("proof-id") long proofId,
-                            @PathVariable("skill-id") long skillId,
-                            Authentication authentication) {
-        talentSkillsService.deleteSkillOnProof(talentId, proofId, skillId, authentication);
-    }
+//    @PostMapping("/{talent-id}/proofs/{proof-id}/skills")
+//    void addSkillOnProof(@PathVariable("talent-id") long talentId,
+//                         @PathVariable("proof-id") long proofId,
+//                         @RequestBody @Valid ProofSkillsDTO skills,
+//                         Authentication authentication) {
+//        talentSkillsService.addSkillsOnProof(talentId, proofId, skills, authentication);
+//    }
+//
+//    @GetMapping("/{talent-id}/proofs/{proof-id}/skills")
+//    SkillsOnProofDTO getAllSkillsOnProof(@PathVariable("talent-id") long talentId,
+//                                         @PathVariable("proof-id") long proofId,
+//                                         Authentication authentication) {
+//        return talentSkillsService.getAllSkillsOnProof(talentId, proofId, authentication);
+//    }
+//    @PreAuthorize("hasRole('TALENT')")
+//    @DeleteMapping("/{talent-id}/proofs/{proof-id}/skills/{skill-id}")
+//    void deleteSkillOnProof(@PathVariable("talent-id") long talentId,
+//                            @PathVariable("proof-id") long proofId,
+//                            @PathVariable("skill-id") long skillId,
+//                            Authentication authentication) {
+//        talentSkillsService.deleteSkillOnProof(talentId, proofId, skillId, authentication);
+//    }
 }
