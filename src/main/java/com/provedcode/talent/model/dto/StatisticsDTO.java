@@ -1,4 +1,9 @@
 package com.provedcode.talent.model.dto;
 
-public record StatisticsDTO() {
+import lombok.Builder;
+
+@Builder
+public record StatisticsDTO(
+        Long allKudosOnTalent
+) {
 }

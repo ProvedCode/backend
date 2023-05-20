@@ -91,11 +91,10 @@ public class TalentController {
         return talentService.getFilteredBySkillsTalentsPage(page, size, filterBy).map(talentMapper::talentToShortTalentDTO);
     }
 
-    @GetMapping("v5/talents{talent-id}/statistics")
+    @PreAuthorize("hasRole('TALENT')")
+    @GetMapping("v5/talents/{talent-id}/statistics")
     StatisticsDTO getStatisticsForTalent(@PathVariable("talent-id") long talentId,
                                          Authentication authentication) {
         return talentService.getStatisticsForTalent(talentId, authentication);
     }
-
-
 }

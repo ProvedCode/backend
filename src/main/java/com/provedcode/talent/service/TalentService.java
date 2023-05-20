@@ -220,15 +220,21 @@ public class TalentService {
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
         validateTalentForCompliance.userVerification(talent, userInfo, talentId);
         Talent talentObject = talent.get();
-        getAllKudosOnTalent(talentObject);
         getSkillWithLargestNumberOfKudos(talentObject);
         getProofWithLargestNumberOfKudos(talentObject);
 
-        return null;
+        return StatisticsDTO.builder()
+                .allKudosOnTalent(getAllKudosOnTalent(talentObject))
+                .build();
     }
 
     public Long getAllKudosOnTalent(Talent talent) {
-        return null;
+        return talent.getTalentProofs()
+                .stream()
+                .flatMap(x -> x.getProofSkills().stream())
+                .flatMap(y -> y.getKudos().stream())
+                .mapToLong(q -> q.getAmount())
+                .sum();
     }
 
     public Map<String, Long> getSkillWithLargestNumberOfKudos(Talent talent) {
