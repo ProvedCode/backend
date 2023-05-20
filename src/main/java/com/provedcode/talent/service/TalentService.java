@@ -240,19 +240,29 @@ public class TalentService {
     }
 
     public Map<String, Long> getSkillWithLargestNumberOfKudos(Talent talent) {
-        Map<String, Long> rez = new HashMap<>();
-//        Long max = Long.MIN_VALUE;
-//        for (TalentProof talentProof : talent.getTalentProofs()) {
-//            for (ProofSkill proofSkill : talentProof.getProofSkills()) {
-//                for (Kudos kudos : proofSkill.getKudos()) {
-//                    if (max < kudos.getAmount()) {
-//                        rez.put(proofSkill.getSkill().getSkill(), kudos.getAmount());
-//                        max = kudos.getAmount();
-//                    }
-//                }
-//            }
-//        }
-        return rez;
+        Map<String, Long> numberKudosOnSkill = new HashMap<>();
+        for (TalentProof talentProof : talent.getTalentProofs()) {
+            for (ProofSkill proofSkill : talentProof.getProofSkills()) {
+                for (Kudos kudos : proofSkill.getKudos()) {
+                    if (numberKudosOnSkill.containsKey(proofSkill.getSkill().getSkill())) {
+                        Long amountKudosOnSkill = numberKudosOnSkill.get(proofSkill.getSkill().getSkill());
+                        numberKudosOnSkill.remove(proofSkill.getSkill().getSkill());
+                        numberKudosOnSkill.put(proofSkill.getSkill().getSkill(), amountKudosOnSkill + kudos.getAmount());
+                    } else {
+                        numberKudosOnSkill.put(proofSkill.getSkill().getSkill(), kudos.getAmount());
+                    }
+                }
+            }
+        }
+        Long max = Collections.max(numberKudosOnSkill.values());
+        Map<String, Long> result = new HashMap<>();
+        for (Map.Entry<String, Long> entry : numberKudosOnSkill.entrySet()) {
+            if (entry.getValue().equals(max)) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return result;
     }
 
     public Map<ProofDTO, Long> getProofWithLargestNumberOfKudos(Talent talent) {
