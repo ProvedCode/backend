@@ -37,7 +37,7 @@ ADD CONSTRAINT FK_useaut_on_user_info FOREIGN KEY (user_id) REFERENCES user_info
 ALTER TABLE kudos
 ADD CONSTRAINT FK_KUDOS_ON_SPONSOR FOREIGN KEY (sponsor_id) REFERENCES sponsor (id);
 ALTER TABLE kudos
-ADD CONSTRAINT FK_KUDOS_ON_PROOF_SKILL FOREIGN KEY (proof_skill_id) REFERENCES proof_skill(id);
+ADD CONSTRAINT FK_KUDOS_ON_PROOF_SKILL FOREIGN KEY (proof_skill_id) REFERENCES proof_skill (id);
 ALTER TABLE proof_skill
 ADD CONSTRAINT FK_proof_skill_ON_TALENT_PROOF FOREIGN KEY (proof_id) REFERENCES talent_proofs (id);
 ALTER TABLE proof_skill

@@ -175,7 +175,7 @@ public class TalentService {
         for (Skill skill : talentObject.getSkills()) {
             for (Skill skillForAdd : skillsFromRepo) {
                 if (skill.equals(skillForAdd)) {
-                    throw new ResponseStatusException(BAD_REQUEST,
+                    throw new ResponseStatusException(CONFLICT,
                             "Skill with id = %d found in talent's skills".formatted(skill.getId()));
                 }
             }

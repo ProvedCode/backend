@@ -160,22 +160,28 @@ public class TalentProofService {
         return talentProofRepository.save(oldProof);
     }
 
-//    public void deleteProofById(long talentId, long proofId, Authentication authentication) {
-//        Optional<Talent> talent = talentRepository.findById(talentId);
-//        Optional<TalentProof> talentProof = talentProofRepository.findById(proofId);
-//        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
-//
-//        validateTalentForCompliance.userAndProofVerification(talent, talentProof, userInfo, talentId, proofId);
-//
-//        Talent updatableTalent = talent.get();
-//        List<Skills> talentSkills = updatableTalent.getTalentProofs().stream()
-//                .flatMap(proof -> proof.getSkills().stream()).collect(Collectors.toCollection(ArrayList::new));
-//        log.info("talent-skills = {}", talentSkills.stream().map(i -> i.getSkill()).toList());
-//        List<Skills> skillsOnProof = talentProof.get().getSkills().stream().toList();
-//        talentSkills.removeAll(skillsOnProof);
-//        Set<Skills> newTalentSkills = new HashSet<>(talentSkills);
-//        updatableTalent.setSkills(newTalentSkills);
-//        log.info("new talent-skills = {}", newTalentSkills.stream().map(Skills::getSkill).toList());
-//        updatableTalent.getTalentProofs().remove(talentProof.get());
-//    }
+    public void deleteProofById(long talentId, long proofId, Authentication authentication) {
+        Optional<Talent> talent = talentRepository.findById(talentId);
+        Optional<TalentProof> talentProof = talentProofRepository.findById(proofId);
+        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
+
+        validateTalentForCompliance.userAndProofVerification(talent, talentProof, userInfo, talentId, proofId);
+
+        Talent updatableTalent = talent.get();
+
+        List<Skill> allTalentSkills = updatableTalent.getTalentProofs().stream()
+                .flatMap(proof -> proof.getProofSkills()
+                        .stream().map(skill -> skill.getSkill())).collect(Collectors.toList());
+
+        log.info("talent-skills = {}", allTalentSkills.stream().map(i -> i.getSkill()).toList());
+
+        List<Skill> skillsOnProofForDelete = talentProof.get().getProofSkills()
+                .stream().map(skill -> skill.getSkill()).toList();
+
+        allTalentSkills.removeAll(skillsOnProofForDelete);
+        Set<Skill> newTalentSkills = new HashSet<>(allTalentSkills);
+        updatableTalent.setSkills(newTalentSkills);
+        log.info("new talent-skills = {}", newTalentSkills.stream().map(Skill::getSkill).toList());
+        updatableTalent.getTalentProofs().remove(talentProof.get());
+    }
 }
