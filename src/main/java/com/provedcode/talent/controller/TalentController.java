@@ -4,6 +4,7 @@ import com.provedcode.talent.mapper.TalentMapper;
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
 import com.provedcode.talent.model.dto.SkillIdDTO;
+import com.provedcode.talent.model.dto.StatisticsDTO;
 import com.provedcode.talent.model.request.EditTalent;
 import com.provedcode.talent.service.TalentService;
 import com.provedcode.user.model.dto.SessionInfoDTO;
@@ -89,5 +90,12 @@ public class TalentController {
                                                     @RequestParam(value = "filter-by", required = false) String... filterBy) {
         return talentService.getFilteredBySkillsTalentsPage(page, size, filterBy).map(talentMapper::talentToShortTalentDTO);
     }
+
+    @GetMapping("v5/talents{talent-id}/statistics")
+    StatisticsDTO getStatisticsForTalent(@PathVariable("talent-id") long talentId,
+                                         Authentication authentication) {
+        return talentService.getStatisticsForTalent(talentId, authentication);
+    }
+
 
 }

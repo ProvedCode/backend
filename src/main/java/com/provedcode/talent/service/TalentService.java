@@ -1,7 +1,10 @@
 package com.provedcode.talent.service;
 
 import com.provedcode.config.PageProperties;
+import com.provedcode.talent.model.dto.ProofDTO;
+import com.provedcode.talent.model.dto.SkillDTO;
 import com.provedcode.talent.model.dto.SkillIdDTO;
+import com.provedcode.talent.model.dto.StatisticsDTO;
 import com.provedcode.talent.model.entity.*;
 import com.provedcode.talent.model.request.EditTalent;
 import com.provedcode.talent.repo.SkillsRepository;
@@ -24,10 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
@@ -213,5 +213,29 @@ public class TalentService {
         return filterBy != null ?
                 talentRepository.findBySkills_SkillsInIgnoreCase(PageRequest.of(page, size), Arrays.stream(filterBy).map(String::toUpperCase).toList())
                 : talentRepository.findAll(PageRequest.of(page, size));
+    }
+
+    public StatisticsDTO getStatisticsForTalent(long talentId, Authentication authentication) {
+        Optional<Talent> talent = talentRepository.findById(talentId);
+        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
+        validateTalentForCompliance.userVerification(talent, userInfo, talentId);
+        Talent talentObject = talent.get();
+        getAllKudosOnTalent(talentObject);
+        getSkillWithLargestNumberOfKudos(talentObject);
+        getProofWithLargestNumberOfKudos(talentObject);
+
+        return null;
+    }
+
+    public Long getAllKudosOnTalent(Talent talent) {
+        return null;
+    }
+
+    public Map<String, Long> getSkillWithLargestNumberOfKudos(Talent talent) {
+        return null;
+    }
+
+    public Map<ProofDTO, Long> getProofWithLargestNumberOfKudos(Talent talent) {
+        return null;
     }
 }
