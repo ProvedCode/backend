@@ -1,6 +1,7 @@
 package com.provedcode.talent.service;
 
 import com.provedcode.config.PageProperties;
+import com.provedcode.kudos.model.entity.Kudos;
 import com.provedcode.talent.model.dto.ProofDTO;
 import com.provedcode.talent.model.dto.SkillDTO;
 import com.provedcode.talent.model.dto.SkillIdDTO;
@@ -220,11 +221,10 @@ public class TalentService {
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
         validateTalentForCompliance.userVerification(talent, userInfo, talentId);
         Talent talentObject = talent.get();
-        getSkillWithLargestNumberOfKudos(talentObject);
-        getProofWithLargestNumberOfKudos(talentObject);
-
         return StatisticsDTO.builder()
                 .allKudosOnTalent(getAllKudosOnTalent(talentObject))
+                .skillWithLargestNumberOfKudos(getSkillWithLargestNumberOfKudos(talentObject))
+                .proofWithLargestNumberOfKudos(getProofWithLargestNumberOfKudos(talentObject))
                 .build();
     }
 
@@ -238,7 +238,19 @@ public class TalentService {
     }
 
     public Map<String, Long> getSkillWithLargestNumberOfKudos(Talent talent) {
-        return null;
+        Map<String, Long> rez = new HashMap<>();
+        Long max = Long.MIN_VALUE;
+        for (TalentProof talentProof : talent.getTalentProofs()) {
+            for (ProofSkill proofSkill : talentProof.getProofSkills()) {
+                for (Kudos kudos : proofSkill.getKudos()) {
+                    if (max < kudos.getAmount()) {
+                        rez.put(proofSkill.getSkill().getSkill(), kudos.getAmount());
+                        max = kudos.getAmount();
+                    }
+                }
+            }
+        }
+        return rez;
     }
 
     public Map<ProofDTO, Long> getProofWithLargestNumberOfKudos(Talent talent) {
