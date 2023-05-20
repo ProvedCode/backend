@@ -2,6 +2,7 @@ package com.provedcode.talent.service;
 
 import com.provedcode.config.PageProperties;
 import com.provedcode.kudos.model.entity.Kudos;
+import com.provedcode.talent.mapper.TalentProofMapper;
 import com.provedcode.talent.model.dto.ProofDTO;
 import com.provedcode.talent.model.dto.SkillDTO;
 import com.provedcode.talent.model.dto.SkillIdDTO;
@@ -45,6 +46,7 @@ public class TalentService {
     PageProperties pageProperties;
     ValidateTalentForCompliance validateTalentForCompliance;
     SkillsRepository skillsRepository;
+    TalentProofMapper talentProofMapper;
 
     @Transactional(readOnly = true)
     public Page<Talent> getTalentsPage(Integer page, Integer size) {
@@ -239,21 +241,36 @@ public class TalentService {
 
     public Map<String, Long> getSkillWithLargestNumberOfKudos(Talent talent) {
         Map<String, Long> rez = new HashMap<>();
-        Long max = Long.MIN_VALUE;
-        for (TalentProof talentProof : talent.getTalentProofs()) {
-            for (ProofSkill proofSkill : talentProof.getProofSkills()) {
-                for (Kudos kudos : proofSkill.getKudos()) {
-                    if (max < kudos.getAmount()) {
-                        rez.put(proofSkill.getSkill().getSkill(), kudos.getAmount());
-                        max = kudos.getAmount();
-                    }
-                }
-            }
-        }
+//        Long max = Long.MIN_VALUE;
+//        for (TalentProof talentProof : talent.getTalentProofs()) {
+//            for (ProofSkill proofSkill : talentProof.getProofSkills()) {
+//                for (Kudos kudos : proofSkill.getKudos()) {
+//                    if (max < kudos.getAmount()) {
+//                        rez.put(proofSkill.getSkill().getSkill(), kudos.getAmount());
+//                        max = kudos.getAmount();
+//                    }
+//                }
+//            }
+//        }
         return rez;
     }
 
     public Map<ProofDTO, Long> getProofWithLargestNumberOfKudos(Talent talent) {
-        return null;
+        Map<ProofDTO, Long> result = new HashMap<>();
+        Long maxForResult = 0L;
+        for (TalentProof talentProof : talent.getTalentProofs()) {
+            Long amountKudosOnSkills = 0L;
+            for (ProofSkill proofSkill : talentProof.getProofSkills()) {
+                for (Kudos kudos : proofSkill.getKudos()) {
+                    amountKudosOnSkills += kudos.getAmount();
+                }
+            }
+            if (amountKudosOnSkills > maxForResult) {
+                maxForResult = amountKudosOnSkills;
+                result.clear();
+                result.put(talentProofMapper.toProofDTO(talentProof), amountKudosOnSkills);
+            }
+        }
+        return result;
     }
 }
