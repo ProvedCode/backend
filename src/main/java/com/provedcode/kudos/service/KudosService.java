@@ -1,5 +1,18 @@
 package com.provedcode.kudos.service;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.provedcode.kudos.model.entity.Kudos;
 import com.provedcode.kudos.model.request.SetAmountKudos;
 import com.provedcode.kudos.model.response.KudosAmount;
@@ -17,17 +30,8 @@ import com.provedcode.talent.repo.TalentProofRepository;
 import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.UserInfoRepository;
+
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpStatus.*;
 
 @Service
 @AllArgsConstructor
@@ -71,7 +75,7 @@ public class KudosService {
                         "Proof with id = %s not found".formatted(proofId)));
 
         Long countOfAllKudos = talentProof.getProofSkills()
-                .stream().flatMap(proofSkills -> proofSkills.getKudoses()
+                .stream().flatMap(proofSkills -> proofSkills.getKudos()
                         .stream().map(Kudos::getAmount))
                 .reduce(0L, (prev, next) -> prev + next);
 
@@ -81,7 +85,7 @@ public class KudosService {
                 String skill = proofSkill.getSkill().getSkill();
                 Map<Long, SponsorDTO> kudosFromSponsor = talentProof.getProofSkills().stream()
                         .filter(proofSkills -> proofSkills.getSkill().getSkill().equals(skill))
-                        .flatMap(proofSkills -> proofSkills.getKudoses().stream())
+                        .flatMap(proofSkills -> proofSkills.getKudos().stream())
                         .collect(Collectors.toMap(
                                 Kudos::getAmount,
                                 proof -> proof.getSponsor() != null
@@ -137,8 +141,7 @@ public class KudosService {
                     .skill(proofSkill)
                     .amount(addKudoses)
                     .build();
-            proofSkill.getKudoses().add(kudosRepository.save(kudos));
+            proofSkill.getKudos().add(kudosRepository.save(kudos));
         });
-
     }
 }
