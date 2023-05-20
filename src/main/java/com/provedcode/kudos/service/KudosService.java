@@ -89,10 +89,10 @@ public class KudosService {
                         .collect(Collectors.toMap(
                                 Kudos::getAmount,
                                 proof -> proof.getSponsor() != null
-                                    ? sponsorMapper.toDto(proof.getSponsor())
-                                    : SponsorDTO.builder().build(),
-                            (prev, next) -> next,
-                            HashMap::new));
+                                        ? sponsorMapper.toDto(proof.getSponsor())
+                                        : SponsorDTO.builder().build(),
+                                (prev, next) -> next,
+                                HashMap::new));
                 skillsMap.put(skill, kudosFromSponsor);
             });
             return KudosAmountWithSponsor.builder()
@@ -127,9 +127,9 @@ public class KudosService {
         if (sponsor.getAmountKudos() < obtainedAmount) {
             throw new ResponseStatusException(FORBIDDEN, "The sponsor cannot give more kudos than he has");
         }
-        if (obtainedAmount % talentProof.getProofSkills().size() != 0) {
-            throw new ResponseStatusException(BAD_REQUEST,
-                    "Sponsor cannot add amount of kudos that multiple of amount of skills");
+        Long modula = obtainedAmount % talentProof.getProofSkills().size();
+        if (modula != 0) {
+            obtainedAmount -= modula;
         }
         sponsor.setAmountKudos(sponsor.getAmountKudos() - obtainedAmount);
 
