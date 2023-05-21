@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 
 @RestController
-@RequestMapping("/api/v4/talents")
+@RequestMapping("/api/v4/")
 public class TalentSkillsController {
     TalentSkillsService talentSkillsService;
 
-    @PostMapping("/{talent-id}/proofs/{proof-id}/skills")
+    @PostMapping("talents/{talent-id}/proofs/{proof-id}/skills")
     void addSkillOnProof(@PathVariable("talent-id") long talentId,
                          @PathVariable("proof-id") long proofId,
                          @RequestBody @Valid ProofSkillsDTO skills,
@@ -28,14 +28,13 @@ public class TalentSkillsController {
         talentSkillsService.addSkillsOnProof(talentId, proofId, skills, authentication);
     }
 
-    @GetMapping("/{talent-id}/proofs/{proof-id}/skills")
-    SkillsOnProofDTO getAllSkillsOnProof(@PathVariable("talent-id") long talentId,
-                                         @PathVariable("proof-id") long proofId,
+    @GetMapping("proofs/{proof-id}/skills")
+    SkillsOnProofDTO getAllSkillsOnProof(@PathVariable("proof-id") long proofId,
                                          Authentication authentication) {
-        return talentSkillsService.getAllSkillsOnProof(talentId, proofId, authentication);
+        return talentSkillsService.getAllSkillsOnProof(proofId, authentication);
     }
     @PreAuthorize("hasRole('TALENT')")
-    @DeleteMapping("/{talent-id}/proofs/{proof-id}/skills/{skill-id}")
+    @DeleteMapping("talents/{talent-id}/proofs/{proof-id}/skills/{skill-id}")
     void deleteSkillOnProof(@PathVariable("talent-id") long talentId,
                             @PathVariable("proof-id") long proofId,
                             @PathVariable("skill-id") long skillId,

@@ -68,18 +68,10 @@ public class TalentSkillsService {
     }
 
     @Transactional(readOnly = true)
-    public SkillsOnProofDTO getAllSkillsOnProof(long talentId, long proofId, Authentication authentication) {
+    public SkillsOnProofDTO getAllSkillsOnProof(long proofId, Authentication authentication) {
         TalentProof talentProof = talentProofRepository.findById(proofId)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "proof with id = %s not found".formatted(proofId)));
-        Talent talent = talentRepository.findById(talentId)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-                        "talent with id = %s not found".formatted(talentId)));
-        if (!talent.getId().equals(talentProof.getTalent().getId())) {
-            throw new ResponseStatusException(BAD_REQUEST,
-                    "talentId with id = %s and proofId with id = %s do not match".formatted(talentId, proofId));
-        }
-
         if (talentProof.getStatus().equals(ProofStatus.PUBLISHED)) {
             return SkillsOnProofDTO.builder().skills(talentProof.getSkills()).build();
         } else if (authentication != null) {
