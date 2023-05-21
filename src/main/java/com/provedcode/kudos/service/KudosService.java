@@ -126,14 +126,14 @@ public class KudosService {
                                         "Proof that was kudosed does not have the PUBLISHED status");
                 long obtainedAmount = amountOfKudoses.amount();
 
-        if (sponsor.getAmountKudos() < obtainedAmount) {
-            throw new ResponseStatusException(FORBIDDEN, "The sponsor cannot give more kudos than he has");
-        }
-        Long modula = obtainedAmount % talentProof.getProofSkills().size();
-        if (modula != 0) {
-            obtainedAmount -= modula;
-        }
-        sponsor.setAmountKudos(sponsor.getAmountKudos() - obtainedAmount);
+                if (sponsor.getAmountKudos() < obtainedAmount) {
+                        throw new ResponseStatusException(FORBIDDEN, "The sponsor cannot give more kudos than he has");
+                }
+                Long modula = obtainedAmount % talentProof.getProofSkills().size();
+                if (modula != 0) {
+                        obtainedAmount -= modula;
+                }
+                sponsor.setAmountKudos(sponsor.getAmountKudos() - obtainedAmount);
 
                 Long addKudoses = obtainedAmount / talentProof.getProofSkills().size();
 
@@ -174,6 +174,7 @@ public class KudosService {
                 kudosRepository.save(Kudos.builder().amount(obtainedAmount).sponsor(sponsor).skill(proofSkill).build());
         }
 
+        @Transactional(readOnly = true)
         public KudosAmount getSkillKudos(long proofId, long skillId) {
                 TalentProof talentProof = talentProofRepository.findById(proofId)
                                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
