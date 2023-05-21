@@ -1,7 +1,12 @@
 package com.provedcode.talent.service;
 
 import com.provedcode.config.PageProperties;
+import com.provedcode.kudos.model.entity.Kudos;
+import com.provedcode.talent.mapper.TalentProofMapper;
+import com.provedcode.talent.model.dto.ProofDTO;
+import com.provedcode.talent.model.dto.SkillDTO;
 import com.provedcode.talent.model.dto.SkillIdDTO;
+import com.provedcode.talent.model.dto.StatisticsDTO;
 import com.provedcode.talent.model.entity.*;
 import com.provedcode.talent.model.request.EditTalent;
 import com.provedcode.talent.repo.SkillsRepository;
@@ -24,10 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
@@ -44,6 +46,7 @@ public class TalentService {
     PageProperties pageProperties;
     ValidateTalentForCompliance validateTalentForCompliance;
     SkillsRepository skillsRepository;
+    TalentProofMapper talentProofMapper;
 
     @Transactional(readOnly = true)
     public Page<Talent> getTalentsPage(Integer page, Integer size) {
@@ -213,5 +216,71 @@ public class TalentService {
         return filterBy != null ?
                 talentRepository.findBySkills_SkillsInIgnoreCase(PageRequest.of(page, size), Arrays.stream(filterBy).map(String::toUpperCase).toList())
                 : talentRepository.findAll(PageRequest.of(page, size));
+    }
+
+    public StatisticsDTO getStatisticsForTalent(long talentId, Authentication authentication) {
+        Optional<Talent> talent = talentRepository.findById(talentId);
+        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
+        validateTalentForCompliance.userVerification(talent, userInfo, talentId);
+        Talent talentObject = talent.get();
+        return StatisticsDTO.builder()
+                .allKudosOnTalent(getAllKudosOnTalent(talentObject))
+                .skillWithLargestNumberOfKudos(getSkillWithLargestNumberOfKudos(talentObject))
+                .proofWithLargestNumberOfKudos(getProofWithLargestNumberOfKudos(talentObject))
+                .build();
+    }
+
+    public Long getAllKudosOnTalent(Talent talent) {
+        return talent.getTalentProofs()
+                .stream()
+                .flatMap(x -> x.getProofSkills().stream())
+                .flatMap(y -> y.getKudos().stream())
+                .mapToLong(q -> q.getAmount())
+                .sum();
+    }
+
+    public Map<String, Long> getSkillWithLargestNumberOfKudos(Talent talent) {
+        Map<String, Long> numberKudosOnSkill = new HashMap<>();
+        for (TalentProof talentProof : talent.getTalentProofs()) {
+            for (ProofSkill proofSkill : talentProof.getProofSkills()) {
+                for (Kudos kudos : proofSkill.getKudos()) {
+                    if (numberKudosOnSkill.containsKey(proofSkill.getSkill().getSkill())) {
+                        Long amountKudosOnSkill = numberKudosOnSkill.get(proofSkill.getSkill().getSkill());
+                        numberKudosOnSkill.remove(proofSkill.getSkill().getSkill());
+                        numberKudosOnSkill.put(proofSkill.getSkill().getSkill(), amountKudosOnSkill + kudos.getAmount());
+                    } else {
+                        numberKudosOnSkill.put(proofSkill.getSkill().getSkill(), kudos.getAmount());
+                    }
+                }
+            }
+        }
+        Long max = Collections.max(numberKudosOnSkill.values());
+        Map<String, Long> result = new HashMap<>();
+        for (Map.Entry<String, Long> entry : numberKudosOnSkill.entrySet()) {
+            if (entry.getValue().equals(max)) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return result;
+    }
+
+    public Map<ProofDTO, Long> getProofWithLargestNumberOfKudos(Talent talent) {
+        Map<ProofDTO, Long> result = new HashMap<>();
+        Long maxForResult = 0L;
+        for (TalentProof talentProof : talent.getTalentProofs()) {
+            Long amountKudosOnSkills = 0L;
+            for (ProofSkill proofSkill : talentProof.getProofSkills()) {
+                for (Kudos kudos : proofSkill.getKudos()) {
+                    amountKudosOnSkills += kudos.getAmount();
+                }
+            }
+            if (amountKudosOnSkills > maxForResult) {
+                maxForResult = amountKudosOnSkills;
+                result.clear();
+                result.put(talentProofMapper.toProofDTO(talentProof), amountKudosOnSkills);
+            }
+        }
+        return result;
     }
 }
