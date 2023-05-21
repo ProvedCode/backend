@@ -11,6 +11,7 @@ import com.provedcode.user.model.dto.UserInfoDTO;
 import com.provedcode.user.model.entity.Authority;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.AuthorityRepository;
+import com.provedcode.user.repo.DeletedUserRepository;
 import com.provedcode.user.repo.UserInfoRepository;
 import com.provedcode.user.service.AuthenticationService;
 import lombok.AllArgsConstructor;
@@ -48,6 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     SponsorRepository sponsorRepository;
     AuthorityRepository authorityRepository;
     PasswordEncoder passwordEncoder;
+    DeletedUserRepository deletedUserRepository;
 
     @Transactional(readOnly = true)
     public UserInfoDTO login(String name, Collection<? extends GrantedAuthority> authorities) {
@@ -144,5 +146,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .claim("id", id)
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims));
+    }
+
+    public void activateAccount(String uuid) {
+        UserInfo user = userInfoRepository.findByUuid(uuid)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
+        user.setIsLocked(false);
+        deletedUserRepository.deleteByDeletedUser(user);
+        userInfoRepository.save(user);
     }
 }

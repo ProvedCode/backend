@@ -1,5 +1,6 @@
 package com.provedcode.user.controller;
 
+import com.provedcode.talent.service.TalentService;
 import com.provedcode.user.model.dto.SponsorRegistrationDTO;
 import com.provedcode.user.model.dto.TalentRegistrationDTO;
 import com.provedcode.user.model.dto.UserInfoDTO;
@@ -39,5 +40,10 @@ public class AuthenticationController {
     @ResponseStatus(HttpStatus.CREATED)
     UserInfoDTO register(@RequestBody @Valid SponsorRegistrationDTO user) {
         return authenticationService.register(user);
+    }
+
+    @GetMapping("/activate")
+    void activateAccount(@RequestParam("uuid") String uuid) {
+        authenticationService.activateAccount(uuid);
     }
 }

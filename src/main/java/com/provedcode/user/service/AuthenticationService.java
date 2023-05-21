@@ -9,6 +9,10 @@ import java.util.Collection;
 
 public interface AuthenticationService {
     UserInfoDTO login(String name, Collection<? extends GrantedAuthority> authorities);
+
     UserInfoDTO register(TalentRegistrationDTO user);
+
     UserInfoDTO register(SponsorRegistrationDTO user);
+
+    void activateAccount(String uuid);
 }

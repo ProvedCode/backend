@@ -9,5 +9,6 @@ public interface UserInfoRepository extends JpaRepository<UserInfo, Long> {
     long deleteByTalentId(Long talentId);
     boolean existsByLogin(String login);
     Optional<UserInfo> findByLogin(String login);
+    Optional<UserInfo> findByUuid(String uuid);
 
 }

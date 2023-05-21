@@ -1,10 +1,11 @@
 package com.provedcode.talent.service;
 
+import com.provedcode.config.EmailDefaultProps;
 import com.provedcode.config.PageProperties;
+import com.provedcode.config.ServerInfoConfig;
 import com.provedcode.kudos.model.entity.Kudos;
 import com.provedcode.talent.mapper.TalentProofMapper;
 import com.provedcode.talent.model.dto.ProofDTO;
-import com.provedcode.talent.model.dto.SkillDTO;
 import com.provedcode.talent.model.dto.SkillIdDTO;
 import com.provedcode.talent.model.dto.StatisticsDTO;
 import com.provedcode.talent.model.entity.*;
@@ -14,9 +15,12 @@ import com.provedcode.talent.repo.TalentProofRepository;
 import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.talent.utill.ValidateTalentForCompliance;
 import com.provedcode.user.model.dto.SessionInfoDTO;
+import com.provedcode.user.model.entity.DeletedUser;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.AuthorityRepository;
+import com.provedcode.user.repo.DeletedUserRepository;
 import com.provedcode.user.repo.UserInfoRepository;
+import com.provedcode.user.service.impl.EmailService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -29,6 +33,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,6 +53,10 @@ public class TalentService {
     ValidateTalentForCompliance validateTalentForCompliance;
     SkillsRepository skillsRepository;
     TalentProofMapper talentProofMapper;
+    DeletedUserRepository deletedUserRepository;
+    ServerInfoConfig serverInfoConfig;
+    EmailService emailService;
+    EmailDefaultProps emailDefaultProps;
 
     @Transactional(readOnly = true)
     public Page<Talent> getTalentsPage(Integer page, Integer size) {
@@ -143,11 +153,18 @@ public class TalentService {
         validateTalentForCompliance.userVerification(talent, userInfo, id);
 
         UserInfo user = userInfo.get();
-        Talent entity = talent.get();
+        user.setIsLocked(true);
+        DeletedUser deletedUser = DeletedUser.builder()
+                .deletedUser(user)
+                .timeToDelete(Instant.now().plus(3, ChronoUnit.DAYS))
+                .build();
+        deletedUserRepository.save(deletedUser);
+        userInfoRepository.save(user);
 
-        user.getAuthorities().clear();
-        userInfoRepository.delete(user);
-        talentRepository.delete(entity);
+        String userActivateAccountLink = serverInfoConfig.getFullServerAddress() + "/api/activate?uuid=" + user.getUuid();
+        emailService.sendEmail(user.getLogin(),
+                emailDefaultProps.userDeletedSubject(),
+                emailDefaultProps.userDeleted().formatted(userActivateAccountLink));
 
         return new SessionInfoDTO("deleted", "null");
     }

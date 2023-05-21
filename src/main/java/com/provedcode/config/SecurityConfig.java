@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -58,6 +59,7 @@ public class SecurityConfig {
                 .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll() // for openAPI
                 .requestMatchers(antMatcher("/swagger-ui/**")).permitAll() // for openAPI
                 .requestMatchers(antMatcher("/swagger-ui.html")).permitAll() // for openAPI
+                .requestMatchers(antMatcher(HttpMethod.GET, "/api/activate")).permitAll()// for email account recovery
                 .anyRequest().authenticated()
         );
 
