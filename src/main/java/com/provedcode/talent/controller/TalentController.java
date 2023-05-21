@@ -46,7 +46,7 @@ public class TalentController {
     }
 
     @GetTalentApiDoc
-    @PreAuthorize("hasRole('TALENT')")
+    @PreAuthorize("hasAnyRole('ROLE_TALENT', 'ROLE_SPONSOR')")
     @GetMapping("/talents/{id}")
     FullTalentDTO getTalent(@PathVariable("id") long id, Authentication authentication) {
         log.info("get-talent auth = {}", authentication);
