@@ -126,14 +126,14 @@ public class KudosService {
                                         "Proof that was kudosed does not have the PUBLISHED status");
                 long obtainedAmount = amountOfKudoses.amount();
 
-                if (sponsor.getAmountKudos() < obtainedAmount) {
-                        throw new ResponseStatusException(FORBIDDEN, "The sponsor cannot give more kudos than he has");
-                }
-                if (obtainedAmount % talentProof.getProofSkills().size() != 0) {
-                        throw new ResponseStatusException(BAD_REQUEST,
-                                        "Sponsor cannot add amount of kudos that multiple of amount of skills");
-                }
-                sponsor.setAmountKudos(sponsor.getAmountKudos() - obtainedAmount);
+        if (sponsor.getAmountKudos() < obtainedAmount) {
+            throw new ResponseStatusException(FORBIDDEN, "The sponsor cannot give more kudos than he has");
+        }
+        Long modula = obtainedAmount % talentProof.getProofSkills().size();
+        if (modula != 0) {
+            obtainedAmount -= modula;
+        }
+        sponsor.setAmountKudos(sponsor.getAmountKudos() - obtainedAmount);
 
                 Long addKudoses = obtainedAmount / talentProof.getProofSkills().size();
 
