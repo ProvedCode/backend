@@ -27,3 +27,5 @@ databaseChangeLog:
           file: db/changelog/changeset/V5/dataSkill-V5.sql
     - include:
           file: db/changelog/changeset/V5/dataKudos-V5.sql
+    - include:
+        file: db/changelog/changeset/V5/deleted-user-schema.sql
