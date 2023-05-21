@@ -26,8 +26,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.*;
 
 @Service
 @AllArgsConstructor
@@ -86,8 +85,35 @@ public class SponsorService {
         Optional<Sponsor> sponsor = sponsorRepository.findById(id);
         validateSponsorForCompliance.userVerification(sponsor, user, id);
 
-        UserInfo userObject = user.get();
-        userObject.setIsLocked(true);
+        Sponsor deletableSponsor = sponsor.get();
+        List<Kudos> kudosList = deletableSponsor.getKudoses().stream().map(i -> {
+            i.setSponsor(null);
+            return i;
+        }).toList();
+        deletableSponsor.setKudoses(kudosList);
+        userInfoRepository.delete(user.get());
+    }
+
+    private void checkEditSponsorNull(EditSponsor editSponsor) {
+        if (editSponsor.firstName() == null && editSponsor.lastName() == null && editSponsor.image() == null &&
+                editSponsor.countOfKudos() == null)
+            throw new ResponseStatusException(FORBIDDEN, "you did not provide information to make changes");
+    }
+
+    public void deactivateSponsor(long sponsorId, Authentication authentication) {
+        UserInfo user = userInfoRepository.findByLogin(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "user with login = %s not found".formatted(authentication.getName())));
+
+        Sponsor sponsor = sponsorRepository.findById(sponsorId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "sponsor with id = %s not found".formatted(sponsorId)));
+
+        if (!sponsor.equals(user.getSponsor())) {
+            throw new ResponseStatusException(FORBIDDEN, "you cannot update/delete another sponsor");
+        }
+
+        user.setIsLocked(true);
 
         DeletedUser deletedUser = DeletedUser.builder()
                 .deletedUser(userObject)
@@ -103,18 +129,5 @@ public class SponsorService {
         emailService.sendEmail(userObject.getLogin(),
                 emailDefaultProps.userDeletedSubject(),
                 emailDefaultProps.userDeleted().formatted(userActivateAccountLink));
-//        Sponsor deletableSponsor = sponsor.get();
-//        List<Kudos> kudosList = deletableSponsor.getKudoses().stream().map(i -> {
-//            i.setSponsor(null);
-//            return i;
-//        }).toList();
-//        deletableSponsor.setKudoses(kudosList);
-//        userInfoRepository.delete(userObject);
-    }
-
-    private void checkEditSponsorNull(EditSponsor editSponsor) {
-        if (editSponsor.firstName() == null && editSponsor.lastName() == null && editSponsor.image() == null &&
-                editSponsor.countOfKudos() == null)
-            throw new ResponseStatusException(FORBIDDEN, "you did not provide information to make changes");
     }
 }
