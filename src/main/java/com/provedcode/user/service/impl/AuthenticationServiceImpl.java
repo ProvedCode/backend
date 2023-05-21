@@ -30,6 +30,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -80,6 +81,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .login(user.login())
                 .password(passwordEncoder.encode(user.password()))
                 .authorities(Set.of(authorityRepository.findByAuthority(Role.TALENT).orElseThrow()))
+                .uuid(UUID.randomUUID().toString())
+                .isLocked(false)
                 .build();
         userInfoRepository.save(userInfo);
 
@@ -111,6 +114,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .password(passwordEncoder.encode(user.password()))
                 .authorities(
                         Set.of(authorityRepository.findByAuthority(Role.SPONSOR).orElseThrow()))
+                .uuid(UUID.randomUUID().toString())
+                .isLocked(false)
                 .build();
         userInfoRepository.save(userInfo);
 
