@@ -1,13 +1,18 @@
 package com.provedcode.sponsor.service;
 
+import com.provedcode.config.EmailDefaultProps;
 import com.provedcode.config.PageProperties;
+import com.provedcode.config.ServerInfoConfig;
 import com.provedcode.kudos.model.entity.Kudos;
 import com.provedcode.sponsor.model.entity.Sponsor;
 import com.provedcode.sponsor.model.request.EditSponsor;
 import com.provedcode.sponsor.repository.SponsorRepository;
 import com.provedcode.sponsor.utill.ValidateSponsorForCompliance;
+import com.provedcode.user.model.entity.DeletedUser;
 import com.provedcode.user.model.entity.UserInfo;
+import com.provedcode.user.repo.DeletedUserRepository;
 import com.provedcode.user.repo.UserInfoRepository;
+import com.provedcode.user.service.impl.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +37,10 @@ public class SponsorService {
     SponsorRepository sponsorRepository;
     UserInfoRepository userInfoRepository;
     ValidateSponsorForCompliance validateSponsorForCompliance;
+    DeletedUserRepository deletedUserRepository;
+    ServerInfoConfig serverInfoConfig;
+    EmailService emailService;
+    EmailDefaultProps emailDefaultProps;
 
     @Transactional(readOnly = true)
     public Page<Sponsor> getAllSponsors(Integer page, Integer size) {
@@ -75,18 +86,35 @@ public class SponsorService {
         Optional<Sponsor> sponsor = sponsorRepository.findById(id);
         validateSponsorForCompliance.userVerification(sponsor, user, id);
 
-        Sponsor deletableSponsor = sponsor.get();
-        List<Kudos> kudosList = deletableSponsor.getKudoses().stream().map(i -> {
-            i.setSponsor(null);
-            return i;
-        }).toList();
-        deletableSponsor.setKudoses(kudosList);
-        userInfoRepository.delete(user.get());
+        UserInfo userObject = user.get();
+        userObject.setIsLocked(true);
+
+        DeletedUser deletedUser = DeletedUser.builder()
+                .deletedUser(userObject)
+                .timeToDelete(Instant.now().plus(3, ChronoUnit.DAYS))
+                .build();
+
+        deletedUserRepository.save(deletedUser);
+        userInfoRepository.save(userObject);
+
+        String userActivateAccountLink = serverInfoConfig.getFullServerAddress() +
+                "/api/activate?uuid=" + userObject.getUuid();
+
+        emailService.sendEmail(userObject.getLogin(),
+                emailDefaultProps.userDeletedSubject(),
+                emailDefaultProps.userDeleted().formatted(userActivateAccountLink));
+//        Sponsor deletableSponsor = sponsor.get();
+//        List<Kudos> kudosList = deletableSponsor.getKudoses().stream().map(i -> {
+//            i.setSponsor(null);
+//            return i;
+//        }).toList();
+//        deletableSponsor.setKudoses(kudosList);
+//        userInfoRepository.delete(userObject);
     }
 
     private void checkEditSponsorNull(EditSponsor editSponsor) {
         if (editSponsor.firstName() == null && editSponsor.lastName() == null && editSponsor.image() == null &&
-            editSponsor.countOfKudos() == null)
+                editSponsor.countOfKudos() == null)
             throw new ResponseStatusException(FORBIDDEN, "you did not provide information to make changes");
     }
 }
