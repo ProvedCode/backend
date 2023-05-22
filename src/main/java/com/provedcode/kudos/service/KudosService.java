@@ -94,18 +94,40 @@ public class KudosService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "User with login = %s not found".formatted(
                                 login)));
-        Talent talent = talentRepository.findById(userInfo.getTalent().getId())
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-                        "Talent with login = %s not found".formatted(
-                                login)));
         TalentProof talentProof = talentProofRepository.findById(proofId)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "Proof with id = %s not found".formatted(
                                 proofId)));
-
         Long countOfAllKudos = talentProof.getKudos().stream()
                 .map(Kudos::getAmount)
                 .reduce(0L, (prev, next) -> prev + next);
+
+        if (userInfo.getSponsor() != null && userInfo.getTalent() == null) {
+            Sponsor sponsor = sponsorRepository.findById(userInfo.getSponsor().getId())
+                    .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                            "User with login = %s not found".formatted(
+                                    login)));
+
+            Map<Long, SponsorDTO> kudosFromSponsor = talentProof.getKudos().stream()
+                    .filter(kudos -> sponsor.equals(kudos.getSponsor()))
+                    .collect(Collectors.toMap(
+                            Kudos::getAmount,
+                            proof -> sponsorMapper.toDto(
+                                    proof.getSponsor()),
+                            (prev, next) -> next,
+                            HashMap::new
+                    ));
+
+            return KudosAmountWithSponsor.builder()
+                    .allKudosOnProof(countOfAllKudos)
+                    .kudosFromSponsor(kudosFromSponsor)
+                    .build();
+        }
+        Talent talent = talentRepository.findById(userInfo.getTalent().getId())
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "Talent with login = %s not found".formatted(
+                                login)));
+
 
         if (talent.getId().equals(talentProof.getTalent().getId())) {
             Map<Long, SponsorDTO> kudosFromSponsor = talentProof.getKudos().stream()
