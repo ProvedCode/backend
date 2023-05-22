@@ -13,6 +13,7 @@ import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.DeletedUserRepository;
 import com.provedcode.user.repo.UserInfoRepository;
 import com.provedcode.user.service.impl.EmailService;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +26,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -86,12 +88,16 @@ public class SponsorService {
         validateSponsorForCompliance.userVerification(sponsor, user, id);
 
         Sponsor deletableSponsor = sponsor.get();
+        deleteSponsorByUser(user.get(), deletableSponsor);
+    }
+
+    private void deleteSponsorByUser(UserInfo user, @NotNull Sponsor deletableSponsor) {
         List<Kudos> kudosList = deletableSponsor.getKudoses().stream().map(i -> {
             i.setSponsor(null);
             return i;
         }).toList();
         deletableSponsor.setKudoses(kudosList);
-        userInfoRepository.delete(user.get());
+        userInfoRepository.delete(user);
     }
 
     private void checkEditSponsorNull(EditSponsor editSponsor) {
@@ -104,29 +110,27 @@ public class SponsorService {
         UserInfo user = userInfoRepository.findByLogin(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "user with login = %s not found".formatted(authentication.getName())));
-
         Sponsor sponsor = sponsorRepository.findById(sponsorId)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "sponsor with id = %s not found".formatted(sponsorId)));
-
         if (!sponsor.equals(user.getSponsor())) {
             throw new ResponseStatusException(FORBIDDEN, "you cannot update/delete another sponsor");
         }
-
         user.setIsLocked(true);
 
         DeletedUser deletedUser = DeletedUser.builder()
-                .deletedUser(userObject)
+                .deletedUser(user)
                 .timeToDelete(Instant.now().plus(3, ChronoUnit.DAYS))
+                .uuidForActivate(UUID.randomUUID().toString())
                 .build();
 
-        deletedUserRepository.save(deletedUser);
-        userInfoRepository.save(userObject);
-
         String userActivateAccountLink = serverInfoConfig.getFullServerAddress() +
-                "/api/activate?uuid=" + userObject.getUuid();
+                "/api/v5/activate?uuid=" + deletedUser.getUuidForActivate();
 
-        emailService.sendEmail(userObject.getLogin(),
+        deletedUserRepository.save(deletedUser);
+        userInfoRepository.save(user);
+
+        emailService.sendEmail(user.getLogin(),
                 emailDefaultProps.userDeletedSubject(),
                 emailDefaultProps.userDeleted().formatted(userActivateAccountLink));
     }
