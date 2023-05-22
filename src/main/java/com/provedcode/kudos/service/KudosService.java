@@ -1,6 +1,5 @@
 package com.provedcode.kudos.service;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -160,9 +159,6 @@ public class KudosService {
                 TalentProof talentProof = talentProofRepository.findById(proofId)
                                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                                                 "Proof with id = %d not found".formatted(proofId)));
-                ProofSkill proofSkill = proofSkillRepository.findById(skillId)
-                                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-                                                "Skill with id = %d not found".formatted(skillId)));
                 if (!talentProof.getStatus().equals(ProofStatus.PUBLISHED))
                         throw new ResponseStatusException(FORBIDDEN,
                                         "Skill on proof that was kudosed does not have the PUBLISHED status");
@@ -171,6 +167,10 @@ public class KudosService {
                         throw new ResponseStatusException(FORBIDDEN, "The sponsor cannot give more kudos than he has");
                 }
                 sponsor.setAmountKudos(sponsor.getAmountKudos() - obtainedAmount);
+                ProofSkill proofSkill = talentProof.getProofSkills().stream()
+                                .filter(s -> s.getSkill().getId().equals(skillId))
+                                .findFirst().orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                                                "Skill with id = %d not found".formatted(skillId)));
                 kudosRepository.save(Kudos.builder().amount(obtainedAmount).sponsor(sponsor).skill(proofSkill).build());
         }
 
@@ -179,12 +179,13 @@ public class KudosService {
                 TalentProof talentProof = talentProofRepository.findById(proofId)
                                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                                                 "Proof with id = %d not found".formatted(proofId)));
-                ProofSkill proofSkill = proofSkillRepository.findById(skillId)
-                                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-                                                "Skill with id = %d not found".formatted(skillId)));
                 if (!talentProof.getStatus().equals(ProofStatus.PUBLISHED))
                         throw new ResponseStatusException(FORBIDDEN,
                                         "The skill from the proof that was referred to does not have a PUBLISHED status");
+                ProofSkill proofSkill = talentProof.getProofSkills().stream()
+                                .filter(s -> s.getSkill().getId().equals(skillId))
+                                .findFirst().orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                                                "Skill with id = %d not found".formatted(skillId)));
                 List<Kudos> kudos = kudosRepository.findBySkill(proofSkill);
                 long amountOfKudos = kudos.stream().map(Kudos::getAmount).reduce(0L, Long::sum);
                 return new KudosAmount(amountOfKudos);
