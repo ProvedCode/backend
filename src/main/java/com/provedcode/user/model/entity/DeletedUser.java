@@ -19,7 +19,7 @@ public class DeletedUser {
     private Long id;
     private Instant timeToDelete;
     @OneToOne
-    @JoinColumn(name = "id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserInfo deletedUser;
     private String uuidForActivate;
 }

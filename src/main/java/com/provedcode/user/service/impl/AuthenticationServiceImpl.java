@@ -31,7 +31,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
-import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -128,6 +127,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return new UserInfoDTO(generateJWTToken(sponsor.getId(), userLogin, userAuthorities).getTokenValue());
     }
 
+    public void activateAccount(String uuid) {
+        DeletedUser deletedUser = deletedUserRepository.findByUUID(uuid)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
+        UserInfo user = deletedUser.getDeletedUser();
+        user.setIsLocked(false);
+        deletedUserRepository.deleteById(deletedUser.getId());
+        userInfoRepository.save(user);
+    }
+
     private Jwt generateJWTToken(Long id, String login, Collection<? extends GrantedAuthority> authorities) {
         log.info("=== POST /login === auth.login = {}", login);
         log.info("=== POST /login === auth = {}", authorities);
@@ -144,14 +152,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .claim("id", id)
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims));
-    }
-
-    public void activateAccount(String uuid) {
-        DeletedUser deletedUser = deletedUserRepository.findByUuidForActivate(uuid)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
-        UserInfo user = deletedUser.getDeletedUser();
-        user.setIsLocked(false);
-        deletedUserRepository.deleteById(deletedUser.getId());
-        userInfoRepository.save(user);
     }
 }

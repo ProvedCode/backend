@@ -13,6 +13,7 @@ import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.DeletedUserRepository;
 import com.provedcode.user.repo.UserInfoRepository;
 import com.provedcode.user.service.impl.EmailService;
+import com.provedcode.user.util.UsersSchedulerService;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -128,7 +129,6 @@ public class SponsorService {
                 "/api/v5/activate?uuid=" + deletedUser.getUuidForActivate();
 
         deletedUserRepository.save(deletedUser);
-        userInfoRepository.save(user);
 
         emailService.sendEmail(user.getLogin(),
                 emailDefaultProps.userDeletedSubject(),

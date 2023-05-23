@@ -153,20 +153,32 @@ public class TalentService {
         validateTalentForCompliance.userVerification(talent, userInfo, id);
 
         UserInfo user = userInfo.get();
+        userInfoRepository.delete(user);
+
+        return new SessionInfoDTO("deleted", "null");
+    }
+
+    public void deactivateTalentById(long id, Authentication authentication) {
+        Optional<Talent> talent = talentRepository.findById(id);
+        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
+
+        validateTalentForCompliance.userVerification(talent, userInfo, id);
+
+        UserInfo user = userInfo.get();
         user.setIsLocked(true);
         DeletedUser deletedUser = DeletedUser.builder()
                 .deletedUser(user)
                 .timeToDelete(Instant.now().plus(3, ChronoUnit.DAYS))
+                .uuidForActivate(UUID.randomUUID().toString())
                 .build();
         deletedUserRepository.save(deletedUser);
         userInfoRepository.save(user);
 
-        String userActivateAccountLink = serverInfoConfig.getFullServerAddress() + "/api/activate?uuid=" + user.getUuid();
+        String userActivateAccountLink = serverInfoConfig.getFullServerAddress() + "/api/v5/activate?uuid=" + deletedUser.getUuidForActivate();
+
         emailService.sendEmail(user.getLogin(),
                 emailDefaultProps.userDeletedSubject(),
                 emailDefaultProps.userDeleted().formatted(userActivateAccountLink));
-
-        return new SessionInfoDTO("deleted", "null");
     }
 
     private void checkEditTalentNull(EditTalent editTalent) {

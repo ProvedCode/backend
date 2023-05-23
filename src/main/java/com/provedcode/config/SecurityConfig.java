@@ -59,7 +59,7 @@ public class SecurityConfig {
                 .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll() // for openAPI
                 .requestMatchers(antMatcher("/swagger-ui/**")).permitAll() // for openAPI
                 .requestMatchers(antMatcher("/swagger-ui.html")).permitAll() // for openAPI
-                .requestMatchers(antMatcher(HttpMethod.GET, "/api/activate")).permitAll()// for email account recovery
+                .requestMatchers(antMatcher(HttpMethod.GET, "/api/v5/activate")).permitAll()// for email account recovery
                 .anyRequest().authenticated()
         );
 

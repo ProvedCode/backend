@@ -42,7 +42,7 @@ public class AuthenticationController {
         return authenticationService.register(user);
     }
 
-    @GetMapping("/activate")
+    @GetMapping("/v5/activate")
     void activateAccount(@RequestParam("uuid") String uuid) {
         authenticationService.activateAccount(uuid);
     }

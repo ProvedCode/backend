@@ -1,6 +1,5 @@
 package com.provedcode.kudos.service;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -67,9 +66,6 @@ public class KudosService {
         UserInfo userInfo = userInfoRepository.findByLogin(login)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "User with login = %s not found".formatted(login)));
-        Talent talent = talentRepository.findById(userInfo.getTalent().getId())
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-                        "Talent with login = %s not found".formatted(login)));
         TalentProof talentProof = talentProofRepository.findById(proofId)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "Proof with id = %s not found".formatted(proofId)));
@@ -77,10 +73,44 @@ public class KudosService {
         Long countOfAllKudos = talentProof.getProofSkills()
                 .stream().flatMap(proofSkills -> proofSkills.getKudos()
                         .stream().map(Kudos::getAmount))
-                .reduce(0L, (prev, next) -> prev + next);
+                .reduce(0L, Long::sum);
+        Map<String, Map<Long, SponsorDTO>> skillsMap = new HashMap<>();
 
+        if (userInfo.getSponsor() != null && userInfo.getTalent() == null) {
+            Sponsor sponsor = sponsorRepository.findById(userInfo.getSponsor().getId())
+                    .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                            "User with login = %s not found".formatted(
+                                    login)));
+            talentProof.getProofSkills().forEach(proofSkill -> {
+                String skill = proofSkill.getSkill().getSkill();
+                Map<Long, SponsorDTO> kudosFromSponsor = talentProof.getProofSkills().stream()
+                        .map(proofSkills -> {
+                            proofSkills.setKudos(proofSkills.getKudos().stream()
+                                    .filter(kudos -> sponsor.equals(kudos.getSponsor())).toList());
+                            return proofSkills;
+                        })
+                        .filter(proofSkills -> proofSkills.getSkill().getSkill().equals(skill))
+                        .flatMap(proofSkills -> proofSkills.getKudos().stream())
+                        .collect(Collectors.toMap(
+                                Kudos::getAmount,
+                                proof -> proof.getSponsor() != null
+                                        ? sponsorMapper.toDto(proof.getSponsor())
+                                        : SponsorDTO.builder().build(),
+                                (prev, next) -> next,
+                                HashMap::new));
+                skillsMap.put(skill, kudosFromSponsor);
+            });
+
+            return KudosAmountWithSponsor.builder()
+                    .allKudosOnProof(countOfAllKudos)
+                    .kudosFromSponsor(skillsMap)
+                    .build();
+        }
+
+        Talent talent = talentRepository.findById(userInfo.getTalent().getId())
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "Talent with login = %s not found".formatted(login)));
         if (talent.getId().equals(talentProof.getTalent().getId())) {
-            Map<String, Map<Long, SponsorDTO>> skillsMap = new HashMap<>();
             talentProof.getProofSkills().forEach(proofSkill -> { // I dnk wtf is this piece of shit, but it works.
                 String skill = proofSkill.getSkill().getSkill();
                 Map<Long, SponsorDTO> kudosFromSponsor = talentProof.getProofSkills().stream()

@@ -55,5 +55,7 @@ public class UserInfo {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_authorities", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "authority_id"))
     private Set<Authority> authorities = new LinkedHashSet<>();
+
+    @Column(columnDefinition = "FALSE")
     private Boolean isLocked;
 }
