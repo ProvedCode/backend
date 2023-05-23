@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .requestMatchers(antMatcher("/api/*/sponsors/**")).permitAll()
                 .requestMatchers(antMatcher("/api/*/login")).permitAll()
                 .requestMatchers(antMatcher("/api/*/skills")).permitAll()
+                .requestMatchers(antMatcher("/api/*/proofs/**")).permitAll()
                 .requestMatchers(antMatcher("/error")).permitAll()
                 .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll() // for openAPI
                 .requestMatchers(antMatcher("/swagger-ui/**")).permitAll() // for openAPI
