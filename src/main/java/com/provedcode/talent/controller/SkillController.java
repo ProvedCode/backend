@@ -2,7 +2,7 @@ package com.provedcode.talent.controller;
 
 import com.provedcode.talent.model.dto.SkillDTO;
 import com.provedcode.talent.service.SkillsService;
-import com.provedcode.util.annotations.doc.controller.GetListOfSkillsApiDoc;
+import com.provedcode.util.annotations.doc.controller.Skill.GetListOfSkillsApiDoc;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;

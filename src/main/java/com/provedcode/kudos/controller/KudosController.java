@@ -1,5 +1,6 @@
 package com.provedcode.kudos.controller;
 
+import com.provedcode.util.annotations.doc.controller.kudos.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -14,9 +15,6 @@ import com.provedcode.kudos.model.request.SetAmountKudos;
 import com.provedcode.kudos.model.response.KudosAmount;
 import com.provedcode.kudos.model.response.KudosAmountWithSponsor;
 import com.provedcode.kudos.service.KudosService;
-import com.provedcode.util.annotations.doc.controller.kudos.GetAmountOfKudosApiDoc;
-import com.provedcode.util.annotations.doc.controller.kudos.GetKudosForSponsorApiDoc;
-import com.provedcode.util.annotations.doc.controller.kudos.PostAddKudosToProofApiDoc;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -50,14 +48,14 @@ public class KudosController {
             Authentication authentication) {
         kudosService.addKudosToProof(proofId, amount, authentication);
     }
-
+    @PostAddKudosToSkillApiDoc
     @PreAuthorize("hasRole('SPONSOR')")
     @PostMapping("/proofs/{proof-id}/skills/{skill-id}/kudos")
     void addKudosToSkill(@PathVariable("proof-id") long proofId, @PathVariable("skill-id") long skillId,
             Authentication authentication, @RequestBody @Valid SetAmountKudos amount) {
         kudosService.addKudosToSkill(proofId, skillId, amount, authentication);
     }
-
+    @GetAmountOfKudosOnSkillApiDoc
     @GetMapping("/proofs/{proof-id}/skills/{skill-id}/kudos")
     KudosAmount getKudosForSkill(@PathVariable("proof-id") long proofId, @PathVariable("skill-id") long skillId) {
         return kudosService.getSkillKudos(proofId, skillId);

@@ -3,6 +3,9 @@ package com.provedcode.talent.controller;
 import com.provedcode.talent.model.dto.ProofSkillsDTO;
 import com.provedcode.talent.model.dto.SkillsOnProofDTO;
 import com.provedcode.talent.service.ProofSkillsService;
+import com.provedcode.util.annotations.doc.controller.Skill.DeleteSkillOnProofApiDoc;
+import com.provedcode.util.annotations.doc.controller.Skill.GetAllSkillsOnProofApiDoc;
+import com.provedcode.util.annotations.doc.controller.Skill.PostAddSkillOnProofApiDoc;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,9 +13,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @Slf4j
 @Validated
@@ -22,7 +22,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @RequestMapping("/api/v5/talents")
 public class TalentSkillsController {
     ProofSkillsService proofSkillsService;
-
+    @PostAddSkillOnProofApiDoc
     @PostMapping("/{talent-id}/proofs/{proof-id}/skills")
     void addSkillOnProof(@PathVariable("talent-id") long talentId,
                          @PathVariable("proof-id") long proofId,
@@ -30,7 +30,7 @@ public class TalentSkillsController {
                          Authentication authentication) {
         proofSkillsService.addSkillsOnProof(talentId, proofId, skills, authentication);
     }
-
+    @GetAllSkillsOnProofApiDoc
     @GetMapping("/{talent-id}/proofs/{proof-id}/skills")
     SkillsOnProofDTO getAllSkillsOnProof(@PathVariable("talent-id") long talentId,
                                          @PathVariable("proof-id") long proofId,
@@ -38,6 +38,7 @@ public class TalentSkillsController {
         return proofSkillsService.getAllSkillsOnProof(talentId, proofId, authentication);
     }
 
+    @DeleteSkillOnProofApiDoc
     @PreAuthorize("hasRole('TALENT')")
     @DeleteMapping("/{talent-id}/proofs/{proof-id}/skills/{skill-id}")
     void deleteSkillOnProof(@PathVariable("talent-id") long talentId,

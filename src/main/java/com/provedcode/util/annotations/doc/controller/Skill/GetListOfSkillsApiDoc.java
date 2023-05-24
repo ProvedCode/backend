@@ -1,4 +1,4 @@
-package com.provedcode.util.annotations.doc.controller;
+package com.provedcode.util.annotations.doc.controller.Skill;
 
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.SkillDTO;
