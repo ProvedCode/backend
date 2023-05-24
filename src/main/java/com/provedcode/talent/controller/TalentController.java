@@ -8,10 +8,7 @@ import com.provedcode.talent.model.dto.StatisticsDTO;
 import com.provedcode.talent.model.request.EditTalent;
 import com.provedcode.talent.service.TalentService;
 import com.provedcode.user.model.dto.SessionInfoDTO;
-import com.provedcode.util.annotations.doc.controller.talent.DeleteTalentApiDoc;
-import com.provedcode.util.annotations.doc.controller.talent.GetAllTalentsApiDoc;
-import com.provedcode.util.annotations.doc.controller.talent.GetTalentApiDoc;
-import com.provedcode.util.annotations.doc.controller.talent.PatchEditTalentApiDoc;
+import com.provedcode.util.annotations.doc.controller.talent.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -69,6 +66,7 @@ public class TalentController {
         return talentService.deleteTalentById(id, authentication);
     }
 
+    @PostAddSkillOnTalentApiDoc
     @PreAuthorize("hasRole('TALENT')")
     @PostMapping("v4/talents/{talent-id}/skills")
     void addSkillOnTalent(@PathVariable("talent-id") long id,
@@ -77,6 +75,7 @@ public class TalentController {
         talentService.addSkillOnTalent(id, skillIdDTO, authentication);
     }
 
+    @DeleteSkillFromTalentApiDoc
     @PreAuthorize("hasRole('TALENT')")
     @DeleteMapping("v4/talents/{talent-id}/skills/{skill-id}")
     void deleteSkillFromTalent(@PathVariable("talent-id") long talentId,
@@ -85,20 +84,21 @@ public class TalentController {
         talentService.deleteSkillFromTalent(talentId, skillId, authentication);
     }
 
+    @GetFilteredBySkillsTalentsApiDoc
     @GetMapping("v4/talents")
     Page<ShortTalentDTO> getFilteredBySkillsTalents(@RequestParam(value = "page", defaultValue = "0") @PositiveOrZero Integer page,
                                                     @RequestParam(value = "size", defaultValue = "5") @Min(1) @Max(1000) Integer size,
                                                     @RequestParam(value = "filter-by", required = false) String... filterBy) {
         return talentService.getFilteredBySkillsTalentsPage(page, size, filterBy).map(talentMapper::talentToShortTalentDTO);
     }
-
+    @GetStatisticsForTalentApiDoc
     @PreAuthorize("hasRole('TALENT')")
     @GetMapping("v5/talents/{talent-id}/statistics")
     StatisticsDTO getStatisticsForTalent(@PathVariable("talent-id") long talentId,
                                          Authentication authentication) {
         return talentService.getStatisticsForTalent(talentId, authentication);
     }
-
+    @DeleteDeactivateTalentByIdApiDoc
     @PreAuthorize("hasRole('TALENT')")
     @DeleteMapping("v5/talents/{talent-id}")
     void deactivateTalentById(@PathVariable("talent-id") long talentId,
