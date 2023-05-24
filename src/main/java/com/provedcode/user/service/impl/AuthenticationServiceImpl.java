@@ -61,7 +61,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         BiFunction<UserInfo, Role, Long> getUserIdFunction = (user, role) -> role.equals(Role.TALENT) ? user.getTalent().getId()
                 : user.getSponsor().getId();
 
-        return new UserInfoDTO(generateJWTToken(getUserIdFunction.apply(userInfo, userRole), name, authorities).getTokenValue());
+        return UserInfoDTO.builder()
+                .token(generateJWTToken(name, authorities))
+                .id(userRole.equals(Role.TALENT) ? userInfo.getTalent().getId()
+                        : userInfo.getSponsor().getId())
+                .role(userRole.name())
+                .build();
     }
 
     public UserInfoDTO register(TalentRegistrationDTO user) {
@@ -92,7 +97,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("user with login {%s} was saved, his authorities: %s".formatted(userLogin, userAuthorities));
 
-        return new UserInfoDTO(generateJWTToken(talent.getId(), userLogin, userAuthorities).getTokenValue());
+        return UserInfoDTO.builder()
+                .id(talent.getId())
+                .role(Role.TALENT.name())
+                .token(generateJWTToken(userLogin, userAuthorities))
+                .build();
     }
 
     public UserInfoDTO register(SponsorRegistrationDTO user) {
@@ -124,7 +133,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("user with login {%s} was saved, his authorities: %s".formatted(userLogin, userAuthorities));
 
-        return new UserInfoDTO(generateJWTToken(sponsor.getId(), userLogin, userAuthorities).getTokenValue());
+        return UserInfoDTO.builder()
+                .id(sponsor.getId())
+                .role(Role.SPONSOR.name())
+                .token(generateJWTToken(userLogin, userAuthorities))
+                .build();
     }
 
     public void activateAccount(String uuid) {
@@ -136,7 +149,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userInfoRepository.save(user);
     }
 
-    private Jwt generateJWTToken(Long id, String login, Collection<? extends GrantedAuthority> authorities) {
+    private String generateJWTToken(String login, Collection<? extends GrantedAuthority> authorities) {
         log.info("=== POST /login === auth.login = {}", login);
         log.info("=== POST /login === auth = {}", authorities);
         var now = Instant.now();
@@ -147,10 +160,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .subject(login)
                 .claim("scope", authorities.stream().map(GrantedAuthority::getAuthority)
                         .collect(Collectors.joining(" ")))
-                .claim("role", authorities.stream().map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.joining(" ")).replace("ROLE_", ""))
-                .claim("id", id)
                 .build();
-        return jwtEncoder.encode(JwtEncoderParameters.from(claims));
+        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 }
