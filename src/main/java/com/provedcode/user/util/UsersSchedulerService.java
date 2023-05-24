@@ -21,7 +21,7 @@ public class UsersSchedulerService {
     UserInfoRepository userInfoRepository;
     DeletedUserRepository deletedUsersRepository;
 
-    @Scheduled(timeUnit = TimeUnit.MINUTES, fixedRate = 1)
+    @Scheduled(timeUnit = TimeUnit.HOURS, fixedRate = 1)
     void deleteUser() {
         deletedUsersRepository.findAll()
                 .forEach(userToDelete -> {
