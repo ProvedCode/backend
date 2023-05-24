@@ -95,21 +95,13 @@ public class ProofSkillsService {
     }
 
     @Transactional(readOnly = true)
-    public SkillsOnProofDTO getAllSkillsOnProof(long talentId, long proofId, Authentication authentication) {
+    public SkillsOnProofDTO getAllSkillsOnProof(long proofId, Authentication authentication) {
         TalentProof talentProof = talentProofRepository.findById(proofId)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "proof with id = %s not found".formatted(proofId)));
-        Talent talent = talentRepository.findById(talentId)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-                        "talent with id = %s not found".formatted(talentId)));
-        if (!talent.getId().equals(talentProof.getTalent().getId())) {
-            throw new ResponseStatusException(BAD_REQUEST,
-                    "talentId with id = %s and proofId with id = %s do not match".formatted(talentId, proofId));
-        }
         Set<SkillDTO> skills = talentProof.getProofSkills().stream()
                 .map(ProofSkill::getSkill)
                 .map(skillMapper::skillToSkillDTO).collect(Collectors.toSet());
-
         if (talentProof.getStatus().equals(ProofStatus.PUBLISHED)) {
             return SkillsOnProofDTO.builder().skills(skills).build();
         } else if (authentication != null) {
@@ -123,7 +115,6 @@ public class ProofSkillsService {
         } else {
             throw new ResponseStatusException(FORBIDDEN, "you can't see proofs in DRAFT and HIDDEN status");
         }
-
     }
 
     public void deleteSkillOnProof(long talentId, long proofId, long skillId, Authentication authentication) {
