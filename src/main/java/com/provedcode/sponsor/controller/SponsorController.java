@@ -4,10 +4,7 @@ import com.provedcode.sponsor.mapper.SponsorMapper;
 import com.provedcode.sponsor.model.dto.SponsorDTO;
 import com.provedcode.sponsor.model.request.EditSponsor;
 import com.provedcode.sponsor.service.SponsorService;
-import com.provedcode.util.annotations.doc.controller.sponsor.DeleteSponsorApiDoc;
-import com.provedcode.util.annotations.doc.controller.sponsor.GetAllSponsorsApiDoc;
-import com.provedcode.util.annotations.doc.controller.sponsor.GetSponsorApiDoc;
-import com.provedcode.util.annotations.doc.controller.sponsor.PatchEditSponsorApiDoc;
+import com.provedcode.util.annotations.doc.controller.sponsor.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -58,6 +55,7 @@ public class SponsorController {
         sponsorService.deleteSponsor(id, authentication);
     }
 
+    @DeleteDeactivateSponsorByIdApiDoc
     @PreAuthorize("hasRole('SPONSOR')")
     @DeleteMapping("/v5/sponsors/{sponsor-id}")
     void deactivateSponsor(@PathVariable("sponsor-id") long sponsorId, Authentication authentication) {
