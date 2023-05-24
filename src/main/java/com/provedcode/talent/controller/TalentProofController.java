@@ -3,7 +3,6 @@ package com.provedcode.talent.controller;
 import com.provedcode.talent.mapper.TalentProofMapper;
 import com.provedcode.talent.model.dto.FullProofDTO;
 import com.provedcode.talent.model.dto.ProofDTO;
-import com.provedcode.talent.model.dto.StatusDTO;
 import com.provedcode.talent.model.request.AddProof;
 import com.provedcode.talent.service.TalentProofService;
 import com.provedcode.util.annotations.doc.controller.proof.*;
@@ -88,9 +87,9 @@ public class TalentProofController {
     @DeleteProofApiDoc
     @DeleteMapping("/{talent-id}/proofs/{proof-id}")
     @PreAuthorize("hasRole('TALENT')")
-    StatusDTO deleteProof(@PathVariable(value = "talent-id") long talentId,
+    void deleteProof(@PathVariable(value = "talent-id") long talentId,
                           @PathVariable(value = "proof-id") long proofId,
                           Authentication authentication) {
-        return talentProofService.deleteProofById(talentId, proofId, authentication);
+        talentProofService.deleteProofById(talentId, proofId, authentication);
     }
 }

@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import com.provedcode.config.AWSProperties;
+import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.UserInfoRepository;
@@ -75,7 +76,7 @@ public class S3Service implements FileService {
     }
 
     @Override
-    public void setNewUserImage(MultipartFile file, Authentication authentication) {
+    public void setNewUserImage(MultipartFile file, Long talentId, Authentication authentication) {
         if (file.isEmpty()) {
             throw new ResponseStatusException(BAD_REQUEST, "file must be not empty, actual file-size: %s".formatted(file.getSize()));
         }
@@ -84,6 +85,11 @@ public class S3Service implements FileService {
         }
         UserInfo user = userInfoRepository.findByLogin(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "user with login = {%s} not found".formatted(authentication.getName())));
+        Talent talent = talentRepository.findById(talentId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "talent with id = {%s} not found".formatted(talentId)));
+        if (!user.getTalent().equals(talent)) {
+            throw new ResponseStatusException(FORBIDDEN, "You cannot change another talent");
+        }
 
         try {
             String fileType = getFileType(file);

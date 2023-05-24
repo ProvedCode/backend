@@ -1,13 +1,31 @@
 package com.provedcode.talent.model.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import lombok.*;
-import lombok.experimental.Accessors;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.hibernate.validator.constraints.URL;
 
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @Builder
 @Accessors(chain = true)
@@ -16,7 +34,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "talent")
+@Table(name = "talents")
 public class Talent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,12 +59,13 @@ public class Talent {
     private TalentDescription talentDescription;
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TalentLink> talentLinks = new ArrayList<>();
-//    @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<TalentSkills> talentTalents = new ArrayList<>();
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TalentContact> talentContacts = new ArrayList<>();
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TalentAttachedFile> talentAttachedFiles = new ArrayList<>();
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TalentProof> talentProofs = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name = "talents_skills", joinColumns = @JoinColumn(name = "talent_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    private Set<Skill> skills = new LinkedHashSet<>();
 }

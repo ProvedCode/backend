@@ -10,6 +10,25 @@ databaseChangeLog:
     - include:
           file: db/changelog/changeset/V4/data-V4.sql
     - include:
-        file: db/changelog/changeset/V4/data-V4.1.sql
+          file: db/changelog/changeset/V4/data-V4.1.sql
     - include:
-        file: db/changelog/changeset/V4/skill-update.sql
+          file: db/changelog/changeset/V4/data-V4.2.sql
+    - include:
+          file: db/changelog/changeset/V5/drop-V5.sql
+    - include:
+          file: db/changelog/changeset/V5/talent-schema-V5.sql
+    - include:
+          file: db/changelog/changeset/V5/sponsor-schema-V5.sql
+    - include:
+          file: db/changelog/changeset/V5/user-info-schema-V5.sql
+    - include:
+          file: db/changelog/changeset/V5/data-V5.sql
+    - include:
+          file: db/changelog/changeset/V5/skills-data.sql
+    - include:
+          file: db/changelog/changeset/V5/dataSkill-V5.sql
+    - include:
+          file: db/changelog/changeset/V5/dataKudos-V5.sql
+    - include:
+          file: db/changelog/changeset/V5/deleted-user-schema.sql
+

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 import java.util.List;
+import java.util.Set;
 
 @Builder
 public record FullTalentDTO(
@@ -29,7 +30,7 @@ public record FullTalentDTO(
         String additionalInfo,
         @Size(min = 4, max = 2000)
         String bio,
-        List<String> talents,
+        Set<SkillDTO> skills,
         @UrlList
         List<String> links,
         List<String> contacts,

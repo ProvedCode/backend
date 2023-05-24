@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -51,14 +52,15 @@ public class SecurityConfig {
                 .requestMatchers("/actuator/health").permitAll() // for DevOps
                 .requestMatchers(antMatcher("/h2/**")).permitAll()
                 .requestMatchers(antMatcher("/api/*/talents/**")).permitAll()
-                .requestMatchers(antMatcher("/api/*/proofs/**")).permitAll()
                 .requestMatchers(antMatcher("/api/*/sponsors/**")).permitAll()
                 .requestMatchers(antMatcher("/api/*/login")).permitAll()
                 .requestMatchers(antMatcher("/api/*/skills")).permitAll()
+                .requestMatchers(antMatcher("/api/*/proofs/**")).permitAll()
                 .requestMatchers(antMatcher("/error")).permitAll()
                 .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll() // for openAPI
                 .requestMatchers(antMatcher("/swagger-ui/**")).permitAll() // for openAPI
                 .requestMatchers(antMatcher("/swagger-ui.html")).permitAll() // for openAPI
+                .requestMatchers(antMatcher(HttpMethod.GET, "/api/v5/activate")).permitAll()// for email account recovery
                 .anyRequest().authenticated()
         );
 

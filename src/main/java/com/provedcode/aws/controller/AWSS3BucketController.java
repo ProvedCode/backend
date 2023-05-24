@@ -21,10 +21,11 @@ public class AWSS3BucketController {
 
     @PostSetNewUserImageApiDoc
     @PreAuthorize("hasRole('TALENT')")
-    @PostMapping("/image/upload")
+    @PostMapping("/talents/{talent-id}/image/upload")
     public void setNewUserImage(@RequestParam("file") MultipartFile file,
-                              Authentication authentication) {
-        fileService.setNewUserImage(file, authentication);
+                                @PathVariable("talent-id") Long talentId,
+                                Authentication authentication) {
+        fileService.setNewUserImage(file, talentId, authentication);
     }
 
     @GetAllAWSBucketFilesDevApiDoc

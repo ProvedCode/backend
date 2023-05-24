@@ -5,6 +5,7 @@ import com.provedcode.talent.model.ProofStatus;
 import com.provedcode.talent.model.dto.FullProofDTO;
 import com.provedcode.talent.model.dto.ProofDTO;
 import com.provedcode.talent.model.dto.StatusDTO;
+import com.provedcode.talent.model.entity.Skill;
 import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.model.entity.TalentProof;
 import com.provedcode.talent.model.request.AddProof;
@@ -30,8 +31,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -159,14 +160,28 @@ public class TalentProofService {
         return talentProofRepository.save(oldProof);
     }
 
-    public StatusDTO deleteProofById(long talentId, long proofId, Authentication authentication) {
+    public void deleteProofById(long talentId, long proofId, Authentication authentication) {
         Optional<Talent> talent = talentRepository.findById(talentId);
         Optional<TalentProof> talentProof = talentProofRepository.findById(proofId);
         Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
 
         validateTalentForCompliance.userAndProofVerification(talent, talentProof, userInfo, talentId, proofId);
 
-        talent.get().getTalentProofs().remove(talentProof.get());
-        return new StatusDTO("deleted");
+        Talent updatableTalent = talent.get();
+
+        List<Skill> allTalentSkills = updatableTalent.getTalentProofs().stream()
+                .flatMap(proof -> proof.getProofSkills()
+                        .stream().map(skill -> skill.getSkill())).collect(Collectors.toList());
+
+        log.info("talent-skills = {}", allTalentSkills.stream().map(i -> i.getSkill()).toList());
+
+        List<Skill> skillsOnProofForDelete = talentProof.get().getProofSkills()
+                .stream().map(skill -> skill.getSkill()).toList();
+
+        allTalentSkills.removeAll(skillsOnProofForDelete);
+        Set<Skill> newTalentSkills = new HashSet<>(allTalentSkills);
+        updatableTalent.setSkills(newTalentSkills);
+        log.info("new talent-skills = {}", newTalentSkills.stream().map(Skill::getSkill).toList());
+        updatableTalent.getTalentProofs().remove(talentProof.get());
     }
 }
