@@ -97,4 +97,11 @@ public class TalentController {
                                          Authentication authentication) {
         return talentService.getStatisticsForTalent(talentId, authentication);
     }
+
+    @PreAuthorize("hasRole('TALENT')")
+    @DeleteMapping("v5/talents/{talent-id}")
+    void deactivateTalentById(@PathVariable("talent-id") long talentId,
+                              Authentication authentication) {
+        talentService.deactivateTalentById(talentId, authentication);
+    }
 }

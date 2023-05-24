@@ -24,6 +24,11 @@ databaseChangeLog:
     - include:
           file: db/changelog/changeset/V5/data-V5.sql
     - include:
+          file: db/changelog/changeset/V5/skills-data.sql
+    - include:
           file: db/changelog/changeset/V5/dataSkill-V5.sql
     - include:
           file: db/changelog/changeset/V5/dataKudos-V5.sql
+    - include:
+          file: db/changelog/changeset/V5/deleted-user-schema.sql
+

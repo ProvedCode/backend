@@ -8,6 +8,7 @@ CREATE TABLE users_info (
     sponsor_id BIGINT REFERENCES sponsors,
     login VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
+    is_locked  BOOLEAN,
     PRIMARY KEY (id)
 );
 CREATE TABLE authorities (

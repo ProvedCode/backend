@@ -16,7 +16,7 @@ public interface FileService {
 
     List<String> listAllFiles();
 
-    void setNewUserImage(MultipartFile file, Authentication authentication);
+    void setNewUserImage(MultipartFile file, Long talentId, Authentication authentication);
 
     URL generetePresingedUrlFor7Days(String fileFullPath);
 }

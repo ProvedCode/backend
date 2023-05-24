@@ -1,13 +1,20 @@
 package com.provedcode.sponsor.service;
 
+import com.provedcode.config.EmailDefaultProps;
 import com.provedcode.config.PageProperties;
+import com.provedcode.config.ServerInfoConfig;
 import com.provedcode.kudos.model.entity.Kudos;
 import com.provedcode.sponsor.model.entity.Sponsor;
 import com.provedcode.sponsor.model.request.EditSponsor;
 import com.provedcode.sponsor.repository.SponsorRepository;
 import com.provedcode.sponsor.utill.ValidateSponsorForCompliance;
+import com.provedcode.user.model.entity.DeletedUser;
 import com.provedcode.user.model.entity.UserInfo;
+import com.provedcode.user.repo.DeletedUserRepository;
 import com.provedcode.user.repo.UserInfoRepository;
+import com.provedcode.user.service.impl.EmailService;
+import com.provedcode.user.util.UsersSchedulerService;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,11 +23,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.*;
 
 @Service
 @AllArgsConstructor
@@ -30,6 +39,10 @@ public class SponsorService {
     SponsorRepository sponsorRepository;
     UserInfoRepository userInfoRepository;
     ValidateSponsorForCompliance validateSponsorForCompliance;
+    DeletedUserRepository deletedUserRepository;
+    ServerInfoConfig serverInfoConfig;
+    EmailService emailService;
+    EmailDefaultProps emailDefaultProps;
 
     @Transactional(readOnly = true)
     public Page<Sponsor> getAllSponsors(Integer page, Integer size) {
@@ -76,17 +89,49 @@ public class SponsorService {
         validateSponsorForCompliance.userVerification(sponsor, user, id);
 
         Sponsor deletableSponsor = sponsor.get();
+        deleteSponsorByUser(user.get(), deletableSponsor);
+    }
+
+    private void deleteSponsorByUser(UserInfo user, @NotNull Sponsor deletableSponsor) {
         List<Kudos> kudosList = deletableSponsor.getKudoses().stream().map(i -> {
             i.setSponsor(null);
             return i;
         }).toList();
         deletableSponsor.setKudoses(kudosList);
-        userInfoRepository.delete(user.get());
+        userInfoRepository.delete(user);
     }
 
     private void checkEditSponsorNull(EditSponsor editSponsor) {
         if (editSponsor.firstName() == null && editSponsor.lastName() == null && editSponsor.image() == null &&
-            editSponsor.countOfKudos() == null)
+                editSponsor.countOfKudos() == null)
             throw new ResponseStatusException(FORBIDDEN, "you did not provide information to make changes");
+    }
+
+    public void deactivateSponsor(long sponsorId, Authentication authentication) {
+        UserInfo user = userInfoRepository.findByLogin(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "user with login = %s not found".formatted(authentication.getName())));
+        Sponsor sponsor = sponsorRepository.findById(sponsorId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "sponsor with id = %s not found".formatted(sponsorId)));
+        if (!sponsor.equals(user.getSponsor())) {
+            throw new ResponseStatusException(FORBIDDEN, "you cannot update/delete another sponsor");
+        }
+        user.setIsLocked(true);
+
+        DeletedUser deletedUser = DeletedUser.builder()
+                .deletedUser(user)
+                .timeToDelete(Instant.now().plus(3, ChronoUnit.DAYS))
+                .uuidForActivate(UUID.randomUUID().toString())
+                .build();
+
+        String userActivateAccountLink = serverInfoConfig.getFullServerAddress() +
+                "/api/v5/activate?uuid=" + deletedUser.getUuidForActivate();
+
+        deletedUserRepository.save(deletedUser);
+
+        emailService.sendEmail(user.getLogin(),
+                emailDefaultProps.userDeletedSubject(),
+                emailDefaultProps.userDeleted().formatted(userActivateAccountLink));
     }
 }

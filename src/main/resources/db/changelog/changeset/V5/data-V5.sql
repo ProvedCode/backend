@@ -5,33 +5,7 @@ insert into authorities (id, authority)
 values (1, 'TALENT');
 insert into authorities (id, authority)
 values (2, 'SPONSOR');
--- Skill
-insert into skills (id, skill)
-values (1, 'Java Core');
-insert into skills (id, skill)
-values (2, 'Spring Core');
-insert into skills (id, skill)
-values (3, 'Spring boot');
-insert into skills (id, skill)
-values (4, 'H2 Database');
-insert into skills (id, skill)
-values (5, 'Spring Security');
-insert into skills (id, skill)
-values (6, 'REST API');
-insert into skills (id, skill)
-values (7, 'Git');
-insert into skills (id, skill)
-values (8, 'Docker');
-insert into skills (id, skill)
-values (9, 'Jira');
-insert into skills (id, skill)
-values (10, 'JavaScript Core');
-insert into skills (id, skill)
-values (11, 'React');
-insert into skills (id, skill)
-values (12, 'Node.js');
-insert into skills (id, skill)
-values (13, 'Angular');
+
 -- Talent
 -- Serhii Soloviov
 insert into talents (first_name, last_name, specialization, image)

@@ -9,13 +9,14 @@ import com.provedcode.user.model.dto.SponsorRegistrationDTO;
 import com.provedcode.user.model.dto.TalentRegistrationDTO;
 import com.provedcode.user.model.dto.UserInfoDTO;
 import com.provedcode.user.model.entity.Authority;
+import com.provedcode.user.model.entity.DeletedUser;
 import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.AuthorityRepository;
+import com.provedcode.user.repo.DeletedUserRepository;
 import com.provedcode.user.repo.UserInfoRepository;
 import com.provedcode.user.service.AuthenticationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -47,6 +48,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     SponsorRepository sponsorRepository;
     AuthorityRepository authorityRepository;
     PasswordEncoder passwordEncoder;
+    DeletedUserRepository deletedUserRepository;
 
     @Transactional(readOnly = true)
     public UserInfoDTO login(String name, Collection<? extends GrantedAuthority> authorities) {
@@ -80,6 +82,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .login(user.login())
                 .password(passwordEncoder.encode(user.password()))
                 .authorities(Set.of(authorityRepository.findByAuthority(Role.TALENT).orElseThrow()))
+                .isLocked(false)
                 .build();
         userInfoRepository.save(userInfo);
 
@@ -111,6 +114,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .password(passwordEncoder.encode(user.password()))
                 .authorities(
                         Set.of(authorityRepository.findByAuthority(Role.SPONSOR).orElseThrow()))
+                .isLocked(false)
                 .build();
         userInfoRepository.save(userInfo);
 
@@ -121,6 +125,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.info("user with login {%s} was saved, his authorities: %s".formatted(userLogin, userAuthorities));
 
         return new UserInfoDTO(generateJWTToken(sponsor.getId(), userLogin, userAuthorities).getTokenValue());
+    }
+
+    public void activateAccount(String uuid) {
+        DeletedUser deletedUser = deletedUserRepository.findByUUID(uuid)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
+        UserInfo user = deletedUser.getDeletedUser();
+        user.setIsLocked(false);
+        deletedUserRepository.deleteById(deletedUser.getId());
+        userInfoRepository.save(user);
     }
 
     private Jwt generateJWTToken(Long id, String login, Collection<? extends GrantedAuthority> authorities) {
