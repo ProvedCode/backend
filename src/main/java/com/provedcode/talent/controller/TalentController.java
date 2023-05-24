@@ -3,6 +3,8 @@ package com.provedcode.talent.controller;
 import com.provedcode.talent.mapper.TalentMapper;
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
+import com.provedcode.talent.model.dto.SkillIdDTO;
+import com.provedcode.talent.model.dto.StatisticsDTO;
 import com.provedcode.talent.model.request.EditTalent;
 import com.provedcode.talent.service.TalentService;
 import com.provedcode.user.model.dto.SessionInfoDTO;
@@ -43,7 +45,7 @@ public class TalentController {
     }
 
     @GetTalentApiDoc
-    @PreAuthorize("hasRole('TALENT', 'SPONSOR')")
+    @PreAuthorize("hasAnyRole('TALENT', 'SPONSOR')")
     @GetMapping("v2/talents/{id}")
     FullTalentDTO getTalent(@PathVariable("id") long id, Authentication authentication) {
         log.info("get-talent auth = {}", authentication);
