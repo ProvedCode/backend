@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,7 @@ import com.provedcode.sponsor.model.dto.SponsorDTO;
 import com.provedcode.sponsor.model.entity.Sponsor;
 import com.provedcode.sponsor.repository.SponsorRepository;
 import com.provedcode.talent.model.ProofStatus;
+import com.provedcode.talent.model.entity.ProofSkill;
 import com.provedcode.talent.model.entity.Talent;
 import com.provedcode.talent.model.entity.TalentProof;
 import com.provedcode.talent.repo.ProofSkillRepository;
@@ -136,42 +138,85 @@ public class KudosService {
         }
     }
 
+        public void addKudosToProof(long proofId, SetAmountKudos amountOfKudoses, Authentication authentication) {
+                String login = authentication.getName();
+                UserInfo userInfo = userInfoRepository.findByLogin(login)
+                                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                                                "User with login = %s not found".formatted(login)));
+                Sponsor sponsor = sponsorRepository.findById(userInfo.getSponsor().getId()).orElseThrow(
+                                () -> new ResponseStatusException(NOT_FOUND,
+                                                "Sponsor with login = %s not found".formatted(login)));
+                TalentProof talentProof = talentProofRepository.findById(proofId)
+                                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                                                "Proof with id = %d not found".formatted(proofId)));
+                if (!talentProof.getStatus().equals(ProofStatus.PUBLISHED))
+                        throw new ResponseStatusException(FORBIDDEN,
+                                        "Proof that was kudosed does not have the PUBLISHED status");
+                long obtainedAmount = amountOfKudoses.amount();
 
-    public void addKudosToProof(long proofId, SetAmountKudos amountOfKudoses, Authentication authentication) {
-        String login = authentication.getName();
-        UserInfo userInfo = userInfoRepository.findByLogin(login)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-                        "User with login = %s not found".formatted(
-                                login)));
-        Sponsor sponsor = sponsorRepository.findById(userInfo.getSponsor().getId()).orElseThrow(
-                () -> new ResponseStatusException(NOT_FOUND,
-                        "Sponsor with login = %s not found".formatted(login)));
-        TalentProof talentProof = talentProofRepository.findById(proofId)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-                        "Proof with id = %d not found".formatted(
-                                proofId)));
-        if (!talentProof.getStatus().equals(ProofStatus.PUBLISHED))
-            throw new ResponseStatusException(FORBIDDEN, "Proof that was kudosed does not have the PUBLISHED status");
-        long obtainedAmount = amountOfKudoses.amount();
+                if (sponsor.getAmountKudos() < obtainedAmount) {
+                        throw new ResponseStatusException(FORBIDDEN, "The sponsor cannot give more kudos than he has");
+                }
+                Long modula = obtainedAmount % talentProof.getProofSkills().size();
+                if (modula != 0) {
+                        obtainedAmount -= modula;
+                }
+                sponsor.setAmountKudos(sponsor.getAmountKudos() - obtainedAmount);
 
-        if (sponsor.getAmountKudos() < obtainedAmount) {
-            throw new ResponseStatusException(FORBIDDEN, "The sponsor cannot give more kudos than he has");
+                Long addKudoses = obtainedAmount / talentProof.getProofSkills().size();
+
+                talentProof.getProofSkills().forEach(proofSkill -> {
+                        Kudos kudos = Kudos.builder()
+                                        .sponsor(sponsor)
+                                        .skill(proofSkill)
+                                        .amount(addKudoses)
+                                        .build();
+                        proofSkill.getKudos().add(kudosRepository.save(kudos));
+                });
         }
-        Long modula = obtainedAmount % talentProof.getProofSkills().size();
-        if (modula != 0) {
-            obtainedAmount -= modula;
+
+        public void addKudosToSkill(long proofId, long skillId, SetAmountKudos amountOfKudos,
+                        Authentication authentication) {
+                String login = authentication.getName();
+                UserInfo userInfo = userInfoRepository.findByLogin(login)
+                                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                                                "User with login = %s not found".formatted(
+                                                                login)));
+                Sponsor sponsor = sponsorRepository.findById(userInfo.getSponsor().getId()).orElseThrow(
+                                () -> new ResponseStatusException(NOT_FOUND,
+                                                "Sponsor with login = %s not found".formatted(login)));
+                TalentProof talentProof = talentProofRepository.findById(proofId)
+                                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                                                "Proof with id = %d not found".formatted(proofId)));
+                if (!talentProof.getStatus().equals(ProofStatus.PUBLISHED))
+                        throw new ResponseStatusException(FORBIDDEN,
+                                        "Skill on proof that was kudosed does not have the PUBLISHED status");
+                long obtainedAmount = amountOfKudos.amount();
+                if (sponsor.getAmountKudos() < obtainedAmount) {
+                        throw new ResponseStatusException(FORBIDDEN, "The sponsor cannot give more kudos than he has");
+                }
+                sponsor.setAmountKudos(sponsor.getAmountKudos() - obtainedAmount);
+                ProofSkill proofSkill = talentProof.getProofSkills().stream()
+                                .filter(s -> s.getSkill().getId().equals(skillId))
+                                .findFirst().orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                                                "Skill with id = %d not found".formatted(skillId)));
+                kudosRepository.save(Kudos.builder().amount(obtainedAmount).sponsor(sponsor).skill(proofSkill).build());
         }
-        sponsor.setAmountKudos(sponsor.getAmountKudos() - obtainedAmount);
 
-        Long addKudoses = obtainedAmount / talentProof.getProofSkills().size();
-
-        talentProof.getProofSkills().forEach(proofSkill -> {
-            Kudos kudos = Kudos.builder()
-                    .sponsor(sponsor)
-                    .skill(proofSkill)
-                    .amount(addKudoses)
-                    .build();
-            proofSkill.getKudos().add(kudosRepository.save(kudos));
-        });
-    }
+        @Transactional(readOnly = true)
+        public KudosAmount getSkillKudos(long proofId, long skillId) {
+                TalentProof talentProof = talentProofRepository.findById(proofId)
+                                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                                                "Proof with id = %d not found".formatted(proofId)));
+                if (!talentProof.getStatus().equals(ProofStatus.PUBLISHED))
+                        throw new ResponseStatusException(FORBIDDEN,
+                                        "The skill from the proof that was referred to does not have a PUBLISHED status");
+                ProofSkill proofSkill = talentProof.getProofSkills().stream()
+                                .filter(s -> s.getSkill().getId().equals(skillId))
+                                .findFirst().orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                                                "Skill with id = %d not found".formatted(skillId)));
+                List<Kudos> kudos = kudosRepository.findBySkill(proofSkill);
+                long amountOfKudos = kudos.stream().map(Kudos::getAmount).reduce(0L, Long::sum);
+                return new KudosAmount(amountOfKudos);
+        }
 }
