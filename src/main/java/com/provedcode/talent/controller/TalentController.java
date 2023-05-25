@@ -1,10 +1,7 @@
 package com.provedcode.talent.controller;
 
 import com.provedcode.talent.mapper.TalentMapper;
-import com.provedcode.talent.model.dto.FullTalentDTO;
-import com.provedcode.talent.model.dto.ShortTalentDTO;
-import com.provedcode.talent.model.dto.SkillIdDTO;
-import com.provedcode.talent.model.dto.StatisticsDTO;
+import com.provedcode.talent.model.dto.*;
 import com.provedcode.talent.model.request.EditTalent;
 import com.provedcode.talent.service.TalentService;
 import com.provedcode.user.model.dto.SessionInfoDTO;
@@ -21,6 +18,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @Slf4j
@@ -91,6 +90,7 @@ public class TalentController {
                                                     @RequestParam(value = "filter-by", required = false) String... filterBy) {
         return talentService.getFilteredBySkillsTalentsPage(page, size, filterBy).map(talentMapper::talentToShortTalentDTO);
     }
+
     @GetStatisticsForTalentApiDoc
     @PreAuthorize("hasRole('TALENT')")
     @GetMapping("v5/talents/{talent-id}/statistics")
@@ -98,11 +98,19 @@ public class TalentController {
                                          Authentication authentication) {
         return talentService.getStatisticsForTalent(talentId, authentication);
     }
+
     @DeleteDeactivateTalentByIdApiDoc
     @PreAuthorize("hasRole('TALENT')")
     @DeleteMapping("v5/talents/{talent-id}")
     void deactivateTalentById(@PathVariable("talent-id") long talentId,
                               Authentication authentication) {
         talentService.deactivateTalentById(talentId, authentication);
+    }
+
+    @PreAuthorize("hasRole('TALENT')")
+    @GetMapping("v4/talents/{talent-id}/proofs/skills")
+    List<SkillDTO> getAllSkillsOnTalentsProofs(@PathVariable("talent-id") long talentId,
+                                               Authentication authentication) {
+       return talentService.getAllSkillsOnTalentsProofs(talentId, authentication);
     }
 }

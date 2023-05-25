@@ -4,10 +4,9 @@ import com.provedcode.config.EmailDefaultProps;
 import com.provedcode.config.PageProperties;
 import com.provedcode.config.ServerInfoConfig;
 import com.provedcode.kudos.model.entity.Kudos;
+import com.provedcode.talent.mapper.SkillMapper;
 import com.provedcode.talent.mapper.TalentProofMapper;
-import com.provedcode.talent.model.dto.ProofDTO;
-import com.provedcode.talent.model.dto.SkillIdDTO;
-import com.provedcode.talent.model.dto.StatisticsDTO;
+import com.provedcode.talent.model.dto.*;
 import com.provedcode.talent.model.entity.*;
 import com.provedcode.talent.model.request.EditTalent;
 import com.provedcode.talent.repo.SkillsRepository;
@@ -57,6 +56,7 @@ public class TalentService {
     ServerInfoConfig serverInfoConfig;
     EmailService emailService;
     EmailDefaultProps emailDefaultProps;
+    SkillMapper skillMapper;
 
     @Transactional(readOnly = true)
     public Page<Talent> getTalentsPage(Integer page, Integer size) {
@@ -311,5 +311,16 @@ public class TalentService {
             }
         }
         return result;
+    }
+
+    public List<SkillDTO> getAllSkillsOnTalentsProofs(long talentId, Authentication authentication) {
+        Optional<Talent> talent = talentRepository.findById(talentId);
+        Optional<UserInfo> userInfo = userInfoRepository.findByLogin(authentication.getName());
+        validateTalentForCompliance.userVerification(talent, userInfo, talentId);
+        Talent talentObject = talent.get();
+        return talentObject.getTalentProofs().stream()
+                .flatMap(x -> x.getProofSkills()
+                        .stream()
+                        .map(y -> skillMapper.skillToSkillDTO(y.getSkill()))).collect(Collectors.toList());
     }
 }
