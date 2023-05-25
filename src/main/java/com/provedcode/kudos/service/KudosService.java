@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -242,21 +243,32 @@ public class KudosService {
                 .reduce(0L, Long::sum);
 
         if (talent.getId().equals(talentProof.getTalent().getId())) {
-            //TODO
-            Map<Long, SponsorDTO> kudosFromSponsor = talentProof.getKudos().stream()
-                    .collect(Collectors.toMap(
-                            Kudos::getAmount,
-                            proof -> proof.getSponsor() != null
-                                    ? sponsorMapper.toDto(
-                                    proof.getSponsor())
-                                    : SponsorDTO.builder().build(),
-                            (prev, next) -> next,
-                            HashMap::new
-                    ));
-            //TODO
+//            Map<Long, SponsorDTO> kudosFromSponsor = talentProof.getKudos().stream()
+//                    .collect(Collectors.toMap(
+//                            Kudos::getAmount,
+//                            proof -> proof.getSponsor() != null
+//                                    ? sponsorMapper.toDto(
+//                                    proof.getSponsor())
+//                                    : SponsorDTO.builder().build(),
+//                            (prev, next) -> next,
+//                            HashMap::new
+//                    ));
+            Map<Long, SponsorDTO> kudosFromSponsorTwo = new HashMap<>();
+            for (ProofSkill proofSkill : talentProof.getProofSkills()) {
+                for (Kudos kudos : proofSkill.getKudos()) {
+                    if (kudosFromSponsorTwo.containsValue(sponsorMapper.toDto(kudos.getSponsor()))) {
+                        Map<Long, SponsorDTO> map = new HashMap<>();
+
+
+
+                    } else {
+                        kudosFromSponsorTwo.put(kudos.getAmount(), sponsorMapper.toDto(kudos.getSponsor()));
+                    }
+                }
+            }
             return KudosAmountOnProofWithSponsor.builder()
                     .allKudosOnProof(countOfAllKudos)
-                    .kudosFromSponsor(kudosFromSponsor)
+                    .kudosFromSponsor(kudosFromSponsorTwo)
                     .build();
         } else {
             return KudosAmountOnProofWithSponsor.builder()
