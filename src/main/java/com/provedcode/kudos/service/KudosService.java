@@ -242,6 +242,7 @@ public class KudosService {
                 .reduce(0L, Long::sum);
 
         if (talent.getId().equals(talentProof.getTalent().getId())) {
+            //TODO
             Map<Long, SponsorDTO> kudosFromSponsor = talentProof.getKudos().stream()
                     .collect(Collectors.toMap(
                             Kudos::getAmount,
@@ -252,7 +253,7 @@ public class KudosService {
                             (prev, next) -> next,
                             HashMap::new
                     ));
-
+            //TODO
             return KudosAmountOnProofWithSponsor.builder()
                     .allKudosOnProof(countOfAllKudos)
                     .kudosFromSponsor(kudosFromSponsor)
