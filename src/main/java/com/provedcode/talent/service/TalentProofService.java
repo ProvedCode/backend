@@ -87,13 +87,12 @@ public class TalentProofService {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.valueOf(direction.toUpperCase()),
                 sortProperties
         );
-        Page<TalentProof> proofs = talentProofRepository.findByTalentId(talentId, pageRequest);
-        if (authentication.getAuthorities().contains(Role.SPONSOR)) {
-            proofs = talentProofRepository.findByTalentIdAndStatus(talentId, ProofStatus.PUBLISHED, pageRequest);
+        // Page<TalentProof> proofs = talentProofRepository.findByTalentId(talentId, pageRequest);
+        Page<TalentProof> proofs = talentProofRepository.findByTalentIdAndStatus(talentId, ProofStatus.PUBLISHED, pageRequest);
+        if (talent.equals(userInfo.getTalent())) {
+            proofs = talentProofRepository.findByTalentId(talentId, pageRequest);
         }
-        if (userInfo.getTalent() != null && !userInfo.getTalent().getId().equals(talentId)) {
-            proofs = talentProofRepository.findByTalentIdAndStatus(talentId, ProofStatus.PUBLISHED, pageRequest);
-        }
+
         return FullProofDTO.builder()
                 .id(talent.getId())
                 .image(talent.getImage())
