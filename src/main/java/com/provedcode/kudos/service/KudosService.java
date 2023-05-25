@@ -243,24 +243,24 @@ public class KudosService {
                 .reduce(0L, Long::sum);
 
         if (talent.getId().equals(talentProof.getTalent().getId())) {
-//            Map<Long, SponsorDTO> kudosFromSponsor = talentProof.getKudos().stream()
-//                    .collect(Collectors.toMap(
-//                            Kudos::getAmount,
-//                            proof -> proof.getSponsor() != null
-//                                    ? sponsorMapper.toDto(
-//                                    proof.getSponsor())
-//                                    : SponsorDTO.builder().build(),
-//                            (prev, next) -> next,
-//                            HashMap::new
-//                    ));
             Map<Long, SponsorDTO> kudosFromSponsorTwo = new HashMap<>();
             for (ProofSkill proofSkill : talentProof.getProofSkills()) {
                 for (Kudos kudos : proofSkill.getKudos()) {
                     if (kudosFromSponsorTwo.containsValue(sponsorMapper.toDto(kudos.getSponsor()))) {
-                        Map<Long, SponsorDTO> map = new HashMap<>();
-
-
-
+                        SponsorDTO sponsor = sponsorMapper.toDto(kudos.getSponsor());
+                        Map.Entry<Long, SponsorDTO> foundEntry = null;
+                        for (Map.Entry<Long, SponsorDTO> entry : kudosFromSponsorTwo.entrySet()) {
+                            if (entry.getValue().equals(sponsor)) {
+                                foundEntry = entry;
+                                break;
+                            }
+                        }
+                        if (foundEntry != null) {
+                            Long key = foundEntry.getKey();
+                            SponsorDTO value = foundEntry.getValue();
+                            kudosFromSponsorTwo.remove(key);
+                            kudosFromSponsorTwo.put(key + kudos.getAmount(), value);
+                        }
                     } else {
                         kudosFromSponsorTwo.put(kudos.getAmount(), sponsorMapper.toDto(kudos.getSponsor()));
                     }
