@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.provedcode.kudos.model.response.KudosAmountOnProofWithSponsor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +64,7 @@ public class KudosService {
     }
 
     @Transactional(readOnly = true)
-    public KudosAmountWithSponsor getProofKudos(long proofId, Authentication authentication) {
+    public KudosAmountWithSponsor getProofAndSkillsKudos(long proofId, Authentication authentication) {
         String login = authentication.getName();
         UserInfo userInfo = userInfoRepository.findByLogin(login)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
@@ -218,5 +219,48 @@ public class KudosService {
         List<Kudos> kudos = kudosRepository.findBySkill(proofSkill);
         long amountOfKudos = kudos.stream().map(Kudos::getAmount).reduce(0L, Long::sum);
         return new KudosAmount(amountOfKudos);
+    }
+
+    public KudosAmountOnProofWithSponsor getProofKudos(long proofId, Authentication authentication) {
+        String login = authentication.getName();
+        UserInfo userInfo = userInfoRepository.findByLogin(login)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "User with login = %s not found".formatted(
+                                login)));
+        Talent talent = talentRepository.findById(userInfo.getTalent().getId())
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "Talent with login = %s not found".formatted(
+                                login)));
+        TalentProof talentProof = talentProofRepository.findById(proofId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "Proof with id = %s not found".formatted(
+                                proofId)));
+
+        Long countOfAllKudos = talentProof.getProofSkills()
+                .stream().flatMap(proofSkills -> proofSkills.getKudos()
+                        .stream().map(Kudos::getAmount))
+                .reduce(0L, Long::sum);
+
+        if (talent.getId().equals(talentProof.getTalent().getId())) {
+            Map<Long, SponsorDTO> kudosFromSponsor = talentProof.getKudos().stream()
+                    .collect(Collectors.toMap(
+                            Kudos::getAmount,
+                            proof -> proof.getSponsor() != null
+                                    ? sponsorMapper.toDto(
+                                    proof.getSponsor())
+                                    : SponsorDTO.builder().build(),
+                            (prev, next) -> next,
+                            HashMap::new
+                    ));
+
+            return KudosAmountOnProofWithSponsor.builder()
+                    .allKudosOnProof(countOfAllKudos)
+                    .kudosFromSponsor(kudosFromSponsor)
+                    .build();
+        } else {
+            return KudosAmountOnProofWithSponsor.builder()
+                    .allKudosOnProof(countOfAllKudos)
+                    .kudosFromSponsor(null).build();
+        }
     }
 }
