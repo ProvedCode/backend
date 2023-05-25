@@ -41,7 +41,7 @@ public class KudosController {
         return kudosService.getProofAndSkillsKudos(proofId, authentication);
     }
 
-    @GetAmountOfKudosApiDoc
+    @GetAmountOfKudosOnProofApiDoc
     @PreAuthorize("hasAnyRole('TALENT', 'SPONSOR')")
     @GetMapping("v3/proofs/{proof-id}/kudos")
     KudosAmountOnProofWithSponsor getProofKudos(@PathVariable("proof-id") long proofId, Authentication authentication) {

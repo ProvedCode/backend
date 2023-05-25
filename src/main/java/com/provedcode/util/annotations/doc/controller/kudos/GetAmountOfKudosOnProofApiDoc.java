@@ -1,6 +1,6 @@
 package com.provedcode.util.annotations.doc.controller.kudos;
 
-import com.provedcode.kudos.model.response.KudosAmountWithSponsor;
+import com.provedcode.kudos.model.response.KudosAmountOnProofWithSponsor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,17 +13,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Operation(summary = "Amount of “kudos” given by sponsors and who gave the “kudos” on skill")
+@Operation(summary = "Amount of “kudos” given by sponsors and who gave the “kudos” on proof")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200",
                 description = "SUCCESS",
                 content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                        schema = @Schema(implementation = KudosAmountWithSponsor.class))),
+                        schema = @Schema(implementation = KudosAmountOnProofWithSponsor.class))),
         @ApiResponse(responseCode = "404",
-                description = "NOT FOUND",
+                description = "NOT FOUND (Talent with login = %s not found, " +
+                        "Proof with id = %s not found)",
                 content = @Content),
         @ApiResponse(
                 responseCode = "401",
@@ -31,12 +31,12 @@ import java.lang.annotation.Target;
                 content = @Content),
         @ApiResponse(
                 responseCode = "403",
-                description = "FORBIDDEN (if not the talent wants to see)",
+                description = "FORBIDDEN (only for TALENT and SPONSOR)",
                 content = @Content),
         @ApiResponse(
                 responseCode = "400",
                 description = "BAD REQUEST",
                 content = @Content)
 })
-public @interface GetAmountOfKudosApiDoc {
+public @interface GetAmountOfKudosOnProofApiDoc {
 }

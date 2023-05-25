@@ -1,42 +1,33 @@
-package com.provedcode.util.annotations.doc.controller.kudos;
+package com.provedcode.util.annotations.doc.controller.talent;
 
-import com.provedcode.kudos.model.response.KudosAmountWithSponsor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.http.MediaType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Operation(summary = "Amount of “kudos” given by sponsors and who gave the “kudos” on skill")
+@Operation(summary = "Get All Skills On Talent's Proofs")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200",
-                description = "SUCCESS",
-                content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                        schema = @Schema(implementation = KudosAmountWithSponsor.class))),
-        @ApiResponse(responseCode = "404",
-                description = "NOT FOUND",
-                content = @Content),
+                description = "SUCCESS"),
         @ApiResponse(
                 responseCode = "401",
                 description = "UNAUTHORIZED",
                 content = @Content),
         @ApiResponse(
                 responseCode = "403",
-                description = "FORBIDDEN (if not the talent wants to see)",
+                description = "FORBIDDEN (if not the owner wants to see the talent)",
                 content = @Content),
         @ApiResponse(
                 responseCode = "400",
                 description = "BAD REQUEST",
                 content = @Content)
 })
-public @interface GetAmountOfKudosApiDoc {
+public @interface GetListOfSkillsOnProofApiDoc {
 }
