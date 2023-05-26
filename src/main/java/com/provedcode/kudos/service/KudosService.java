@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.provedcode.kudos.model.response.KudosAmountOnProofWithSponsor;
+import com.provedcode.user.model.Role;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -228,10 +229,7 @@ public class KudosService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "User with login = %s not found".formatted(
                                 login)));
-        Talent talent = talentRepository.findById(userInfo.getTalent().getId())
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-                        "Talent with login = %s not found".formatted(
-                                login)));
+
         TalentProof talentProof = talentProofRepository.findById(proofId)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
                         "Proof with id = %s not found".formatted(
@@ -242,7 +240,9 @@ public class KudosService {
                         .stream().map(Kudos::getAmount))
                 .reduce(0L, Long::sum);
 
-        if (talent.getId().equals(talentProof.getTalent().getId())) {
+        //talent.getId().equals(talentProof.getTalent().getId())
+        if (authentication.getAuthorities().contains(Role.SPONSOR)
+                || talentProof.getTalent().equals(userInfo.getTalent())) {
             Map<Long, SponsorDTO> kudosFromSponsorTwo = new HashMap<>();
             for (ProofSkill proofSkill : talentProof.getProofSkills()) {
                 for (Kudos kudos : proofSkill.getKudos()) {
