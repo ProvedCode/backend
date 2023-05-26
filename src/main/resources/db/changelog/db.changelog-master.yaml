@@ -19,4 +19,7 @@ databaseChangeLog:
           file: db/changelog/changeset/V5/dataKudos-V5.sql
     - include:
           file: db/changelog/changeset/V5/deleted-user-schema.sql
+    - include:
+          file: db/changelog/changeset/V5/data-skills-on-proof.sql
+
 

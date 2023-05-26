@@ -1,8 +1,5 @@
 package com.provedcode.kudos.service;
 
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +33,8 @@ import com.provedcode.user.model.entity.UserInfo;
 import com.provedcode.user.repo.UserInfoRepository;
 
 import lombok.AllArgsConstructor;
+
+import static org.springframework.http.HttpStatus.*;
 
 @Service
 @AllArgsConstructor
@@ -160,6 +159,9 @@ public class KudosService {
         if (sponsor.getAmountKudos() < obtainedAmount) {
             throw new ResponseStatusException(FORBIDDEN, "The sponsor cannot give more kudos than he has");
         }
+        if (talentProof.getProofSkills().size() < 1) {
+            throw new ResponseStatusException(CONFLICT, "proof doesn`t contains skills");
+        }
         Long modula = obtainedAmount % talentProof.getProofSkills().size();
         if (modula != 0) {
             obtainedAmount -= modula;
@@ -266,6 +268,7 @@ public class KudosService {
                     }
                 }
             }
+
             return KudosAmountOnProofWithSponsor.builder()
                     .allKudosOnProof(countOfAllKudos)
                     .kudosFromSponsor(kudosFromSponsorTwo)
