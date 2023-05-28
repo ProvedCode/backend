@@ -1,12 +1,13 @@
 package com.provedcode.config;
 
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.provedcode.user.mapper.UserInfoMapper;
-import com.provedcode.user.repo.UserInfoRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPublicKey;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -32,13 +33,14 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.RSAPublicKey;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.provedcode.user.mapper.UserInfoMapper;
+import com.provedcode.user.repo.UserInfoRepository;
 
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
@@ -61,6 +63,7 @@ public class SecurityConfig {
                 .requestMatchers(antMatcher("/swagger-ui/**")).permitAll() // for openAPI
                 .requestMatchers(antMatcher("/swagger-ui.html")).permitAll() // for openAPI
                 .requestMatchers(antMatcher(HttpMethod.GET, "/api/v5/activate")).permitAll()// for email account recovery
+                .requestMatchers(antMatcher("/api/*/checkout/**")).permitAll()
                 .anyRequest().authenticated()
         );
 
