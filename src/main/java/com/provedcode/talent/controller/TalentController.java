@@ -45,8 +45,6 @@ public class TalentController {
     @PreAuthorize("hasAnyRole('TALENT', 'SPONSOR')")
     @GetMapping("v2/talents/{id}")
     FullTalentDTO getTalent(@PathVariable("id") long id, Authentication authentication) {
-        log.info("get-talent auth = {}", authentication);
-        log.info("get-talent auth.name = {}", authentication.getAuthorities());
         return talentMapper.talentToFullTalentDTO(talentService.getTalentById(id));
     }
 
