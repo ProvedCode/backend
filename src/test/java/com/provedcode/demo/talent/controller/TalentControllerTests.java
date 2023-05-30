@@ -7,7 +7,9 @@ import com.provedcode.talent.mapper.TalentMapper;
 import com.provedcode.talent.model.dto.FullTalentDTO;
 import com.provedcode.talent.model.dto.ShortTalentDTO;
 import com.provedcode.talent.model.entity.*;
+import com.provedcode.talent.model.request.EditTalent;
 import com.provedcode.talent.service.TalentService;
+import com.provedcode.user.model.dto.SessionInfoDTO;
 import com.provedcode.user.repo.UserInfoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,9 +23,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.util.List;
@@ -97,4 +101,39 @@ public class TalentControllerTests {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    @WithMockUser(roles = "TALENT")
+    void TalentController_EditTalent_ReturnForbidden() throws Exception {
+        long talentId = 1L;
+
+        FullTalentDTO expectedDTO = FullTalentDTO.builder().build();
+        EditTalent editTalent = EditTalent.builder().build();
+
+        when(talentService.editTalent(anyLong(), any(EditTalent.class), any(Authentication.class)))
+                .thenReturn(talent);
+        when(talentMapper.talentToFullTalentDTO(any(Talent.class)))
+                .thenReturn(expectedDTO);
+
+        mockMvc.perform(patch("/api/v2/talents/{talent-id}", talentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(editTalent)))
+                .andExpect(status().isForbidden())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @WithMockUser
+    void TalentController_DeleteTalent_ReturnForbidden() throws Exception {
+        long talentId = 1L;
+
+        SessionInfoDTO sessionInfoDTO = SessionInfoDTO.builder().build();
+
+        when(talentService.deleteTalentById(anyLong(), any(Authentication.class)))
+                .thenReturn(sessionInfoDTO);
+
+        mockMvc.perform(delete("/api/v2/talents/{id}", talentId))
+                .andExpect(status().isForbidden())
+                .andDo(MockMvcResultHandlers.print());
+
+    }
 }
