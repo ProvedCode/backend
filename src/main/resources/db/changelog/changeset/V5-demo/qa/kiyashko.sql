@@ -6,7 +6,7 @@ values (
            'Maxim',
            'Kiyashko',
            'Quality assurance engineer',
-           'https://i.pinimg.com/564x/80/2d/58/802d58b0302985f9486893d499d3634d.jpg'
+           'https://media.discordapp.net/attachments/1067116531265310872/1113782535021920327/image.png?width=575&height=575'
        );
 insert into descriptions (talent_id, bio, addition_info)
 values (

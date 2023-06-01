@@ -6,7 +6,7 @@ values (
            'Denis',
            'Boyko',
            'Java-Developer',
-           'https://i.pinimg.com/564x/4f/1f/30/4f1f3065c6f3cf409a627982f43af365.jpg'
+           'https://i.pinimg.com/564x/b9/99/70/b999704239bcbd9d92102f064c5870eb.jpg'
        );
 insert into descriptions (talent_id, bio, addition_info)
 values (

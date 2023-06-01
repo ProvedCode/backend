@@ -6,7 +6,7 @@ values (
            'Mykhailo',
            'Ordyntsev',
            'Java back-end developer',
-           'https://i.pinimg.com/564x/e1/08/49/e10849923a8b2e85a7adf494ebd063e6.jpg'
+           'https://i.pinimg.com/564x/f1/ba/40/f1ba400207f9b2bae6a0ab9b26f8de80.jpg'
        );
 insert into descriptions (talent_id, bio, addition_info)
 values (
