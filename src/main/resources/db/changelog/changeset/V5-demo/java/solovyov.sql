@@ -6,7 +6,7 @@ values (
            'Serhii',
            'Soloviov',
            'Java back-end developer',
-           'https://i.pinimg.com/564x/e1/08/49/e10849923a8b2e85a7adf494ebd063e6.jpg'
+           'https://i.pinimg.com/564x/f2/28/fc/f228fcf7155c7c9c72d4e095175e6513.jpg'
        );
 insert into descriptions (talent_id, bio, addition_info)
 values (
