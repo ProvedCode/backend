@@ -57,3 +57,7 @@ databaseChangeLog:
           file: db/changelog/changeset/V5-demo/qa/nikitin.sql
     - include:
           file: db/changelog/changeset/V5-demo/qa/nikolaev.sql
+    - include:
+          file: db/changelog/changeset/V5-demo/data/sponsors.sql
+    - include:
+          file: db/changelog/changeset/V5-demo/data/kudos-on-skills.sql
