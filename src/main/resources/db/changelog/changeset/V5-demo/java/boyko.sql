@@ -112,3 +112,48 @@ values (
                where id = 1
                )
        );
+
+insert into talents_skills(talent_id, skill_id)
+values (3, 21);
+insert into talents_skills(talent_id, skill_id)
+values (3, 22);
+insert into talents_skills(talent_id, skill_id)
+values (3, 1);
+insert into talents_skills(talent_id, skill_id)
+values (3, 2);
+insert into talents_skills(talent_id, skill_id)
+values (3, 3);
+insert into talents_skills(talent_id, skill_id)
+values (3, 4);
+insert into talents_skills(talent_id, skill_id)
+values (3, 5);
+insert into talents_skills(talent_id, skill_id)
+values (3, 6);
+
+insert into proofs_skills (skill_id, proof_id)
+values (1, 5);
+insert into proofs_skills (skill_id, proof_id)
+values (2, 5);
+insert into proofs_skills (skill_id, proof_id)
+values (3, 5);
+insert into proofs_skills (skill_id, proof_id)
+values (4, 5);
+insert into proofs_skills (skill_id, proof_id)
+values (5, 5);
+insert into proofs_skills (skill_id, proof_id)
+values (6, 5);
+insert into proofs_skills (skill_id, proof_id)
+values (7, 5);
+
+insert into proofs_skills (skill_id, proof_id)
+values (7, 6);
+insert into proofs_skills (skill_id, proof_id)
+values (1, 6);
+insert into proofs_skills (skill_id, proof_id)
+values (6, 6);
+insert into proofs_skills (skill_id, proof_id)
+values (22, 7);
+insert into proofs_skills (skill_id, proof_id)
+values (7, 7);
+insert into proofs_skills (skill_id, proof_id)
+values (2, 7);

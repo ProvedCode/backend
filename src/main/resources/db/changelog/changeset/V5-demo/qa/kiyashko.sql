@@ -87,3 +87,32 @@ values (
                where id = 1
                )
        );
+
+insert into talents_skills(talent_id, skill_id)
+values (7, 9);
+insert into talents_skills(talent_id, skill_id)
+values (7, 34);
+insert into talents_skills(talent_id, skill_id)
+values (7, 199);
+insert into talents_skills(talent_id, skill_id)
+values (7, 58);
+insert into talents_skills(talent_id, skill_id)
+values (7, 198);
+insert into talents_skills(talent_id, skill_id)
+values (7, 151);
+insert into proofs_skills (skill_id, proof_id)
+values (9, 12);
+insert into proofs_skills (skill_id, proof_id)
+values (124, 12);
+insert into proofs_skills (skill_id, proof_id)
+values (151, 12);
+insert into proofs_skills (skill_id, proof_id)
+values (58, 13);
+insert into proofs_skills (skill_id, proof_id)
+values (58, 13);
+insert into proofs_skills (skill_id, proof_id)
+values (193, 13);
+insert into proofs_skills (skill_id, proof_id)
+values (127, 14);
+insert into proofs_skills (skill_id, proof_id)
+values (124, 14);

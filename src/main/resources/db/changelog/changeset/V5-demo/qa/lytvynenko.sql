@@ -96,3 +96,11 @@ values (
                where id = 1
                )
        );
+
+insert into talents_skills(talent_id, skill_id)
+values (8, 9), (8, 151), (8, 124), (8, 199), (8, 139);
+
+insert into proofs_skills(proof_id, skill_id)
+values (15, 9), (15, 151), (15, 124), (15, 199);
+insert into proofs_skills(proof_id, skill_id)
+values (16, 9), (16, 151), (16, 124), (16, 199), (16, 139);

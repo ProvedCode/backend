@@ -55,3 +55,5 @@ databaseChangeLog:
           file: db/changelog/changeset/V5-demo/qa/moiseienko.sql
     - include:
           file: db/changelog/changeset/V5-demo/qa/nikitin.sql
+    - include:
+          file: db/changelog/changeset/V5-demo/qa/nikolaev.sql

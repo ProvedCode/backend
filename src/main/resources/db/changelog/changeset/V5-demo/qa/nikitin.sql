@@ -86,3 +86,36 @@ values (
                where id = 1
                )
        );
+
+insert into talents_skills(talent_id, skill_id)
+values (10, 151);
+insert into talents_skills(talent_id, skill_id)
+values (10, 9);
+insert into talents_skills(talent_id, skill_id)
+values (10, 58);
+insert into talents_skills(talent_id, skill_id)
+values (10, 59);
+insert into talents_skills(talent_id, skill_id)
+values (10, 60);
+
+
+insert into proofs_skills (skill_id, proof_id)
+values (9, 19);
+insert into proofs_skills (skill_id, proof_id)
+values (151, 19);
+insert into proofs_skills (skill_id, proof_id)
+values (124, 19);
+
+insert into proofs_skills (skill_id, proof_id)
+values (58, 20);
+insert into proofs_skills (skill_id, proof_id)
+values (59, 20);
+insert into proofs_skills (skill_id, proof_id)
+values (60, 20);
+insert into proofs_skills (skill_id, proof_id)
+values (193, 20);
+
+insert into proofs_skills (skill_id, proof_id)
+values (124, 21);
+insert into proofs_skills (skill_id, proof_id)
+values (127, 21);

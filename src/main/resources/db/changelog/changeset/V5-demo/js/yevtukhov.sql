@@ -108,3 +108,18 @@ values (
                where id = 1
                )
        );
+
+INSERT INTO proofs_skills (proof_id, skill_id)
+VALUES (10, 11),
+       (10, 10),
+       (10, 58),
+       (10, 59),
+       (10, 57);
+INSERT INTO proofs_skills (proof_id, skill_id)
+VALUES (11, 57);
+INSERT INTO talents_skills (talent_id, skill_id)
+VALUES (6, 11),
+       (6, 10),
+       (6, 58),
+       (6, 59),
+       (6, 57);

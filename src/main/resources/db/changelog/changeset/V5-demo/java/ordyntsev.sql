@@ -132,7 +132,7 @@ values (
        );
 
 insert into proofs_skills(proof_id, skill_id)
-values (1, 1), (1, 3), (1, 5), (1, 6), (1, 4), (2, 1), (2, 3), (2, 5), (2, 6), (2, 4);
+values (1, 1), (1, 3), (1, 5), (1, 6), (1, 4), (2, 1), (2, 3), (2, 5), (2, 6), (2, 4), (1, 22), (1, 124), (1, 199);
 
 insert into talents_skills(talent_id, skill_id)
 values (1, 1);
@@ -143,4 +143,4 @@ values (1, 5);
 insert into talents_skills(talent_id, skill_id)
 values (1, 6);
 insert into talents_skills(talent_id, skill_id)
-values (1, 4);
+values (1, 4), (1, 22), (1, 124), (1, 199);
