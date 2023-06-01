@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset Ren:0
+--changeset Ren:1
 -- Talent
 drop table if exists talent cascade;
 drop table if exists talent_attached_file cascade;

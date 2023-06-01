@@ -22,8 +22,7 @@ databaseChangeLog:
     - include:
           file: db/changelog/changeset/V5/data-skills-on-proof.sql
     - include:
-          file: db/changelog/changeset/V5/V5-demo/drop-V5-demo.sql
-#    - include:
-#          file: db/changelog/changeset/V5/V5(demo)/data-demo.sql
+          file: db/changelog/changeset/V5-demo/schema/drop-V5-demo.sql
+
 
 
