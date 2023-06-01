@@ -16,6 +16,7 @@ values (
                order by id desc
                limit 1
                ), 'I am from Ukraine. I live in Sumy. I graduated from college and have a diploma, now I am continuing my studies at the university.I can write test plans, checklists, test cases and bug-reports.'
+       , 'GLORY TO UKRAINE'
        );
 insert into contacts (talent_id, contact)
 values (

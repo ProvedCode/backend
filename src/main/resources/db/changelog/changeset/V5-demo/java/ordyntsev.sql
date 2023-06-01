@@ -15,10 +15,8 @@ values (
                from talents
                order by id desc
                limit 1
-               ), 'Hello! I was born in Ukraine. My profession is Java Back-end developer. I ' ||
-                    'started my journey by learning python, after which I became interested in ' ||
-                    'C++ and now I am actively studying Java, Docker, ABC services, ' ||
-                    'PostgreSQL.Now I`m developing a Java backend using Spring Boot.'
+               ), 'Hello! I was born in Ukraine. My profession is Java Back-end developer. I started my journey by learning python, after which I became interested in C++ and now I am actively studying Java, Docker, ABC services, PostgreSQL.',
+           'GLORY TO UKRAINE'
        );
 insert into links (talent_id, link)
 values (
@@ -56,7 +54,6 @@ values (
                limit 1
                ), 'sanci324@gmail.com'
        );
-);
 insert into contacts (talent_id, contact)
 values (
            (

@@ -15,7 +15,8 @@ values (
                from talents
                order by id desc
                limit 1
-               ), 'Motivated and dedicated Junior Java Developer with a passion for coding and problem-solving. Strong foundation in Java programming and object-oriented concepts, with a keen interest in backend development. Eager to contribute to a dynamic development team and further enhance my skills in software development.'
+               ), 'Motivated and dedicated Junior Java Developer with a passion for coding and problem-solving. Strong foundation in Java programming and object-oriented concepts, with a keen interest in backend development. Eager to contribute to a dynamic development team and further enhance my skills in software development.',
+           'GLORY TO UKRAINE'
        );
 insert into links (talent_id, link)
 values (

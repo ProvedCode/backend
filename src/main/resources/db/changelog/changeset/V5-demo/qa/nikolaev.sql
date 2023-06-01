@@ -16,6 +16,7 @@ values (
                order by id desc
                limit 1
                ), 'In my first year at university, I started learning C++, but I stumbled upon QA courses and realized that this profession was more attractive to me. Now I am actively studying water supply.'
+       ,'GLORY TO UKRAINE'
        );
 
 insert into contacts (talent_id, contact)

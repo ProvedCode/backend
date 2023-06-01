@@ -16,6 +16,7 @@ values (
                order by id desc
                limit 1
                ), 'Hi, I am Olexander , student of 4-th grade in Sumy State University . Last 3 years I work with programming languages such: HTML, CSS, JS, C++ . Hard working and responsible student, who is ready to work and to absorb information '
+       , 'GLORY TO UKRAINE'
        );
 insert into links (talent_id, link)
 values (

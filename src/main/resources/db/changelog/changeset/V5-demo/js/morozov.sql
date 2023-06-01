@@ -16,6 +16,7 @@ values (
                order by id desc
                limit 1
                ), 'Student of the Karazin Kharkiv National University. Confident and ambitious Junior React developer. I like to solve problems and look for new and non-standard approaches to them. Always developing and striving for knowledge'
+       , 'GLORY TO UKRAINE'
        );
 insert into links (talent_id, link)
 values (

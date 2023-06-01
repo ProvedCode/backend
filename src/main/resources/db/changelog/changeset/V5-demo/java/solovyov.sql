@@ -19,7 +19,8 @@ values (
                   'I started my career in programming by learning Pascal at school, ' ||
                   'then dabbled in Python for a while. I also have some knowledge of ' ||
                   'java script and php. At the moment, I''m studying java, specifically spring boot. ' ||
-                  'I am also familiar with database management systems such as msql, postgres, and mysql.'
+                  'I am also familiar with database management systems such as msql, postgres, and mysql.',
+        'GLORY TO UKRAINE'
        );
 insert into links (talent_id, link)
 values (

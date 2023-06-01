@@ -16,6 +16,7 @@ values (
                order by id desc
                limit 1
                ), 'I am Ukrainian student from Poltava😎. Manual tester'
+       , 'GLORY TO UKRAINE'
        );
 insert into links (talent_id, link)
 values (

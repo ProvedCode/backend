@@ -16,6 +16,7 @@ values (
                order by id desc
                limit 1
                ), 'My name is Max, I am from Dnipro. I have been studying in Nure for 3 years. My specialization is computer engineering.'
+       , 'GLORY TO UKRAINE'
        );
 
 insert into contacts (talent_id, contact)
