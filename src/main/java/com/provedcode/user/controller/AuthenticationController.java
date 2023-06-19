@@ -1,6 +1,5 @@
 package com.provedcode.user.controller;
 
-import com.provedcode.talent.service.TalentService;
 import com.provedcode.user.model.dto.SponsorRegistrationDTO;
 import com.provedcode.user.model.dto.TalentRegistrationDTO;
 import com.provedcode.user.model.dto.UserInfoDTO;

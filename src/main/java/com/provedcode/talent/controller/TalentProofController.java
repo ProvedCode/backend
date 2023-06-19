@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v2/talents")
 @Validated
 public class TalentProofController {
-    TalentProofService talentProofService;
+    TalentProofService talentProofServiceImpl;
     TalentProofMapper talentProofMapper;
 
     @GetAllProofsApiDoc
@@ -37,7 +37,7 @@ public class TalentProofController {
                                         message = "'direction' query param must be equals ASC or DESC")
                                 String orderBy,
                                 @RequestParam(value = "sort-by", defaultValue = "created") String... sortBy) {
-        return talentProofService.getAllProofsPage(page, size, orderBy, sortBy).map(talentProofMapper::toProofDTO);
+        return talentProofServiceImpl.getAllProofsPage(page, size, orderBy, sortBy).map(talentProofMapper::toProofDTO);
     }
 
     @GetTalentProofByProofIdApiDoc
@@ -45,7 +45,7 @@ public class TalentProofController {
     @PreAuthorize("hasRole('TALENT')")
     ProofDTO getTalentProof(@PathVariable(value = "proof-id") long proofId,
                             Authentication authentication) {
-        return talentProofMapper.toProofDTO(talentProofService.getTalentProof(proofId, authentication));
+        return talentProofMapper.toProofDTO(talentProofServiceImpl.getTalentProof(proofId, authentication));
     }
 
     @GetTalentInformationWithProofsApiDoc
@@ -61,7 +61,7 @@ public class TalentProofController {
                                                         message = "'direction' query param must be equals ASC or DESC")
                                                 String orderBy,
                                                 @RequestParam(value = "sort-by", defaultValue = "created") String... sortBy) {
-        return talentProofService.getTalentProofs(talentId, page, size, orderBy, authentication, sortBy);
+        return talentProofServiceImpl.getTalentProofs(talentId, page, size, orderBy, authentication, sortBy);
     }
 
     @PostAddProofApiDoc
@@ -70,7 +70,7 @@ public class TalentProofController {
     ResponseEntity<?> addProof(@PathVariable(value = "talent-id") long talentId,
                                @RequestBody @Valid AddProof addProof,
                                Authentication authentication) {
-        return talentProofService.addProof(addProof, talentId, authentication);
+        return talentProofServiceImpl.addProof(addProof, talentId, authentication);
     }
 
     @PatchEditProofApiDoc
@@ -81,7 +81,7 @@ public class TalentProofController {
                        @PathVariable("proof-id") long proofId,
                        @RequestBody @Valid ProofDTO proof) {
         return talentProofMapper.toProofDTO(
-                talentProofService.editTalentProof(talentId, proofId, proof, authentication));
+                talentProofServiceImpl.editTalentProof(talentId, proofId, proof, authentication));
     }
 
     @DeleteProofApiDoc
@@ -90,6 +90,6 @@ public class TalentProofController {
     void deleteProof(@PathVariable(value = "talent-id") long talentId,
                           @PathVariable(value = "proof-id") long proofId,
                           Authentication authentication) {
-        talentProofService.deleteProofById(talentId, proofId, authentication);
+        talentProofServiceImpl.deleteProofById(talentId, proofId, authentication);
     }
 }

@@ -5,7 +5,6 @@ import com.provedcode.talent.model.dto.*;
 import com.provedcode.talent.model.request.EditTalent;
 import com.provedcode.talent.service.TalentService;
 import com.provedcode.user.model.dto.SessionInfoDTO;
-import com.provedcode.util.annotations.doc.controller.Skill.GetListOfSkillsApiDoc;
 import com.provedcode.util.annotations.doc.controller.talent.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
