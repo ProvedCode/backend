@@ -7,7 +7,6 @@ import com.provedcode.talent.repo.TalentRepository;
 import com.provedcode.user.model.Role;
 import com.provedcode.user.model.dto.SponsorRegistrationDTO;
 import com.provedcode.user.model.dto.TalentRegistrationDTO;
-import com.provedcode.user.model.dto.UserInfoDTO;
 import com.provedcode.user.model.entity.Authority;
 import com.provedcode.user.model.entity.DeletedUser;
 import com.provedcode.user.model.entity.UserInfo;
@@ -31,10 +30,10 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -51,41 +50,48 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     DeletedUserRepository deletedUserRepository;
 
     @Transactional(readOnly = true)
-    public UserInfoDTO login(String name, Collection<? extends GrantedAuthority> authorities) {
-        UserInfo userInfo = userInfoRepository.findByLogin(name)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, String.format(
-                        "user with login = %s not found", name)));
+    public Jwt login(String login, Collection<? extends GrantedAuthority> authorities) {
+        UserInfo userInfo = getUserInfo(login);
 
-        Role userRole = userInfo.getAuthorities().stream().findFirst().orElseThrow().getAuthority();
+        Role userRole = userInfo.getAuthorities().stream()
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "user with login = {%s} is not valid"))
+                .getAuthority();
 
-        BiFunction<UserInfo, Role, Long> getUserIdFunction = (user, role) -> role.equals(Role.TALENT) ? user.getTalent().getId()
-                : user.getSponsor().getId();
-
-        return UserInfoDTO.builder()
-                .token(generateJWTToken(name, authorities))
-                .id(userRole.equals(Role.TALENT) ? userInfo.getTalent().getId()
-                        : userInfo.getSponsor().getId())
-                .role(userRole.name())
-                .build();
+        return generateJwtToken(userRole.equals(Role.TALENT)
+                ? userInfo.getTalent().getId() : userInfo.getSponsor().getId(),  login, authorities);
     }
 
-    public UserInfoDTO register(TalentRegistrationDTO user) {
-        if (userInfoRepository.existsByLogin(user.login())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    String.format("user with login = {%s} already exists", user.login()));
-        }
+    @Override
+    public Jwt register(TalentRegistrationDTO talent) {
+        isUserExistCheck(talent.login());
 
+
+        return registerTalent(talent.login(), talent.password(),
+                talent.firstName(), talent.lastName(), talent.specialization());
+    }
+
+    @Override
+    public Jwt register(SponsorRegistrationDTO sponsor) {
+        isUserExistCheck(sponsor.login());
+
+        return registerSponsor(sponsor.login(), sponsor.password(), sponsor.firstName(), sponsor.lastName());
+    }
+
+    private Jwt registerTalent(String login, String password,
+                               String firstName, String lastName,
+                               String specialization) {
         Talent talent = Talent.builder()
-                .firstName(user.firstName())
-                .lastName(user.lastName())
-                .specialization(user.specialization())
+                .firstName(firstName)
+                .lastName(lastName)
+                .specialization(specialization)
                 .build();
         talentRepository.save(talent);
 
         UserInfo userInfo = UserInfo.builder()
                 .talent(talent)
-                .login(user.login())
-                .password(passwordEncoder.encode(user.password()))
+                .login(login)
+                .password(passwordEncoder.encode(password))
                 .authorities(Set.of(authorityRepository.findByAuthority(Role.TALENT).orElseThrow()))
                 .isLocked(false)
                 .build();
@@ -97,47 +103,36 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("user with login {%s} was saved, his authorities: %s".formatted(userLogin, userAuthorities));
 
-        return UserInfoDTO.builder()
-                .id(talent.getId())
-                .role(Role.TALENT.name())
-                .token(generateJWTToken(userLogin, userAuthorities))
-                .build();
+        return generateJwtToken(talent.getId(),  userLogin, userAuthorities);
     }
 
-    public UserInfoDTO register(SponsorRegistrationDTO user) {
-        if (userInfoRepository.existsByLogin(user.login())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    String.format("user with login = {%s} already exists", user.login()));
-        }
+    private Jwt registerSponsor(String login, String password,
+                                String firstName, String lastName) {
+        isUserExistCheck(login);
 
         Sponsor sponsor = Sponsor.builder()
-                .firstName(user.firstName())
+                .firstName(firstName)
                 .amountKudos(0L)
-                .lastName(user.lastName())
+                .lastName(lastName)
                 .build();
         sponsorRepository.save(sponsor);
 
         UserInfo userInfo = UserInfo.builder()
                 .sponsor(sponsor)
-                .login(user.login())
-                .password(passwordEncoder.encode(user.password()))
-                .authorities(
-                        Set.of(authorityRepository.findByAuthority(Role.SPONSOR).orElseThrow()))
+                .login(login)
+                .password(passwordEncoder.encode(password))
+                .authorities(Set.of(authorityRepository.findByAuthority(Role.SPONSOR).orElseThrow()))
                 .isLocked(false)
                 .build();
         userInfoRepository.save(userInfo);
 
         String userLogin = userInfo.getLogin();
-        Collection<? extends GrantedAuthority> userAuthorities = userInfo.getAuthorities().stream().map(
-                Authority::getAuthority).toList();
+        Collection<? extends GrantedAuthority> userAuthorities = userInfo.getAuthorities().stream()
+                .map(Authority::getAuthority).toList();
 
         log.info("user with login {%s} was saved, his authorities: %s".formatted(userLogin, userAuthorities));
 
-        return UserInfoDTO.builder()
-                .id(sponsor.getId())
-                .role(Role.SPONSOR.name())
-                .token(generateJWTToken(userLogin, userAuthorities))
-                .build();
+        return generateJwtToken(sponsor.getId(), userLogin, userAuthorities);
     }
 
     public void activateAccount(String uuid) {
@@ -149,7 +144,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userInfoRepository.save(user);
     }
 
-    private String generateJWTToken(String login, Collection<? extends GrantedAuthority> authorities) {
+    private Jwt generateJwtToken(Long id, String login, Collection<? extends GrantedAuthority> authorities) {
         log.info("=== POST /login === auth.login = {}", login);
         log.info("=== POST /login === auth = {}", authorities);
         var now = Instant.now();
@@ -158,9 +153,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .issuedAt(now)
                 .expiresAt(now.plus(60, MINUTES))
                 .subject(login)
+                .claim("id", id)
                 .claim("scope", authorities.stream().map(GrantedAuthority::getAuthority)
                         .collect(Collectors.joining(" ")))
                 .build();
-        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        return jwtEncoder.encode(JwtEncoderParameters.from(claims));
     }
+
+    private UserInfo getUserInfo(String name) {
+        return userInfoRepository.findByLogin(name)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, String.format(
+                        "user with login = %s not found", name)));
+    }
+
+    private void isUserExistCheck(String login) {
+        if (userInfoRepository.existsByLogin(login)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "user with login = {%s} already exists".formatted(login));
+        }
+    }
+
 }

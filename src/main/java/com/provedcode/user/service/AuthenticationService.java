@@ -2,17 +2,16 @@ package com.provedcode.user.service;
 
 import com.provedcode.user.model.dto.SponsorRegistrationDTO;
 import com.provedcode.user.model.dto.TalentRegistrationDTO;
-import com.provedcode.user.model.dto.UserInfoDTO;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.Collection;
 
 public interface AuthenticationService {
-    UserInfoDTO login(String name, Collection<? extends GrantedAuthority> authorities);
-
-    UserInfoDTO register(TalentRegistrationDTO user);
-
-    UserInfoDTO register(SponsorRegistrationDTO user);
+    Jwt login(String name, Collection<? extends GrantedAuthority> authorities);
 
     void activateAccount(String uuid);
+
+    Jwt register(TalentRegistrationDTO talent);
+    Jwt register(SponsorRegistrationDTO sponsor);
 }

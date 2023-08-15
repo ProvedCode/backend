@@ -1,9 +1,9 @@
 package com.provedcode.user.controller;
 
-import com.provedcode.talent.service.TalentService;
+import com.provedcode.user.model.Role;
+import com.provedcode.user.model.dto.JwtToken;
 import com.provedcode.user.model.dto.SponsorRegistrationDTO;
 import com.provedcode.user.model.dto.TalentRegistrationDTO;
-import com.provedcode.user.model.dto.UserInfoDTO;
 import com.provedcode.user.service.AuthenticationService;
 import com.provedcode.util.annotations.doc.controller.user.PostSponsorRegistrationApiDoc;
 import com.provedcode.util.annotations.doc.controller.user.PostTalentRegistrationApiDoc;
@@ -24,22 +24,27 @@ public class AuthenticationController {
 
     @PostUserLoginApiDoc
     @PostMapping("/v2/login")
-    UserInfoDTO login(Authentication authentication) {
-        return authenticationService.login(authentication.getName(), authentication.getAuthorities());
+    JwtToken login(Authentication authentication) {
+        return new JwtToken(
+                authenticationService.login(authentication.getName(), authentication.getAuthorities())
+                .getTokenValue()
+        );
     }
 
     @PostTalentRegistrationApiDoc
     @PostMapping("/v2/talents/register")
     @ResponseStatus(HttpStatus.CREATED)
-    UserInfoDTO register(@RequestBody @Valid TalentRegistrationDTO user) {
-        return authenticationService.register(user);
+    JwtToken registerTalent(@RequestBody @Valid TalentRegistrationDTO user) {
+        return new JwtToken(
+                authenticationService.register(user).getTokenValue()
+        );
     }
 
     @PostSponsorRegistrationApiDoc
     @PostMapping("/v3/sponsors/register")
     @ResponseStatus(HttpStatus.CREATED)
-    UserInfoDTO register(@RequestBody @Valid SponsorRegistrationDTO user) {
-        return authenticationService.register(user);
+    JwtToken registerSponsor(@RequestBody @Valid SponsorRegistrationDTO user) {
+        return new JwtToken(authenticationService.register(user).getTokenValue());
     }
 
     @GetMapping("/v5/activate")

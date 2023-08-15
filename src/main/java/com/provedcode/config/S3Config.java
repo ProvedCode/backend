@@ -5,7 +5,6 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -26,8 +25,4 @@ public class S3Config {
                 .build();
     }
 
-    @PostConstruct
-    void test() {
-        log.info("S3Config: %s %s %s".formatted(awsProperties.accessKey(), awsProperties.secretKey(), awsProperties.region()));
-    }
 }
