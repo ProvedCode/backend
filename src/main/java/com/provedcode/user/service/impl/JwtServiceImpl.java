@@ -24,8 +24,8 @@ public class JwtServiceImpl implements JwtService {
 
     public Jwt generateJwtToken(Long id, String login, Collection<? extends GrantedAuthority> authorities) {
         log.info("jwt-token generation: id = {%s}, authorities = {%s}".formatted(id, authorities));
-        var now = Instant.now();
-        var claims = JwtClaimsSet.builder()
+        Instant now = Instant.now();
+        JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
                 .expiresAt(now.plus(60, MINUTES))
