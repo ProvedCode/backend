@@ -14,40 +14,37 @@ import com.provedcode.user.repo.AuthorityRepository;
 import com.provedcode.user.repo.DeletedUserRepository;
 import com.provedcode.user.repo.UserInfoRepository;
 import com.provedcode.user.service.AuthenticationService;
-import lombok.AllArgsConstructor;
+import com.provedcode.user.service.JwtService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 @Transactional
 public class AuthenticationServiceImpl implements AuthenticationService {
-    JwtEncoder jwtEncoder;
-    UserInfoRepository userInfoRepository;
-    TalentRepository talentRepository;
-    SponsorRepository sponsorRepository;
-    AuthorityRepository authorityRepository;
-    PasswordEncoder passwordEncoder;
-    DeletedUserRepository deletedUserRepository;
+    private final JwtEncoder jwtEncoder;
+    private final UserInfoRepository userInfoRepository;
+    private final TalentRepository talentRepository;
+    private final SponsorRepository sponsorRepository;
+    private final AuthorityRepository authorityRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final DeletedUserRepository deletedUserRepository;
+    private final JwtService jwtService;
 
     @Transactional(readOnly = true)
     public Jwt login(String login, Collection<? extends GrantedAuthority> authorities) {
@@ -58,14 +55,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "user with login = {%s} is not valid"))
                 .getAuthority();
 
-        return generateJwtToken(userRole.equals(Role.TALENT)
+        return jwtService.generateJwtToken(userRole.equals(Role.TALENT)
                 ? userInfo.getTalent().getId() : userInfo.getSponsor().getId(),  login, authorities);
     }
 
     @Override
     public Jwt register(TalentRegistrationDTO talent) {
         isUserExistCheck(talent.login());
-
 
         return registerTalent(talent.login(), talent.password(),
                 talent.firstName(), talent.lastName(), talent.specialization());
@@ -103,7 +99,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("user with login {%s} was saved, his authorities: %s".formatted(userLogin, userAuthorities));
 
-        return generateJwtToken(talent.getId(),  userLogin, userAuthorities);
+        return jwtService.generateJwtToken(talent.getId(),  userLogin, userAuthorities);
     }
 
     private Jwt registerSponsor(String login, String password,
@@ -132,7 +128,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("user with login {%s} was saved, his authorities: %s".formatted(userLogin, userAuthorities));
 
-        return generateJwtToken(sponsor.getId(), userLogin, userAuthorities);
+        return jwtService.generateJwtToken(sponsor.getId(), userLogin, userAuthorities);
     }
 
     public void activateAccount(String uuid) {
@@ -142,22 +138,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setIsLocked(false);
         deletedUserRepository.deleteById(deletedUser.getId());
         userInfoRepository.save(user);
-    }
-
-    private Jwt generateJwtToken(Long id, String login, Collection<? extends GrantedAuthority> authorities) {
-        log.info("=== POST /login === auth.login = {}", login);
-        log.info("=== POST /login === auth = {}", authorities);
-        var now = Instant.now();
-        var claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(60, MINUTES))
-                .subject(login)
-                .claim("id", id)
-                .claim("scope", authorities.stream().map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.joining(" ")))
-                .build();
-        return jwtEncoder.encode(JwtEncoderParameters.from(claims));
     }
 
     private UserInfo getUserInfo(String name) {
