@@ -24,6 +24,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,22 +42,22 @@ import static org.springframework.http.HttpStatus.*;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional
 public class TalentService {
-    AuthorityRepository authorityRepository;
-    TalentProofRepository talentProofRepository;
-    TalentRepository talentRepository;
-    UserInfoRepository userInfoRepository;
-    PageProperties pageProperties;
-    ValidateTalentForCompliance validateTalentForCompliance;
-    SkillsRepository skillsRepository;
-    TalentProofMapper talentProofMapper;
-    DeletedUserRepository deletedUserRepository;
-    ServerInfoConfig serverInfoConfig;
-    EmailService emailService;
-    EmailDefaultProps emailDefaultProps;
-    SkillMapper skillMapper;
+    private final AuthorityRepository authorityRepository;
+    private final TalentProofRepository talentProofRepository;
+    private final TalentRepository talentRepository;
+    private final UserInfoRepository userInfoRepository;
+    private final PageProperties pageProperties;
+    private final ValidateTalentForCompliance validateTalentForCompliance;
+    private final SkillsRepository skillsRepository;
+    private final TalentProofMapper talentProofMapper;
+    private final DeletedUserRepository deletedUserRepository;
+    private final ServerInfoConfig serverInfoConfig;
+    private final EmailService emailService;
+    private final EmailDefaultProps emailDefaultProps;
+    private final SkillMapper skillMapper;
 
     @Transactional(readOnly = true)
     public Page<Talent> getTalentsPage(Integer page, Integer size) {
@@ -82,18 +83,11 @@ public class TalentService {
         List<TalentContact> editableTalentContacts = editableTalent.getTalentContacts();
         List<TalentAttachedFile> editableTalentAttachedFiles = editableTalent.getTalentAttachedFiles();
 
-        if (editTalent.firstName() != null) {
-            editableTalent.setFirstName(editTalent.firstName());
-        }
-        if (editTalent.lastName() != null) {
-            editableTalent.setLastName(editTalent.lastName());
-        }
-        if (editTalent.specialization() != null) {
-            editableTalent.setSpecialization(editTalent.specialization());
-        }
-        if (editTalent.image() != null) {
-            editableTalent.setImage(editTalent.image());
-        }
+        if (editTalent.firstName() != null) editableTalent.setFirstName(editTalent.firstName());
+        if (editTalent.lastName() != null) editableTalent.setLastName(editTalent.lastName());
+        if (editTalent.specialization() != null) editableTalent.setSpecialization(editTalent.specialization());
+        if (editTalent.image() != null) editableTalent.setImage(editTalent.image());
+        
         if (editTalent.additionalInfo() != null || editTalent.bio() != null) {
             if (editableTalentDescription != null) {
                 if (editTalent.additionalInfo() != null)
@@ -264,7 +258,7 @@ public class TalentService {
                 .stream()
                 .flatMap(x -> x.getProofSkills().stream())
                 .flatMap(y -> y.getKudos().stream())
-                .mapToLong(q -> q.getAmount())
+                .mapToLong(Kudos::getAmount)
                 .sum();
     }
 
@@ -296,7 +290,7 @@ public class TalentService {
 
     public Map<ProofDTO, Long> getProofWithLargestNumberOfKudos(Talent talent) {
         Map<ProofDTO, Long> result = new HashMap<>();
-        Long maxForResult = 0L;
+        long maxForResult = 0L;
         for (TalentProof talentProof : talent.getTalentProofs()) {
             Long amountKudosOnSkills = 0L;
             for (ProofSkill proofSkill : talentProof.getProofSkills()) {

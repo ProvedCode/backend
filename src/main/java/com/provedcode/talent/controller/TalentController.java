@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,13 +26,13 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/")
 @Tag(name = "talent", description = "Talent API")
 @Validated
 public class TalentController {
-    TalentService talentService;
-    TalentMapper talentMapper;
+    private final TalentService talentService;
+    private final TalentMapper talentMapper;
 
     @GetAllTalentsApiDoc
     @GetMapping("v2/talents")
