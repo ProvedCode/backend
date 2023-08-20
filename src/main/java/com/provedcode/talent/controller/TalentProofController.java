@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,12 +20,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/v2/talents")
 @Validated
 public class TalentProofController {
-    TalentProofService talentProofService;
-    TalentProofMapper talentProofMapper;
+    private final TalentProofService talentProofService;
+    private final TalentProofMapper talentProofMapper;
 
     @GetAllProofsApiDoc
     @GetMapping("/proofs")
